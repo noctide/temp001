@@ -481,7 +481,7 @@ Pipeline。
 Dataset
 出口。签到账及个人事由等敏感字段按场景过滤，不能默认全部进入分析或模型。
 
-事件使用平台统一事件信封：eventId、type、schemaVersion、source、scope、subject、sourceVersion、occurredAt、recordedAt、correlationId，以及最小变更信息；增量同步另带 changeSeq，更正事件带 correctionOf，自动化与联动产生的事件带 causationId，并可带来源 Run / 步骤引用 originRunRef（可选）（字段定义见 titanloom-contracts 的 outbox-event）。领域事务与待发事件使用事务性
+事件使用平台统一事件信封：eventId、type、schemaVersion、source、scope、subject、sourceVersion、occurredAt、recordedAt、correlationId，以及最小变更信息；增量同步另带 changeSeq，更正事件带 correctionOf，自动化与联动产生的事件带 causationId，并可带来源 Run / 步骤引用 originRunRef（可选）（字段定义见 packages/contracts 的 outbox-event）。领域事务与待发事件使用事务性
 outbox
 或等价机制；按至少一次投递设计，消费者幂等，不承诺网络全局恰好一次。
 

@@ -1180,7 +1180,7 @@ accepted、Job succeeded 或 Notification delivered 标成 effective。
 
 ### 13.4 事件与推送
 
-事件至少包括资源版本变化、引用变化、角色与授权变化、委托撤销、配置发布与激活、任务状态、执行器心跳、资产撤回、插件禁用及告警变化。事件使用平台统一事件信封：eventId、type、schemaVersion、source、scope、subject、sourceVersion、occurredAt、recordedAt 和 correlationId，增量同步另带 changeSeq，更正事件带 correctionOf，自动化与联动产生的事件带 causationId，并可带来源 Run / 步骤引用 originRunRef（可选）（字段定义见 titanloom-contracts 的 outbox-event）。
+事件至少包括资源版本变化、引用变化、角色与授权变化、委托撤销、配置发布与激活、任务状态、执行器心跳、资产撤回、插件禁用及告警变化。事件使用平台统一事件信封：eventId、type、schemaVersion、source、scope、subject、sourceVersion、occurredAt、recordedAt 和 correlationId，增量同步另带 changeSeq，更正事件带 correctionOf，自动化与联动产生的事件带 causationId，并可带来源 Run / 步骤引用 originRunRef（可选）（字段定义见 packages/contracts 的 outbox-event）。
 
 WebSocket
 复用既有推送能力，通知变更及受控摘要；查询接口仍是权威。订阅建立与续期校验权限，撤权关闭相关订阅并清理受限客户端缓存；断连后

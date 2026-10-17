@@ -1,0 +1,73 @@
+# Titanloom 项目清单（开发项目划分与多 Agent 协作规范 附录 A；2026-10-17 落成）
+# 正本：工具（tl check 范围检查、导入边界、AGENTS.md、启动指令）都从这里读，不另写一份。
+# 字段：module = apps/api/titanloom 下的包名；paths = 允许修改的路径；read = 读取清单（除第 4.1 节共同必读外）；
+#       owner = arch 表示只有架构改（执行 Agent 不改）。
+
+arch:
+  owner: arch
+  paths: [apps/api/titanloom/kernel/, apps/api/titanloom/main.py, apps/api/titanloom/runner.py, apps/api/titanloom/__init__.py, apps/api/pyproject.toml,
+          apps/web/src/shared/base/, apps/web/src/main.tsx, ops/tools/, plan/, projects.yaml, AGENTS.md, CLAUDE.md, docs/, README.md,
+          pyproject.toml, uv.lock, package.json, pnpm-workspace.yaml, pnpm-lock.yaml, .python-version, .gitignore, .gitattributes, .pre-commit-config.yaml]
+  read: []
+ops:
+  paths: [ops/synthetic-data/, ops/perf/, ops/deploy/, ops/db/, .github/, tests/e2e/]
+  read: [实施路线, 部署拓扑与容量规划, 总框架#12, 开源与第三方依赖治理]
+contracts:
+  paths: [packages/contracts/, packages/sdk-python/, packages/sdk-typescript/, i18n/errors.yaml]
+  read: [平台能力契约与Agent接入规范, 总框架#8.2, 总框架#8.3, 总框架#13.1]
+access:
+  module: access
+  paths: [apps/api/titanloom/access/, i18n/access.yaml]
+  read: [后端详细设计-身份与权限, 平台能力契约#5, 平台能力契约#6.4, 总框架#3.1, 总框架#3.1.1, 总框架#8.5, 后台治理#4, 后台治理#5.1]
+execution:
+  module: execution
+  paths: [apps/api/titanloom/execution/, i18n/execution.yaml]
+  read: [后端详细设计-命令与任务, 平台能力契约#6, 平台能力契约#7, 平台能力契约#8, 平台能力契约#13, 平台能力契约#14, 总框架#12.4, 总框架#13, 部署拓扑#4]
+facilities:
+  module: facilities
+  paths: [apps/api/titanloom/facilities/, i18n/facilities.yaml, i18n/glossary.yaml]
+  read: [后端详细设计-公共设施, 平台能力契约#9.4, 总框架#8.7, 总框架#9, 后台治理#11.1, 后台治理#11.3, 后台治理#12.2]
+plugin-host:
+  module: plugin_host
+  paths: [apps/api/titanloom/plugin_host/, packages/host-sdk/, i18n/plugins.yaml]
+  read: [后端详细设计-插件宿主与Shell与平台管理-M1, 插件与扩展体系, 总框架#8.6, ADR-013, ADR-016]
+shell:
+  module: shell
+  paths: [apps/api/titanloom/shell/, apps/web/src/shell/, apps/web/src/shared/, i18n/common.yaml, i18n/shell.yaml]
+  read: [后端详细设计-插件宿主与Shell与平台管理-M1, Shell与门户及个人工作台, 总框架#3, 总框架#8.7]
+admin:
+  module: admin
+  paths: [apps/api/titanloom/admin/, apps/web/src/domains/admin/, i18n/admin.yaml]
+  read: [后端详细设计-插件宿主与Shell与平台管理-M1, 后台治理中心, 平台能力契约#5, 平台能力契约#8, 集成与消息通道#5]
+integration:
+  module: integration
+  paths: [apps/api/titanloom/integration/, apps/web/src/domains/integration/, i18n/integration.yaml]
+  read: [集成与消息通道, 后台治理#7.2, 后台治理#10.3, 平台能力契约#6]
+forms:
+  module: forms
+  paths: [apps/api/titanloom/forms/, apps/web/src/domains/forms/, i18n/forms.yaml]
+  read: [表单平台, 平台能力契约#6, 平台能力契约#7, 插件与扩展体系#2]
+attendance:
+  module: attendance
+  paths: [apps/api/titanloom/attendance/, apps/web/src/domains/attendance/, i18n/attendance.yaml]
+  read: [考勤签到, 平台能力契约#6, 平台能力契约#7, 平台能力契约#8, 总框架#8.7]
+dataproc:
+  module: dataproc
+  paths: [apps/api/titanloom/dataproc/, apps/web/src/domains/dataproc/, i18n/dataproc.yaml]
+  read: [数据处理, 平台能力契约#8, 平台能力契约#9, 插件与扩展体系#2, 插件与扩展体系#8, ADR-016]
+visualization:
+  module: visualization
+  paths: [apps/api/titanloom/visualization/, apps/web/src/domains/visualization/, apps/player/, i18n/visualization.yaml]
+  read: [数据可视化控制台, 平台能力契约#9, 数据处理#12, Shell与门户及个人工作台#7]
+automation:
+  module: automation
+  paths: [apps/api/titanloom/automation/, apps/web/src/domains/automation/, i18n/automation.yaml]
+  read: [工具自动化, 平台能力契约#6, 平台能力契约#7, 平台能力契约#8, 集成与消息通道#4, ADR-016]
+knowledge:
+  module: knowledge
+  paths: [apps/api/titanloom/knowledge/, apps/web/src/domains/knowledge/, i18n/knowledge.yaml]
+  read: [知识与文档, 平台能力契约#9.4, 总框架#9]
+agent:
+  module: agent
+  paths: [apps/api/titanloom/agent/, apps/web/src/domains/agent/, i18n/agent.yaml]
+  read: [智能管家, 平台能力契约#4, 平台能力契约#5, 平台能力契约#6, 平台能力契约#9.3, 平台能力契约#10, 平台能力契约#11]

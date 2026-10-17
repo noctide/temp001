@@ -1,0 +1,56 @@
+# Titanloom 开发环境根配置（uv 工作区）。依赖登记见《开源与第三方依赖治理》；新增依赖须写明用途与许可证。
+[project]
+name = "titanloom-dev"
+version = "0.0.0"
+description = "Titanloom 单仓开发环境（工具与检查）"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["apps/api"]
+
+[tool.uv.sources]
+titanloom = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "titanloom",
+    "pytest>=8.3",
+    "ruff>=0.7",
+    "pyright>=1.1.385",
+    "import-linter>=2.1",
+    "jsonschema>=4.23",
+    "referencing>=0.35",
+    "pyyaml>=6.0",
+    "httpx2>=2.13",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["packages/contracts"]
+
+[tool.ruff.lint]
+# 错误、导入、复杂度、安全、异步、时间、简化（工程规范 4.1）
+select = ["E", "F", "W", "I", "B", "C90", "S", "ASYNC", "DTZ", "UP", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]   # 中文全角标点出现在注释与文档字符串里是正常的
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101"]
+"ops/**" = ["S101", "T201", "E501"]   # 工具里的中文说明行长
+
+[tool.pytest.ini_options]
+testpaths = ["apps/api/titanloom"]
+addopts = "-q"
+
+[tool.pyright]
+include = ["apps/api/titanloom"]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+extraPaths = ["apps/api"]

@@ -14,7 +14,7 @@
 - 开发验证环境为小规格 Linux 单机，仅用于功能与最小部署测试，不代表容量；实测基线记录见 5.2。
 - 目标共享生产 Linux 的 OS、权限、配额、数据库政策未知，不以物理内存推定可用资源（部署 V0.1、ADR-014）。
 - 技术栈基线：React + TypeScript + Vite、Python 3.12.10（独立虚拟环境，不替换系统 python3）、FastAPI、PostgreSQL、Polars；最小档为 PostgreSQL 持久 JobRun + 有界本地 Runner，标准档才加 RabbitMQ / Celery（总框架 12.3）。
-- OpenAPI / JSON Schema、数据库 Schema、契约测试、迁移脚本尚未建立（契约骨架见 titanloom-contracts）。
+- OpenAPI / JSON Schema、数据库 Schema、契约测试、迁移脚本尚未建立（契约骨架见 packages/contracts）。
 
 ## 2. 两个口径与一个门禁
 
@@ -57,7 +57,7 @@
 
 **前提（2026-10-16 维护者定）：后端详细设计先行。** 每个里程碑开工前，它涉及的后端详细设计（表结构、接口清单、状态与后台任务、请求链路）必须先以设计页形式经维护者确认并定稿，定稿内容写成契约文件；M0 的仓库布局与分层以"后端总图"定稿为前提。与后端设计无关的项（分支保护、提交前密钥扫描、合成数据人设表）可先做。
 
-交付：代码仓库、分支与提交规范、依赖锁定（pnpm-lock、uv.lock）、CI（lint、类型、单元测试、迁移检查）、S0 环境脚本；合成数据生成器（工时、考勤、基表，含脏数据、重复导入、跨月与修订样本）；契约骨架（Capability Descriptor、Command / Invocation、错误模型、幂等键）；在验证环境上用 uv 装 Python 3.12.10 并实测 PostgreSQL + FastAPI + 前端静态服务的启动、内存与连接上限；待决事项中标注"M0 前"的项均有结论或书面默认值；**性能基线与度量脚手架**（见第 5.1 节）；契约骨架见 titanloom-contracts（能力描述符、命令、JobRun、错误体的 JSON Schema 与状态机，附校验测试）。
+交付：代码仓库、分支与提交规范、依赖锁定（pnpm-lock、uv.lock）、CI（lint、类型、单元测试、迁移检查）、S0 环境脚本；合成数据生成器（工时、考勤、基表，含脏数据、重复导入、跨月与修订样本）；契约骨架（Capability Descriptor、Command / Invocation、错误模型、幂等键）；在验证环境上用 uv 装 Python 3.12.10 并实测 PostgreSQL + FastAPI + 前端静态服务的启动、内存与连接上限；待决事项中标注"M0 前"的项均有结论或书面默认值；**性能基线与度量脚手架**（见第 5.1 节）；契约骨架见 packages/contracts（能力描述符、命令、JobRun、错误体的 JSON Schema 与状态机，附校验测试）。
 
 出口：CI 在干净环境可重复构建；《Titanloom-工程质量与代码规范》第 9 节标为 M0 引入的门禁全部生效；验证环境资源实测入库；无"M0 前"悬空待决项。
 
@@ -152,7 +152,7 @@ M0 同时建立：前端体积预算与 CI 检查、Playwright 性能追踪脚�
 | 序号 | 任务 | 产出 | 完成标准 |
 | --- | --- | --- | --- |
 | 1 | 仓库收尾（仓库已公开，LICENSE、NOTICE、CONTRIBUTING、SPDX 约定、`.gitignore`、DCO 检查、托管平台密钥扫描与推送保护已就位，2026-10-16 核对）：补 `main` 分支保护（必需检查）、提交前密钥扫描 | 仓库设置与 pre-commit 配置 | 必需检查不过不能合并；提交前与 CI 各扫一次密钥；历史中无主机地址、口令、私钥 |
-| 2 | 仓库布局：单仓，`apps/api`（FastAPI）、`apps/web`（React + TypeScript + Vite）、`packages/contracts`（迁入 titanloom-contracts）、`docs`、`ops` | 目录与 README | 新克隆后按 README 能在开发机启动空应用 |
+| 2 | 仓库布局：单仓，`apps/api`（FastAPI）、`apps/web`（React + TypeScript + Vite）、`packages/contracts`（迁入 packages/contracts）、`docs`、`ops` | 目录与 README | 新克隆后按 README 能在开发机启动空应用 |
 | 3 | 开发机工具链：uv 管理 Python 3.12.10 独立环境、pnpm 与 Node 22 LTS、锁文件入库 | uv.lock、pnpm-lock.yaml | 干净环境一条命令完成依赖安装 |
 | 4 | CI：按《Titanloom-工程质量与代码规范》第 9 节门禁清单建立，含 ruff、类型检查（Python 与 TypeScript）、pytest、vitest、全部契约测试文件、Alembic 迁移检查、密钥扫描、依赖许可证清单（先出报告，不拦截） | CI 配置 | 干净环境可重复通过；故意引入凭据时被拦截 |
 | 5 | 合成数据生成器：工时、考勤、基表各一套，含脏数据、重复导入、跨月、修订、基表有效期变更样本，固定随机种子 | `ops/synthetic-data` | 同一种子两次生成逐字节相同；覆盖路线与考勤验收需要的样本类别 |

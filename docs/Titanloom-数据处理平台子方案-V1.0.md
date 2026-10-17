@@ -642,7 +642,7 @@ Dataset/Query、来源批次和执行版本。若指标受外部/上级固定公
 
 ### 12.6 字段标识、可筛选声明与数据代次（拟定）
 
-本节为数据可视化子方案 8.2（筛选器与字段绑定）、8.3（报表模板与数据绑定）与 16.2（生成式 HTML 报表）提供数据侧接口。对象与字段为拟定，待工程 Schema 确认；草案见 titanloom-contracts 的 field-ref、query-filterable、dataset-generation-changed。
+本节为数据可视化子方案 8.2（筛选器与字段绑定）、8.3（报表模板与数据绑定）与 16.2（生成式 HTML 报表）提供数据侧接口。对象与字段为拟定，待工程 Schema 确认；草案见 packages/contracts 的 field-ref、query-filterable、dataset-generation-changed。
 
 **FieldRef（字段标识）**。FieldRef 是数据处理登记的稳定字段身份，ID 形如 `fld_department`，记录显示名称（LocalizedText，国际化规范 7）、数据类型、单位、时间字段的粒度与业务时区、取值字典或选项 Query、是否为权限维度、所属业务域与责任人、版本与状态（draft / active / deprecated）。FieldRef 只回答"这是哪个业务字段"，不承载口径；口径、层级与生效规则仍由 12.5 的 Metric / Dimension 表达，Dimension 可引用 FieldRef。已被 Query 声明引用的 FieldRef 不可删除，只能标记 deprecated 并给出替代项。
 
@@ -792,9 +792,9 @@ ID、重试及资源用量；支持超时、取消、恢复、额度和状态回
 5. JobRun 成功不改变上述任一维度；JobRun 失败或取消也不直接改写 PipelineRun 终态，由数据处理按领域规则判定（ADR-012）。
 6. 终态 PipelineRun 不复活；重新运行创建新的 PipelineRun 并记录来源。
 
-对应的 JSON Schema 草案见 titanloom-contracts/pipeline-run.schema.json。
+对应的 JSON Schema 草案见 packages/contracts/pipeline-run.schema.json。
 
-与 Query 响应的关系：已发布的 Dataset 版本其质量状态只可能是 `passed` 或 `warned`（`blocked` 的数据不会发布，10.3），因此 Query 响应的 `qualityStatus` 只取这两个值，见 titanloom-contracts/query-execute-response.schema.json。
+与 Query 响应的关系：已发布的 Dataset 版本其质量状态只可能是 `passed` 或 `warned`（`blocked` 的数据不会发布，10.3），因此 Query 响应的 `qualityStatus` 只取这两个值，见 packages/contracts/query-execute-response.schema.json。
 
 ## 16. Agent / Tool 能力映射
 

@@ -38,7 +38,7 @@ check("错误码格式合法", all(re.fullmatch(r"[A-Z][A-Z0-9_]*",c) for c in c
 check("HTTP 状态码合法", all(400<=c["httpStatus"]<=504 for c in reg))
 check("状态只能是 documented 或 proposed", all(c["status"] in ("documented","proposed") for c in reg))
 check("仅 429 与 503 与 PROJECTION_STALE 可 retryable", all((not c["retryable"]) or c["httpStatus"] in (429,503) or c["code"]=="PROJECTION_STALE" for c in reg))
-spec=open(glob.glob(str(root.parent/"docs"/"Titanloom-平台能力契约*.md"))[0] if glob.glob(str(root.parent/"docs"/"Titanloom-平台能力契约*.md")) else glob.glob(str(root.parent/"titanloom"/"Titanloom-平台能力契约*.md"))[0],encoding="utf-8").read()
+spec=open(glob.glob(str(root.parents[1]/"docs"/"Titanloom-平台能力契约*.md"))[0] if glob.glob(str(root.parents[1]/"docs"/"Titanloom-平台能力契约*.md")) else glob.glob(str(root.parent/"titanloom"/"Titanloom-平台能力契约*.md"))[0],encoding="utf-8").read()
 miss=[c["code"] for c in reg if c["status"]=="documented" and c["code"] not in spec]
 check("documented 错误码均出现在能力契约中", not miss)
 bad=[]

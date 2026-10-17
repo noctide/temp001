@@ -20,7 +20,7 @@ git commit -s -m "说明"
 ## 提交前
 
 - 新增依赖须写明许可证，并更新 THIRD_PARTY_NOTICES（发布时生成）。
-- 契约与状态机变更须同步 titanloom-contracts 的 Schema 与测试，必要时新增 ADR。
+- 契约与状态机变更须同步 packages/contracts 的 Schema 与测试，必要时新增 ADR。
 
 ## 提交前检查
 
