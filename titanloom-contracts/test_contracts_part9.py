@@ -47,9 +47,9 @@ check("三门：资源准入行有效", ok("grant", x))
 
 # ---- 判定结果
 d = {"decision": "deny", "policyRev": 32, "decidedAt": T, "failedStep": "grant",
-     "reasonKey": "access:reason.notGranted", "contactRef": "person:p-zhaoyiming", "canRequest": True,
+     "reasonKey": "access.reason.notGranted", "contactRef": "person:p-zhaoyiming", "canRequest": True,
      "steps": [{"step": "identity", "result": "pass"}, {"step": "feature", "result": "not_applicable"},
-               {"step": "grant", "result": "fail", "reasonKey": "access:reason.notGranted"},
+               {"step": "grant", "result": "fail", "reasonKey": "access.reason.notGranted"},
                {"step": "agent_gate", "result": "not_applicable"}, {"step": "data_scope", "result": "not_checked"},
                {"step": "state", "result": "not_checked"}]}
 check("判定示例（林晓看质检结果 · 卡在基础授权）有效", ok("access-decision", d))

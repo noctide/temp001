@@ -52,9 +52,9 @@ check("部门归属条目必须有 scopeId", not ok("search-doc", x))
 
 # ---- SearchProvider 登记
 prov = {"module": "attendance",
-        "objectTypes": [{"objectType": "attendance.makeupRequest", "group": "form", "labelKey": "attendance:makeup.title",
+        "objectTypes": [{"objectType": "attendance.makeupRequest", "group": "form", "labelKey": "attendance.makeup.title",
                          "sensitiveFieldsExcluded": True}],
-        "actions": [{"actionId": "attendance.makeup.new", "labelKey": "attendance:makeup.new", "route": "/attendance/makeup/new",
+        "actions": [{"actionId": "attendance.makeup.new", "labelKey": "attendance.makeup.new", "route": "/attendance/makeup/new",
                      "keywords": ["补签", "补卡", "makeup"], "capabilityId": "titanloom.attendance.makeup_request.submit"}],
         "checkVisibleCapability": "titanloom.attendance.search.check_visible",
         "reindexEvent": "attendance.makeupRequest.changed", "nightlyReconcile": True}

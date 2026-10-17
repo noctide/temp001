@@ -22,7 +22,7 @@ x = copy.deepcopy(v); x["checks"]["format"] = "fail"
 check("检查没过不能是可用", not ok("asset-version", x))
 x["state"] = "quarantined"
 check("检查没过进隔离必须写原因", not ok("asset-version", x))
-x["checks"]["rejectReasonKey"] = "facilities:file.formatInvalid"
+x["checks"]["rejectReasonKey"] = "facilities.file.formatInvalid"
 check("隔离带原因有效", ok("asset-version", x))
 x = copy.deepcopy(v); x["size"] = 300 * 1024 * 1024
 check("超过上限（200 MB）被拒", not ok("asset-version", x))
@@ -39,7 +39,7 @@ check("审计可带指纹链", "prevHash" in S["audit-event"]["properties"] and 
 check("指纹必须是 sha256 十六进制", S["audit-event"]["properties"]["hash"]["pattern"] == "^[0-9a-f]{64}$")
 
 n = {"notificationId": "n1", "recipientId": "a-zhouning", "type": "attendance.importFailed", "category": "task_result",
-     "subjectRef": "execution.job:JR-8840", "severity": "warning", "messageKey": "attendance:notify.importFailed",
+     "subjectRef": "execution.job:JR-8840", "severity": "warning", "messageKey": "attendance.notify.importFailed",
      "params": {"batch": 41}, "link": "/admin/runs/JR-8840", "lang": "zh-CN", "packVersion": "zh-CN@37",
      "dedupeKey": "attendance.importFailed:JR-8840", "mergedCount": 3, "createdAt": T}
 check("通知示例（合并 3 次）有效", ok("notification", n))
@@ -54,7 +54,7 @@ check("个人设置：任务结果只站内有效", ok("notify-pref", {"accountI
 check("审批不能关站内", not ok("notify-pref", {"accountId": "a1", "category": "approval", "channels": ["external"]}))
 check("账户安全不能全关", not ok("notify-pref", {"accountId": "a1", "category": "account_security", "channels": []}))
 
-t = {"todoId": "t1", "type": "attendance.makeupReview", "sourceRef": "attendance.makeup:mr-9", "titleKey": "attendance:todo.makeupReview",
+t = {"todoId": "t1", "type": "attendance.makeupReview", "sourceRef": "attendance.makeup:mr-9", "titleKey": "attendance.todo.makeupReview",
      "state": "open", "openedAt": T, "assignees": [{"accountId": "a-zhouning", "state": "open"}, {"accountId": "a-lihang", "state": "open", "snoozedUntil": T}]}
 check("组待办（两位考勤管理员）有效", ok("todo-item", t))
 x = copy.deepcopy(t); x.update({"state": "done", "doneBy": "a-zhouning", "doneAt": T}); x["assignees"][0]["state"] = "done"; x["assignees"][1]["state"] = "done_by_other"

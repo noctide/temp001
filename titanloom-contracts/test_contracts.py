@@ -66,7 +66,7 @@ check("终态必须有 finishedAt", not ok("job-run.schema.json", j))
 j = copy.deepcopy(job); j.update(state="failed", effectStatus="partial", finishedAt="2026-10-01T09:05:00Z")
 check("failed + partial 副作用有效(须如实记录)", ok("job-run.schema.json", j))
 
-err = {"requestId":"req_003","error":{"code":"RESOURCE_VERSION_CONFLICT","messageKey":"errors:resourceVersionConflict","messageParams":{},"retryable":False,"recoveryAction":"refresh_and_prepare","details":{"commandId":"cmd_001"}}}
+err = {"requestId":"req_003","error":{"code":"RESOURCE_VERSION_CONFLICT","messageKey":"errors.resourceVersionConflict","messageParams":{},"retryable":False,"recoveryAction":"refresh_and_prepare","details":{"commandId":"cmd_001"}}}
 check("规范 12.1 示例错误体有效", ok("error.schema.json", err))
 e = copy.deepcopy(err); e["error"]["stack"] = "Traceback..."
 check("错误体不得携带栈等内部字段", not ok("error.schema.json", e))

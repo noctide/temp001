@@ -1,7 +1,7 @@
 # Titanloom · 国际化与本地化规范
 
 > 版本：V1.0｜日期：2026-10-03｜状态：公共平台规范，随 M1 生效（facilities 项目的语言资源服务）；契约草案见 titanloom-contracts 的 i18n-key-manifest、language-pack、localized-text。
-> 修订：2026-10-11 补写回语言与术语页评审（10-09）：5.1 补在页面上找文案、按语言分别发布；6 节关键文案发布须第二位管理员批准；9 节待复核含升级后出厂文案变化；10 节补改术语流程。\
+> 修订：2026-10-17 第 3 节键名改为全部用点一层一层分隔（命名空间.页面.区域….名称），不再用冒号；契约中所有文案键格式同步。2026-10-11 补写回语言与术语页评审（10-09）：5.1 补在页面上找文案、按语言分别发布；6 节关键文案发布须第二位管理员批准；9 节待复核含升级后出厂文案变化；10 节补改术语流程。\
 > 定位：把总框架 8.7 的国际化原则落成统一标准：文案存在哪里、怎么命名、怎么写、怎么发布、谁能改、怎么检查。与总框架 8.7 冲突时以总框架为准并先修订本文。
 > 依据：总框架 8.7；能力契约 11.3、12；后台治理 6.1、7.1、7.2；插件与扩展体系 7；数据可视化 9.1；ADR-021。
 
@@ -24,10 +24,12 @@
 
 ## 3. 键名
 
--   格式：`命名空间:路径`，例如 `attendance:schedule.publishConfirm`、`errors:resourceVersionConflict`。
--   命名空间：开发项目名（`attendance`、`dataproc`、`visualization` 等，见开发项目划分规范 2.2），项目名含连字符的去掉连字符改用简称（plugin-host 项目用 `plugins`）；另有 `common`（通用词，归 shell 项目）、`errors`（错误码文案，归 contracts 项目）。插件使用 `plugin.<pluginId>` 命名空间（插件与扩展体系 7）。
--   路径：小驼峰分段，用点分隔，按页面或功能区组织；不以显示文字命名键（不写 `attendance:确定`）。
--   错误码的键由错误码机械推导：`VERSION_CONFLICT` → `errors:versionConflict`；错误码注册表记录该键（契约测试检查一致）。
+-   格式：全部用点一层一层往下分：`命名空间.页面.区域….名称`，最后一段是功能或名称。例如 `attendance.schedule.publish.confirm`、`forms.designer.toolbar.save`、`common.action.save`、`errors.resourceVersionConflict`。层数不设上限，至少两段（命名空间 + 名称）；页面上的文案建议至少三段（命名空间.页面.名称）。（2026-10-17 维护者定：不用冒号分隔命名空间。）
+-   命名空间：第一段就是命名空间，取开发项目名（`attendance`、`dataproc`、`visualization` 等，见开发项目划分规范 2.2），项目名含连字符的去掉连字符改用简称（plugin-host 项目用 `plugins`）；另有 `common`（通用词，归 shell 项目）、`errors`（错误码文案，归 contracts 项目）。插件的命名空间是前两段 `plugin.<pluginId>`（插件与扩展体系 7），如 `plugin.acme-gauge.settings.title`；`plugin` 作为第一段保留给插件。
+-   每一段小驼峰（小写字母开头），按页面或功能区组织；不以显示文字命名键（不写 `attendance.确定`）。
+-   一个键不能同时是另一个键的上一层：有了 `forms.nav.title` 就不能再有 `forms.nav.title.short`（同一层改用 `forms.nav.titleShort`）。这样键清单可以直接存成一层套一层的结构，检查工具对此报错。
+-   前端 i18next 用点作层级分隔、不用冒号分隔命名空间（`nsSeparator: false`），命名空间由第一段（插件为前两段）推出，按命名空间分块加载。
+-   错误码的键由错误码机械推导：`VERSION_CONFLICT` → `errors.versionConflict`；错误码注册表记录该键（契约测试检查一致）。
 -   每个键在键清单中登记：命名空间、路径、参数名与类型、用途说明、是否关键文案（第 6 节）、出现位置。
 
 ## 4. 文案格式

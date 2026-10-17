@@ -18,7 +18,7 @@ m = {"id": "titanloom.forms", "version": "1.0.0", "kind": "domain", "removable":
      "provides": {"services": [{"id": "titanloom.forms.records", "version": "1.0.0"}],
                   "extensionPoints": [{"id": "titanloom.forms.field-type", "version": "1.0.0", "cardinality": "many", "thirdParty": False}]},
      "registers": {"features": ["form.create"], "pages": [{"id": "forms.list", "route": "/forms", "devices": ["desktop", "mobile"]}],
-                   "nav": [{"slot": "shell.nav.primary", "order": 30, "labelKey": "forms:nav.title"}], "i18n": "i18n/forms.yaml"},
+                   "nav": [{"slot": "shell.nav.primary", "order": 30, "labelKey": "forms.nav.title"}], "i18n": "i18n/forms.yaml"},
      "drainSec": 60}
 check("清单示例（表单）有效", ok("plugin-manifest", m))
 x = copy.deepcopy(m); x["kind"] = "core"
@@ -49,8 +49,8 @@ check("原因必填", not ok("composition-version", x))
 
 me = {"person": {"id": "p-linxiao", "name": "林晓"}, "depts": ["dept-assembly-1"], "lang": "zh-CN", "tz": "Asia/Shanghai",
       "scopeMenu": [{"kind": "dept", "id": "dept-assembly-1"}], "currentScope": {"kind": "dept", "id": "dept-assembly-1"}, "scopeEpoch": 1,
-      "nav": [{"pageId": "forms.list", "labelKey": "forms:nav.title", "state": "ok", "route": "/forms"},
-              {"pageId": "knowledge.home", "labelKey": "knowledge:nav.title", "state": "unavailable"}],
+      "nav": [{"pageId": "forms.list", "labelKey": "forms.nav.title", "state": "ok", "route": "/forms"},
+              {"pageId": "knowledge.home", "labelKey": "knowledge.nav.title", "state": "unavailable"}],
       "features": {"form.create": "requestable", "data.conn": "hidden"}, "homeRef": "/r/shell/home/HP-0003",
       "langPack": {"lang": "zh-CN", "version": "zh-CN@37"}, "badges": {"todo": None, "messages": 2},
       "ring": ["agent", "todo", "support", "feedback", "pick"], "policyRev": 32, "compositionVersion": 2}
@@ -69,7 +69,7 @@ check("不是你的部门：不泄露名称", not ok("resource-resolve", {"ref":
 check("不是你的部门：有效", ok("resource-resolve", {"ref": "/r/forms/form/FM-0031", "outcome": "not_your_dept"}))
 check("打开必须给地址", not ok("resource-resolve", {"ref": "/r/forms/form/FM-0031", "outcome": "open"}))
 
-h = {"pluginId": "titanloom.knowledge", "status": "down", "checkedAt": T, "consecutiveDown": 3, "reasonKey": "platform:health.dbSchema", "since": T}
+h = {"pluginId": "titanloom.knowledge", "status": "down", "checkedAt": T, "consecutiveDown": 3, "reasonKey": "plugins.health.dbSchema", "since": T}
 check("健康：不可用有效", ok("plugin-health", h))
 x = copy.deepcopy(h); x["consecutiveDown"] = 1
 check("连续 3 次才标不可用", not ok("plugin-health", x))

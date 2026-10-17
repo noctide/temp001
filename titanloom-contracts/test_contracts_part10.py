@@ -44,10 +44,10 @@ check("必须声明重叠策略", not ok("schedule-rule", x))
 o = {"ruleId": "sr-1", "plannedAt": "2026-10-17T01:00:00Z", "state": "placed", "jobId": "j1", "recordedAt": T}
 check("计划时刻（已放任务）有效", ok("trigger-occurrence", o))
 check("错过必须写原因", not ok("trigger-occurrence", {"ruleId": "sr-1", "plannedAt": "2026-10-17T01:00:00Z", "state": "missed", "recordedAt": T}))
-check("错过带原因有效", ok("trigger-occurrence", {"ruleId": "sr-1", "plannedAt": "2026-10-17T01:00:00Z", "state": "missed", "reasonKey": "exec:occurrence.hostDown", "recordedAt": T}))
+check("错过带原因有效", ok("trigger-occurrence", {"ruleId": "sr-1", "plannedAt": "2026-10-17T01:00:00Z", "state": "missed", "reasonKey": "execution.occurrence.hostDown", "recordedAt": T}))
 x = copy.deepcopy(o); x["plannedAt"] = "2026-10-17T09:00:00+08:00"
 check("计划时刻存 UTC", not ok("trigger-occurrence", x))
-x = copy.deepcopy(o); x["state"] = "skipped_overlap"; x["reasonKey"] = "exec:occurrence.previousRunning"
+x = copy.deepcopy(o); x["state"] = "skipped_overlap"; x["reasonKey"] = "execution.occurrence.previousRunning"
 check("跳过的时刻不得挂任务", not ok("trigger-occurrence", x))
 
 c = {"caseId": "rc-1", "jobId": "j9", "openedAt": T, "autoUntil": "2026-10-17T01:15:00Z", "state": "auto_checking"}

@@ -45,7 +45,7 @@
           },
           "labelKey": {
             "type": "string",
-            "pattern": "^[a-z][a-z0-9]*(\\.[a-z0-9-]+)?:[a-z][A-Za-z0-9]*(\\.[a-z][A-Za-z0-9]*)*$"
+            "pattern": "^(plugin\\.[a-z0-9-]+|[a-z][a-z0-9]*)(\\.[a-z][A-Za-z0-9]*)+$"
           },
           "sensitiveFieldsExcluded": {
             "const": true
@@ -70,7 +70,7 @@
           },
           "labelKey": {
             "type": "string",
-            "pattern": "^[a-z][a-z0-9]*(\\.[a-z0-9-]+)?:[a-z][A-Za-z0-9]*(\\.[a-z][A-Za-z0-9]*)*$"
+            "pattern": "^(plugin\\.[a-z0-9-]+|[a-z][a-z0-9]*)(\\.[a-z][A-Za-z0-9]*)+$"
           },
           "route": {
             "type": "string",

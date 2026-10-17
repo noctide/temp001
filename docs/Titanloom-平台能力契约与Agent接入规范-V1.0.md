@@ -502,7 +502,7 @@ Agent 工作不能通过复制 Job、人工缓存、导出文件或 Player 身�
     "expiresAt": "2026-09-26T09:40:00Z",
     "effectivePolicy": "confirm",
     "preview": {
-      "messageKey": "dataproc:pipelineRun.preview",
+      "messageKey": "dataproc.pipelineRun.preview",
       "messageParams": {"pipelineVersion": "7", "period": "2026-09"},
       "effectScope": "registered_pipeline_outputs",
       "estimateStatus": "bounded_estimate"
@@ -1068,7 +1068,7 @@ Skill 包。
   "requestId": "req_003",
   "error": {
     "code": "RESOURCE_VERSION_CONFLICT",
-    "messageKey": "errors:resourceVersionConflict",
+    "messageKey": "errors.resourceVersionConflict",
     "messageParams": {},
     "retryable": false,
     "recoveryAction": "refresh_and_prepare",

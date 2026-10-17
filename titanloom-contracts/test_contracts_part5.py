@@ -38,7 +38,7 @@ check("验证器不可用如实记录有效", ok("invocation",x))
 x=copy.deepcopy(iv); x["verification"]={"state":"verified","validatorVersion":"1","verifiedAt":T2,"domainRunRef":"r","naturalLanguageResult":"成功了"}
 check("不接受自然语言结果代替证据字段", not ok("invocation",x))
 
-pr={"requestId":"req_001","data":{"commandId":"cmd_001","state":"awaiting_confirmation","capabilityId":"titanloom.data.pipeline.run","contractVersion":"1.0.0","commandDigest":H,"expiresAt":T2,"effectivePolicy":"confirm","preview":{"messageKey":"dataproc:pipelineRun.preview","messageParams":{"period":"2026-09"},"effectScope":"registered_pipeline_outputs","estimateStatus":"bounded_estimate"},"confirmation":{"required":True,"interactionRef":"confirm_ui_001"}}}
+pr={"requestId":"req_001","data":{"commandId":"cmd_001","state":"awaiting_confirmation","capabilityId":"titanloom.data.pipeline.run","contractVersion":"1.0.0","commandDigest":H,"expiresAt":T2,"effectivePolicy":"confirm","preview":{"messageKey":"dataproc.pipelineRun.preview","messageParams":{"period":"2026-09"},"effectScope":"registered_pipeline_outputs","estimateStatus":"bounded_estimate"},"confirmation":{"required":True,"interactionRef":"confirm_ui_001"}}}
 check("准备结果有效(规范 6.2 示例)", ok("prepare-result",pr))
 x=copy.deepcopy(pr); x["data"]["confirmation"]["required"]=False
 check("等待确认状态必须要求确认", not ok("prepare-result",x))

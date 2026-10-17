@@ -37,7 +37,7 @@
     },
     "reasonKey": {
       "type": "string",
-      "pattern": "^[a-z][a-z0-9]*(\\.[a-z0-9-]+)?:[a-z][A-Za-z0-9]*(\\.[a-z][A-Za-z0-9]*)*$"
+      "pattern": "^(plugin\\.[a-z0-9-]+|[a-z][a-z0-9]*)(\\.[a-z][A-Za-z0-9]*)+$"
     },
     "since": {
       "type": "string",

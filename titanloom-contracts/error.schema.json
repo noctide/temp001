@@ -33,7 +33,7 @@
         },
         "messageKey": {
           "type": "string",
-          "pattern": "^errors:[a-z][A-Za-z0-9]*$"
+          "pattern": "^errors\\.[a-z][A-Za-z0-9]*$"
         },
         "messageParams": {
           "type": "object"

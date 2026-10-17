@@ -15,7 +15,7 @@ def check(label, cond):
 # ---- 错误码注册表：每个码都有由错误码机械推导的文案键，且唯一
 reg = json.loads((root / "error-codes.json").read_text(encoding="utf-8"))["codes"]
 def derive(code):
-    p = code.lower().split("_"); return "errors:" + p[0] + "".join(x.capitalize() for x in p[1:])
+    p = code.lower().split("_"); return "errors." + p[0] + "".join(x.capitalize() for x in p[1:])
 check("每个错误码都有 messageKey", all("messageKey" in c for c in reg))
 check("messageKey 由错误码机械推导", all(c["messageKey"] == derive(c["code"]) for c in reg))
 check("messageKey 不重复", len({c["messageKey"] for c in reg}) == len(reg))
@@ -33,10 +33,12 @@ def find_pat(o):
     elif isinstance(o, list):
         for v in o: find_pat(v)
 find_pat(S["prepare-result"])
-check("通用键名：命名空间:路径 合法", pr_key is not None and all(pr_key.match(k) for k in
-      ["dataproc:pipelineRun.preview", "attendance:schedule.publishConfirm", "common:save", "plugin.acme-gauge:settings.title"]))
-check("通用键名：旧点分格式被拒", not pr_key.match("command.pipelineRun.preview"))
-check("通用键名：以显示文字为键被拒", not pr_key.match("attendance:确定"))
+check("通用键名：命名空间.路径 一层一层 合法", pr_key is not None and all(pr_key.match(k) for k in
+      ["dataproc.pipelineRun.preview", "attendance.schedule.publishConfirm", "common.save", "plugin.acme-gauge.settings.title"]))
+check("通用键名：只有一段被拒", not pr_key.match("save"))
+check("通用键名：冒号格式被拒", not pr_key.match("attendance:schedule.publishConfirm"))
+check("通用键名：大写开头的段被拒", not pr_key.match("attendance.Schedule.publish"))
+check("通用键名：以显示文字为键被拒", not pr_key.match("attendance.确定"))
 
 # ---- 键清单
 mf = {"namespace": "attendance", "keys": {
@@ -72,7 +74,7 @@ lp = {"packId": "lp_zh", "version": 3, "locale": "zh-CN", "state": "active", "cr
                      "errors": {"resourceVersionConflict": "资源已被他人修改"}},
       "publishedAt": "2026-10-03T08:00:00Z"}
 check("已激活语言包有效", ok("language-pack", lp))
-x = copy.deepcopy(lp); x["criticalComplete"] = False; x["missingKeys"] = ["attendance:schedule.publishConfirm"]
+x = copy.deepcopy(lp); x["criticalComplete"] = False; x["missingKeys"] = ["attendance.schedule.publishConfirm"]
 check("关键文案缺失的语言包不得处于 active", not ok("language-pack", x))
 x["state"] = "published"
 check("关键文案缺失的语言包可发布但不激活", ok("language-pack", x))
