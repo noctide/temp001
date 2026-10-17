@@ -44,6 +44,8 @@ max-complexity = 10
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["S101"]
 "ops/**" = ["S101", "T201", "E501"]   # 工具里的中文说明行长
+"ops/tools/**" = ["S101", "T201", "E501", "C901"]   # 架构的工具脚本，检查项多分支
+"ops/synthetic-data/**" = ["S101", "T201", "E501", "S311", "S603"]   # 合成数据用普通随机数；测试里调用本目录脚本
 
 [tool.pytest.ini_options]
 testpaths = ["apps/api/titanloom"]

@@ -17,6 +17,9 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import checks
+
 ROOT = Path(__file__).resolve().parents[2]
 API = ROOT / "apps" / "api" / "titanloom"
 WEB = ROOT / "apps" / "web" / "src"
@@ -117,15 +120,49 @@ def scaffold() -> int:
     return 0
 
 
+MARK = {"ok": "✓", "fail": "✗", "warn": "!", "skip": "–"}
+
+
+def check(fast: bool, only: list[str]) -> int:
+    names = only or (list(checks.FAST) if fast else list(checks.ALL))
+    bad = [n for n in names if n not in checks.ALL]
+    if bad:
+        print("没有这项检查：" + ", ".join(bad), file=sys.stderr)
+        return 2
+    results = []
+    for n in names:
+        try:
+            r = checks.ALL[n]()
+        except Exception as e:  # 检查本身出错也要报出来，不吞掉
+            r = checks.Result(n, "fail", [f"检查本身出错：{type(e).__name__}: {e}"])
+        results.append(r)
+        print(f"{MARK[r.status]} {r.name}" + (f" —— {r.lines[0]}" if r.lines and r.status in ("ok", "skip") else ""))
+        if r.status in ("fail", "warn"):
+            for line in r.lines:
+                print("    " + line)
+    fails = [r for r in results if r.status == "fail"]
+    warns = [r for r in results if r.status == "warn"]
+    print()
+    print(
+        f"{'没过' if fails else '通过'}：{len(results)} 项 · ✗ {len(fails)} · ! {len(warns)}（! 是提醒，架构审核时看）"
+    )
+    return 1 if fails else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="tl", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("scaffold", help="按 projects.yaml 补齐模块骨架")
-    for c in ("check", "gen", "status"):
-        sub.add_parser(c, help="（A2 / A3 落成）")
+    pc = sub.add_parser("check", help="全套门禁：本地和推送后的 CI 跑同一条")
+    pc.add_argument("--fast", action="store_true", help="只跑快的（不跑类型检查、测试、契约测试、前端）")
+    pc.add_argument("--only", default="", help="只跑某几项，逗号分隔：" + ",".join(checks.ALL))
+    for c in ("gen", "status"):
+        sub.add_parser(c, help="（A3 落成）")
     args = ap.parse_args(argv)
     if args.cmd == "scaffold":
         return scaffold()
+    if args.cmd == "check":
+        return check(args.fast, [x for x in args.only.split(",") if x])
     print(f"{args.cmd}：还没落成（阶段 A2 / A3）", file=sys.stderr)
     return 2
 

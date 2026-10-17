@@ -41,7 +41,7 @@ EXPECTED_HEADCOUNTS = {
 def _expected_roles(spec: dict) -> list[str]:
     """规格里的具体角色 +（在职且有账户时的）基础「员工」角色。"""
     if spec["status"] == "active" and spec["account"] == "active":
-        return [gen_personas.BASE_ROLE] + list(spec.get("platform_roles") or [])
+        return [gen_personas.BASE_ROLE, *(spec.get("platform_roles") or [])]
     return []
 
 
@@ -79,10 +79,7 @@ class PersonasTest(unittest.TestCase):
                 person = self.by_id[spec["id"]]
             else:
                 matches = [
-                    p
-                    for p in self.people
-                    if p["name"] == spec["name"]
-                    and p["department"] == spec["department"]
+                    p for p in self.people if p["name"] == spec["name"] and p["department"] == spec["department"]
                 ]
                 self.assertEqual(len(matches), 1, spec["name"])
                 person = matches[0]
@@ -107,11 +104,7 @@ class PersonasTest(unittest.TestCase):
         self.assertEqual(len(wanglei), 2)
         self.assertEqual({p["id"] for p in wanglei}, {"A0077", "W0015"})
         # 其余名字除「张燕」外都不重复；张燕是同一人离职再入职的两份档案（非重名）。
-        duplicates = {
-            name: count
-            for name, count in Counter(p["name"] for p in self.people).items()
-            if count > 1
-        }
+        duplicates = {name: count for name, count in Counter(p["name"] for p in self.people).items() if count > 1}
         self.assertEqual(duplicates, {"王磊": 2, "张燕": 2})
 
     def test_yanshu_no_account(self):
