@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### 2026-10-18｜全项目跑道与派工
+
+设计页 sketch-roadmap v1 经维护者确认（同时 3 个 Agent；先派考勤、表单、数据处理；首页按大型项目惯例放 MVP）。
+
+-   **实施路线 5.4**：13 条跑道、开工四条件、派工顺序；里程碑顺序与出口不变。
+-   **ADR-033**：首页最小版（待办、我发起的、快捷导航、公告）随 M4 交付；同时最多 3 个执行 Agent。
+-   **projects.yaml**：`apps/web/src/shared/` 归架构。
+
 ### 2026-10-18｜M2 后端详细设计：考勤、表单平台
 
 设计页 sketch-backend-attendance v1、sketch-backend-forms v1 经维护者确认（各 H 节 3 处"可以"）。

@@ -6,7 +6,7 @@
 arch:
   owner: arch
   paths: [apps/api/titanloom/kernel/, apps/api/titanloom/main.py, apps/api/titanloom/runner.py, apps/api/titanloom/__init__.py, apps/api/pyproject.toml,
-          apps/web/src/shared/base/, apps/web/src/main.tsx, ops/tools/, plan/, projects.yaml, AGENTS.md, CLAUDE.md, docs/, README.md,
+          apps/web/src/shared/, apps/web/src/main.tsx, ops/tools/, plan/, projects.yaml, AGENTS.md, CLAUDE.md, docs/, README.md,
           pyproject.toml, uv.lock, package.json, pnpm-workspace.yaml, pnpm-lock.yaml, .python-version, .gitignore, .gitattributes, .pre-commit-config.yaml]
   read: []
 ops:
@@ -33,7 +33,7 @@ plugin-host:
   read: [后端详细设计-插件宿主与Shell与平台管理-M1, 插件与扩展体系, 总框架#8.6, ADR-013, ADR-016]
 shell:
   module: shell
-  paths: [apps/api/titanloom/shell/, apps/web/src/shell/, apps/web/src/shared/, i18n/common.yaml, i18n/shell.yaml]
+  paths: [apps/api/titanloom/shell/, apps/web/src/shell/, i18n/common.yaml, i18n/shell.yaml]
   read: [后端详细设计-插件宿主与Shell与平台管理-M1, Shell与门户及个人工作台, 总框架#3, 总框架#8.7]
 admin:
   module: admin
