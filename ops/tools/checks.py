@@ -423,7 +423,10 @@ def code_files() -> list[Path]:
     return [
         p
         for p in files
-        if "node_modules" not in p.parts and "generated" not in p.parts and "/kernel/reg/" not in p.as_posix()
+        if "node_modules" not in p.parts
+        and "generated" not in p.parts
+        and "/kernel/reg/" not in p.as_posix()
+        and "/shared/base/reg/" not in p.as_posix()  # 生成物本来就由正本生成
     ]
 
 

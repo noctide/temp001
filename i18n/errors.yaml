@@ -1,0 +1,169 @@
+# 错误码文案（国际化规范 3、4、5.2、6）。键由错误码机械推导：VERSION_CONFLICT → errors.versionConflict。
+# 出厂默认文案：部署时只补数据库里没有的键；上线后在 平台管理 › 语言与术语 维护。每句说清"出了什么事 + 你能做什么"。
+namespace: errors
+keys:
+  invalidRequest:
+    description: 请求格式不对（缺字段、类型不对），多半是页面或调用方的问题
+    defaults:
+      zh-CN: 提交的内容格式不对，请检查后重新提交；一直这样请点"反馈"告诉我们。
+      en-US: The request was not in the expected format. Check it and submit again, or send feedback if this keeps happening.
+  inputValidationFailed:
+    description: 填写的内容没通过校验（必填、范围、格式）
+    defaults:
+      zh-CN: 有内容没填对，请按标出的地方改好再提交。
+      en-US: Some fields need fixing. Correct the highlighted fields and submit again.
+  authenticationRequired:
+    description: 没有登录或登录已失效
+    critical: true
+    defaults:
+      zh-CN: 需要先登录。请重新登录后再继续，刚才没提交的内容会保留在草稿里。
+      en-US: Please sign in to continue. Anything you had not submitted stays in your draft.
+  tokenExpired:
+    description: 登录凭据过期（闲置太久或超过最长登录时间）
+    critical: true
+    defaults:
+      zh-CN: 登录已过期，请重新登录。
+      en-US: Your session has expired. Please sign in again.
+  accessDenied:
+    description: 没有做这件事的权限
+    critical: true
+    defaults:
+      zh-CN: 你还没有这项权限。可以点"申请权限"，由负责人批准后就能用。
+      en-US: You don't have permission for this yet. Use "Request access" and it will be available once approved.
+  delegationRevoked:
+    description: 管家用的委托已被收回或已到期
+    critical: true
+    defaults:
+      zh-CN: 管家用的授权已被收回或到期，这一步停下了。需要的话请重新委托。
+      en-US: The authorization the assistant was using has been revoked or has expired, so this step stopped. Delegate again if needed.
+  resourceNotFound:
+    description: 要找的东西不存在，或你看不到它
+    defaults:
+      zh-CN: 找不到这项内容，可能已被停用、归档，或者没有分享给你。
+      en-US: This item can't be found. It may have been disabled or archived, or it hasn't been shared with you.
+  confirmationRequired:
+    description: 影响较大的操作，提交前要先确认
+    defaults:
+      zh-CN: 这一步影响较大，请先看清影响范围并确认，再提交。
+      en-US: This action has a wide impact. Review what it will affect and confirm before submitting.
+  resourceVersionConflict:
+    description: 有人刚改过（乐观锁版本不一致）
+    defaults:
+      zh-CN: 有人刚刚改过这项内容。请刷新看最新的版本，再决定要不要重新提交。
+      en-US: Someone just changed this. Refresh to see the latest version, then decide whether to submit again.
+  idempotencyConflict:
+    description: 同一个提交编号带了不一样的内容
+    defaults:
+      zh-CN: 这次提交和刚才那次用了同一个编号但内容不同，没有执行。请确认要提交的是哪一份。
+      en-US: This submission reused an earlier submission ID with different content, so it was not run. Check which version you meant to submit.
+  capabilityDisabled:
+    description: 这项功能已停用或下线
+    defaults:
+      zh-CN: 这项功能已经停用。如需继续使用，请联系平台管理员。
+      en-US: This feature has been turned off. Contact your platform administrator if you still need it.
+  contractVersionUnsupported:
+    description: 调用方用的接口版本平台已不再支持
+    defaults:
+      zh-CN: 这个页面或插件用的接口版本太旧，平台已不再支持。请刷新页面，插件需要更新到新版本。
+      en-US: This page or plugin uses an interface version that is no longer supported. Refresh the page, or update the plugin.
+  commandExpired:
+    description: 准备好的操作放太久已过期
+    defaults:
+      zh-CN: 这一步准备得太久已经过期，没有执行。请先看看结果是否已经有了，再重新发起。
+      en-US: This action expired before it ran. Check whether the result already exists, then start it again.
+  resultExpired:
+    description: 结果保存期已过，取不到了
+    defaults:
+      zh-CN: 这次结果的保存时间已过，取不到了。需要的话请重新运行。
+      en-US: This result is no longer kept. Run it again if you still need it.
+  idempotencyWindowExpired:
+    description: 超过防重复的时间窗口，无法判断是否已执行
+    defaults:
+      zh-CN: 时间隔得太久，平台已无法判断这一步之前有没有做过。请先查一下业务记录，确认没做过再重新发起。
+      en-US: Too much time has passed to tell whether this already ran. Check the records first, and start it again only if it didn't.
+  payloadTooLarge:
+    description: 提交的内容太大
+    defaults:
+      zh-CN: 提交的内容太大。请拆小一些，大文件请作为附件上传。
+      en-US: What you submitted is too large. Split it up, or upload large files as attachments.
+  resultTooLarge:
+    description: 结果太大，不能一次返回
+    defaults:
+      zh-CN: 结果太多，不能一次显示。请加筛选条件缩小范围，或改为导出。
+      en-US: There are too many results to show at once. Add filters to narrow them down, or export instead.
+  queryBudgetExceeded:
+    description: 查询超出本次允许的数据量或耗时
+    defaults:
+      zh-CN: 这次查询的数据量太大。请缩小时间或范围，或改为后台运行，好了会通知你。
+      en-US: This query covers too much data. Narrow the time range or scope, or run it in the background and get notified when it's done.
+  rateLimited:
+    description: 短时间内请求太多
+    defaults:
+      zh-CN: 操作太频繁了，请稍等片刻再试。
+      en-US: Too many requests in a short time. Wait a moment and try again.
+  capacityExceeded:
+    description: 平台当前排队已满
+    defaults:
+      zh-CN: 平台现在比较忙，请稍后再试；不着急的可以改为后台运行。
+      en-US: The platform is busy right now. Try again shortly, or run it in the background if it isn't urgent.
+  dependencyUnavailable:
+    description: 依赖的服务或外部系统暂时连不上
+    defaults:
+      zh-CN: 依赖的服务暂时连不上，平台会自动重试。一直不好请联系平台管理员。
+      en-US: A service this depends on is unavailable. The platform will retry automatically; contact your administrator if it persists.
+  requestDeadlineExceeded:
+    description: 等结果超时，但操作可能已在执行
+    defaults:
+      zh-CN: 等待超时了，但这一步可能已经在执行。请先查看运行记录，不要直接重复提交。
+      en-US: This timed out, but it may still be running. Check the run history before submitting again.
+  dependencyBlocked:
+    description: 有别的东西依赖它，暂时不能这样改
+    defaults:
+      zh-CN: 还有其他内容依赖它，现在不能这样改。请先看依赖关系，处理好再试。
+      en-US: Other items still depend on this, so it can't be changed this way yet. Review the dependencies and try again.
+  projectionStale:
+    description: 汇总数据还没更新到最新
+    defaults:
+      zh-CN: 汇总数据还没更新到最新，请稍后刷新再看。
+      en-US: The summary isn't up to date yet. Refresh again shortly.
+  partialActivation:
+    description: 改动只在一部分地方生效了
+    defaults:
+      zh-CN: 改动只在一部分地方生效了。请在生效进度里看还差哪些，处理后再推一次。
+      en-US: The change has only taken effect in some places. Check the rollout progress to see what's left, then push it again.
+  reconciliationRequired:
+    description: 结果不确定，需要先核对
+    defaults:
+      zh-CN: 这一步的结果还不确定，已转去核对，核对完会通知你。在此之前请不要重复操作。
+      en-US: The outcome of this step is uncertain and has been sent for checking. You'll be notified when it's resolved; please don't repeat it in the meantime.
+  budgetExceeded:
+    description: 超出配额或预算（非查询场景）
+    defaults:
+      zh-CN: 已超出可用的额度。请缩小范围，或向管理员申请提高额度。
+      en-US: This is over your available quota. Narrow the scope, or ask an administrator to raise the quota.
+  egressTargetNotApproved:
+    description: 要发往的外部地址不在批准清单里
+    defaults:
+      zh-CN: 要发往的外部地址还没被批准，所以没有发出去。请联系平台管理员把它加入出网许可清单。
+      en-US: The external address hasn't been approved, so nothing was sent. Ask your platform administrator to add it to the allowed list.
+  channelDisabled:
+    description: 消息通道已停用或暂停
+    defaults:
+      zh-CN: 这个消息通道已停用或暂停，消息没有发出去。请在集成中心启用后再试。
+      en-US: This channel is disabled or paused, so the message wasn't sent. Enable it in the integration center and try again.
+  accountLocked:
+    description: 连续输错密码，账户被临时锁定
+    critical: true
+    defaults:
+      zh-CN: 密码连续输错次数太多，账户暂时锁定了，请过一会儿再试；忘记密码请找平台管理员重置。
+      en-US: Too many incorrect passwords, so the account is temporarily locked. Try again later, or ask an administrator to reset your password.
+  featureNotOpen:
+    description: 这项功能没有开放给你（功能开放）
+    defaults:
+      zh-CN: 这项功能还没有开放给你。可以点"申请"，由负责人批准后就能用。
+      en-US: This feature isn't available to you yet. Use "Request" and it will be available once approved.
+  secondApprovalRequired:
+    description: 这类改动要另一位管理员批准
+    defaults:
+      zh-CN: 这类改动需要另一位管理员批准，已提交给对方，批准后自动生效。
+      en-US: This change needs approval from another administrator. It has been sent to them and will take effect once approved.
