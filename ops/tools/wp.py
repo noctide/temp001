@@ -114,7 +114,7 @@ def launch(wid: str) -> int:
 5. 工作目录里的 PROGRESS.md（上次做到哪）
 
 做完：uv run python ops/tools/tl.py check 全部通过（✗ 0），最后一条提交写自查结果；只在本地提交（git commit -s，末尾 Agent: <你的工具名>），不推送、不合并。
-然后回复一句"{wid} 做完了"，列出改了哪些文件、测试结果。设计里没写、拿不准的，停下来写进 PROGRESS.md 告诉我。"""
+按说明书的阶段一个一个做；**每做完一个阶段**回复一句"{wid} 阶段 N 做完了"，列出改了哪些文件、测试结果，等审核通过再做下一阶段。设计里没写、拿不准的，停下来写进 PROGRESS.md 告诉我。"""
     )
     return 0
 
