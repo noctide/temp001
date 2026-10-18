@@ -8,6 +8,7 @@ dependencies = []
 
 [tool.uv]
 package = false
+link-mode = "copy"   # 缓存在 C 盘、仓库在 D 盘时硬链接不可用（Windows），直接复制
 
 [tool.uv.workspace]
 members = ["apps/api"]
