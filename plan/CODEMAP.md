@@ -19,6 +19,16 @@
   - `def bind` — 设置上下文，返回令牌，用完交给 reset。
   - `def reset` — （没写说明）
   - `def new_request_id` — （没写说明）
+- `titanloom.kernel.db`
+  - `class DatabaseNotConfigured` — 没有设置连接串。启动期的配置错误，不是业务错误，不走 AppError。
+  - `def database_url` — owner=True 取迁移账号的连接串，没设则退回运行账号。
+  - `def make_engine` — （没写说明）
+  - `def get_engine` — （没写说明）
+  - `def set_engine` — 测试与引导用：换掉（或清掉）进程里共用的引擎。
+  - `def current_session` — 当前事务里的会话；不在 `transaction()` 里调用是程序错误。
+  - `def in_transaction` — （没写说明）
+  - `def transaction` — 最外层：开会话、正常结束提交、出错回滚。已在事务里：加入它，由最外层决定提交。
+  - `def bind_session` — 把一个现成的会话当作当前事务（测试用：事务回滚的 fixture 用它；里面的 transaction() 都加入它）。
 - `titanloom.kernel.errors`
   - `class AppError` — 业务可预期的错误。code 必须是登记过的 ErrorCode。
   - `class ErrorBody` — （没写说明）
@@ -42,6 +52,14 @@
   - `class JsonFormatter` — （没写说明）
   - `def get_logger` — （没写说明）
   - `def setup` — （没写说明）
+- `titanloom.kernel.migrate`
+  - `def migrations_dir` — （没写说明）
+  - `def version_table` — （没写说明）
+  - `def module_metadata` — （没写说明）
+  - `def config_for` — （没写说明）
+  - `def upgrade` — （没写说明）
+  - `def new_revision` — 从 store/models.py 与当前数据库的差别生成一份迁移脚本；生成后要人看一遍再提交。
+  - `def run_env` — env.py 调用：在线执行迁移。
 - `titanloom.kernel.paging`
   - `class Page` — （没写说明）
   - `def clamp_limit` — （没写说明）
@@ -50,6 +68,9 @@
 - `titanloom.kernel.params`
   - `class UnknownParam` — （没写说明）
   - `class ParamStore` — （没写说明）
+- `titanloom.kernel.testing`
+  - `def connect_test_db` — 连测试库；没设或连不上就跳过当前测试。
+  - `def schema_session_fixture` — 生成一个 pytest fixture：临时 schema 里建好这些 metadata 的表，交出一个当前事务的会话。
 
 生成的常量：`titanloom.kernel.reg`（ErrorCode、K 文案键、P 业务参数、F 功能）；前端 `shared/base/reg`。
 

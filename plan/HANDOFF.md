@@ -28,7 +28,7 @@
 
 目标：先把**接口 + 测试桩**发布出来，让考勤能做阶段 2、表单能做阶段 3；实现随后补。每一块做完都 `tl check`、提交、更新本文件。
 
-1. **数据库与迁移脚手架（kernel）** —— 所有模块的 store 都卡在这里
+1. **数据库与迁移脚手架（kernel）** —— ✅ 已做（2026-10-18）：`kernel/db.py`（同步会话，`transaction()` 嵌套加入外层）、`kernel/migrate.py` + `kernel/alembic_env/`（公共 env，模块只放 `migrations/versions/`）、`kernel/testing.py`（`schema_session_fixture(metadata)`，环境变量 `TITANLOOM_TEST_DB_URL`，没设就跳过）、`tl.py db upgrade|revision|modules`、`ops/db/create.ps1`。**还没在真实 PostgreSQL 上跑过**（本机未检测到 PG：迁移、建库脚本、带库的 fixture 待维护者在装了 PG 的环境验证）。原要求如下：
    - `kernel/db.py`：引擎、会话、`transaction()`（一个请求一个事务；模块的 store 只拿会话不建引擎）；连接串从环境变量读。
    - Alembic：每个模块独立迁移目录 `apps/api/titanloom/<模块>/migrations/` 和独立 version 表 `<模块>_alembic`（总图 12）；`tl.py db upgrade [模块]`、`tl.py db revision <模块> -m …`（从模块 `store/models.py` 的 metadata 自动生成）。
    - 测试工具：`kernel/testing.py` 提供临时 schema / 事务回滚的 pytest fixture；没有数据库时这类测试跳过。
@@ -45,6 +45,8 @@
 6. 然后：三块底座的真实实现 → 插件宿主 A → 文件解析器（Excel / CSV，**表单阶段 5 之前**）→ Shell A1 前后端 → 后台 P1 前后端。
 
 接口规矩：模块之间只 import 对方的 `api` 和 `kernel`；接口签名一次定好（同一功能不出两套参数）；错误一律 `AppError(ErrorCode…)`；时间带时区；分页用 kernel 的游标。
+
+> 待维护者确认的两点：① 首期用同步 SQLAlchemy 会话（路由写普通 `def`）；② 运行账号目前是一个 `titanloom_app`（对各模块 schema 读写），按模块分账号需要每模块一个引擎，先不做，模块间隔离靠 import-linter 与审核。
 
 ## 4. 审核与合入（Agent 报"阶段 N 做完了"时）
 

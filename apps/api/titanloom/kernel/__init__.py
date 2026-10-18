@@ -9,6 +9,9 @@
     context  请求上下文（requestId、主体、jobId、pluginId）
     idem     幂等：请求摘要（能力契约 7）
     log      结构化日志（带上下文里的编号），凭据类字段自动打码
+    db       数据库引擎、会话与事务（一个请求一个事务；store 只拿会话）
+    migrate  每个模块各自一套迁移（独立版本表 <模块>_alembic；tl.py db …）
+    testing  测试工具：临时 schema + 事务回滚的数据库 fixture（没有测试库时自动跳过）
     params   业务参数读取（ADR-022；值按看的人所在部门取）
     reg      生成的常量（tl.py gen 生成，不手改）
 """
