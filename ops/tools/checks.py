@@ -242,10 +242,11 @@ def changed_files() -> list[str]:
 
 
 def wp_extra_paths(wp: str) -> list[str]:
-    f = ROOT / "plan" / "wp" / f"{wp}.md"
-    if not f.exists():
+    # 额外放行只认集成分支上的说明书（架构写的），工作分支自己加的 allow 不算
+    text = git("show", f"{INTEGRATION}:plan/wp/{wp}.md")
+    if not text:
         return []
-    m = re.search(r"<!--\s*allow:\s*(.+?)\s*-->", f.read_text(encoding="utf-8"), re.S)
+    m = re.search(r"<!--\s*allow:\s*(.+?)\s*-->", text, re.S)
     return [x.strip() for x in m.group(1).split(",")] if m else []
 
 
