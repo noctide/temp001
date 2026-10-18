@@ -64,3 +64,12 @@ started: 2026-10-18 15:03
 阶段 2 提前说明：
 - `publish_check` 里用正则找 `$引用` 是临时做法；阶段 2 必须改为用表达式解析器给出的"引用字段列表"，删掉正则，否则同一件事两套写法（规范 5.5）。阶段 2 审核会查。
 - 持久化（表单、版本、字段表）阶段 1、2 不做可以；迁移脚手架由架构随底座发布，阶段 3 开工前补 store。
+
+### 阶段 1 · 2026-10-18 · 通过（提交 d8f3823，已合入 edb95cf）
+
+返工 5 条都落实了：草稿改名、改设置、删字段都不再影响已发布版本（已复现验证）；公式移到计算字段的 settings；`FieldKind` 改为 StrEnum；检查结果已结构化；进度文件已搬家。tl check 12 项全过，16 个测试通过。
+
+带到阶段 2 一起改（阶段 2 审核时查）：
+1. **已发布版本本身还能被直接改**：`FormRelease.fields` 是普通 dict，`sections` 是 list，`Section` 也可变，拿到版本的代码可以 `release.fields["z"] = …`。改为 `fields: Mapping`（MappingProxyType）、`sections: tuple[Section, ...]`，`Section` frozen、`fields: tuple[str, ...]`（草稿用另一个可变类型，或草稿操作返回新的 Section）。
+2. `CheckProblem.kind` 改为 StrEnum；`PublishCheckFailed` 的中文兜底句去掉。
+3. 上次说过的：`publish_check` 改用表达式解析器给出的引用字段列表，删掉正则。
