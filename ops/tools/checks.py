@@ -60,7 +60,9 @@ def modules() -> dict[str, str]:
 
 
 def run(cmd: list[str], cwd: Path = ROOT) -> tuple[int, str]:
-    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace")  # noqa: S603
+    # Windows 控制台默认不是 UTF-8：子进程统一按 UTF-8 读写（中文输出、读配置文件）
+    env = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
+    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)  # noqa: S603
     return p.returncode, (p.stdout + p.stderr).strip()
 
 
@@ -130,12 +132,13 @@ def c_web() -> Result:
         r.status = "skip"
         r.lines.append("没装前端依赖（pnpm install）——跳过")
         return r
-    pnpm = shutil.which("pnpm")
-    if not pnpm:
+    # 直接用项目里装的 tsc，不经 pnpm（各版本 pnpm 的命令行参数不一样）
+    tsc = shutil.which("tsc", path=str(WEB / "node_modules" / ".bin"))
+    if not tsc:
         r.status = "skip"
-        r.lines.append("找不到 pnpm——跳过")
+        r.lines.append("apps/web/node_modules/.bin 里没有 tsc（pnpm install）——跳过")
         return r
-    code, out = run([pnpm, "-s", "--dir", "apps/web", "typecheck"])
+    code, out = run([tsc, "-p", "tsconfig.json", "--noEmit"], cwd=WEB)
     if code:
         r.fail("tsc 有错：")
         r.lines += tail(out, 20)
