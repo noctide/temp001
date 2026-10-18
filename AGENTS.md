@@ -6,12 +6,12 @@ opencode、Codex、DeepSeek Harness、Claude 等所有执行 Agent 都按这一�
 
 1. 读工作包 `plan/wp/<编号>.md`（目标、设计依据、接口、验收、允许路径、不做的事、分支名、依赖）。
 2. 读本模块 `AGENTS.md` 列的必读；读 `plan/CODEMAP.md` 里本模块和你要调用的模块那一段——**要用的东西先查有没有，有就用，不要再写一个**。
-3. 读或建 worktree 根目录的 `PROGRESS.md`：上次做到哪、下一步是什么。
+3. 读 `plan/progress/<编号>.md`：上次做到哪、下一步是什么（每个项目一份，合入时互不冲突）。
 
 ## 只做这些
 
 - 只改工作包"允许修改的路径"里的文件（通常是本模块目录 + 本模块的 `i18n/<命名空间>.yaml`）。`tl check` 会拦。
-- 不改：`apps/api/titanloom/kernel/`、`packages/contracts/`、别的模块、`projects.yaml`、`ops/tools/`、`docs/`、本文件。需要改 → 停下，在 `PROGRESS.md` 写"变更请求：要什么、为什么、对应设计章节"，告诉维护者。
+- 不改：`apps/api/titanloom/kernel/`、`packages/contracts/`、别的模块、`projects.yaml`、`ops/tools/`、`docs/`、本文件。需要改 → 停下，在 `plan/progress/<编号>.md` 写"变更请求：要什么、为什么、对应设计章节"，告诉维护者。
 - 设计里没写、你拿不准的：**不要自己补**，停下来写清楚问题。
 
 ## 写代码的规矩
@@ -26,7 +26,7 @@ opencode、Codex、DeepSeek Harness、Claude 等所有执行 Agent 都按这一�
 
 - 只在本地分支提交，**不推送、不合并、不开合并请求**。
 - `git commit -s`；提交信息第一行 `<模块>: <做了什么>`，正文写依据的设计章节，末尾另起一行 `Agent: <你的工具名>`。
-- 每完成一步更新 `PROGRESS.md`（做到哪、下一步、遇到的问题）。
+- 每完成一步更新 `plan/progress/<编号>.md`（做到哪、下一步、遇到的问题）。
 - 做完先跑 `uv run python ops/tools/tl.py check`，全部通过再交；最后一条提交写自查结果。然后回复一句"<编号> 做完了"，列出改了哪些文件、测试结果。
 
 ## 常用命令（Windows 用 PowerShell 也一样）

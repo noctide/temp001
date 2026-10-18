@@ -12,7 +12,7 @@ plan/wp/<编号>.md 是工作包正本，开头一段 YAML：
     ---
 后面是正文：目标、设计依据、图、接口、验收、允许路径、不做的事；审核意见也记在这里。
 
-    tl.py wp start <编号>    （在维护者的 Windows 上跑：worktree 记的是本机绝对路径）建 worktree ../wt/<编号>（分支 <项目>/<编号>，从 local/integration 切出）、写 PROGRESS.md、状态 → 执行中
+    tl.py wp start <编号>    （在维护者的 Windows 上跑：worktree 记的是本机绝对路径）建 worktree ../wt/<编号>（分支 <项目>/<编号>，从 local/integration 切出）、写 plan/progress/<编号>.md、状态 → 执行中
     tl.py wp launch <编号>   打出给执行 Agent 的启动指令（贴进 opencode / Codex / DeepSeek Harness）
     tl.py wp merge <编号> --keep   一个阶段审核通过：保留历史合入 local/integration，worktree 继续（2026-10-18：一个开发项目一个 Agent，按阶段审核）
     tl.py wp merge <编号>    整个里程碑做完：压成一个提交合入、删 worktree、状态 → 已合本地
@@ -81,7 +81,9 @@ def start(wid: str, agent: str | None) -> int:
     if path.exists():
         raise SystemExit(f"{path} 已经存在")
     git("worktree", "add", str(path), "-b", branch, INTEGRATION)
-    (path / "PROGRESS.md").write_text(
+    prog = path / "plan" / "progress" / f"{wid}.md"  # 每个项目一份，合入时不和别的项目冲突
+    prog.parent.mkdir(parents=True, exist_ok=True)
+    prog.write_text(
         f"# {wid} 进度（断点续做：每完成一步更新；上下文满了换新会话照着接着做）\n\n"
         f"- 工作包：plan/wp/{wid}.md\n- 分支：{branch}\n\n## 做到哪\n\n（还没开始）\n\n## 下一步\n\n1. 读工作包和必读\n\n## 问题 / 变更请求\n\n（无）\n",
         encoding="utf-8",
@@ -111,10 +113,10 @@ def launch(wid: str) -> int:
 2. 工作包 plan/wp/{wid}.md（目标、依据、验收、允许路径、不做的事）
 3. plan/CODEMAP.md 里本模块和要调用的模块那一段——已经有的就用，不要再写一份
 4. 本项目必读：{reads}
-5. 工作目录里的 PROGRESS.md（上次做到哪）
+5. plan/progress/{wid}.md（上次做到哪、审核意见怎么改）
 
 做完：uv run python ops/tools/tl.py check 全部通过（✗ 0），最后一条提交写自查结果；只在本地提交（git commit -s，末尾 Agent: <你的工具名>），不推送、不合并。
-按说明书的阶段一个一个做；**每做完一个阶段**回复一句"{wid} 阶段 N 做完了"，列出改了哪些文件、测试结果，等审核通过再做下一阶段。设计里没写、拿不准的，停下来写进 PROGRESS.md 告诉我。"""
+按说明书的阶段一个一个做；**每做完一个阶段**回复一句"{wid} 阶段 N 做完了"，列出改了哪些文件、测试结果，等审核通过再做下一阶段。设计里没写、拿不准的，停下来写进 plan/progress/{wid}.md 告诉我。"""
     )
     return 0
 

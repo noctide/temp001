@@ -30,7 +30,7 @@ WEB = ROOT / "apps" / "web"
 CONTRACTS = ROOT / "packages" / "contracts"
 INTEGRATION = "local/integration"
 # 执行 Agent 在 worktree 里总能改的文件
-ALWAYS_OK = ("PROGRESS.md",)
+ALWAYS_OK = ("PROGRESS.md",)  # 旧位置：只为搬家那次提交放行（2026-10-18 起进度文件在 plan/progress/<编号>.md）
 
 
 @dataclass
@@ -271,7 +271,7 @@ def c_scope() -> Result:
         r.status = "skip"
         r.lines.append("架构分支——不限范围")
         return r
-    prefixes = list(P[proj].get("paths", [])) + wp_extra_paths(wp)
+    prefixes = list(P[proj].get("paths", [])) + wp_extra_paths(wp) + [f"plan/progress/{wp}.md"]
     out = [f for f in changed_files() if not allowed(f, prefixes)]
     if out:
         r.fail(f"项目 {proj} 不该改这些文件（要改请提变更请求）：")
