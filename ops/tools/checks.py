@@ -139,6 +139,10 @@ def c_web() -> Result:
         r.lines.append("apps/web/node_modules/.bin 里没有 tsc（pnpm install）——跳过")
         return r
     code, out = run([tsc, "-p", "tsconfig.json", "--noEmit"], cwd=WEB)
+    if code and "MODULE_NOT_FOUND" in out:
+        r.status = "skip"
+        r.lines.append("前端依赖是另一个系统装的（例如 Windows 装、这里是 Linux）——跳过，在装依赖的那台机器上跑")
+        return r
     if code:
         r.fail("tsc 有错：")
         r.lines += tail(out, 20)
@@ -506,7 +510,22 @@ def c_dups() -> Result:
     return r
 
 
+def c_gen() -> Result:
+    r = Result("生成物与正本一致（tl.py gen）")
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import gen
+
+    stale = gen.stale()
+    if stale:
+        r.fail("这些生成物和正本对不上——跑 uv run python ops/tools/tl.py gen（生成物不手改）：")
+        r.lines += [f"  {p.relative_to(ROOT).as_posix()}" for p in stale]
+    else:
+        r.lines.append(f"{len(gen.outputs())} 个生成物都是最新的")
+    return r
+
+
 ALL = {
+    "gen": c_gen,
     "ruff": c_ruff,
     "types": c_pyright,
     "test": c_pytest,
@@ -519,4 +538,4 @@ ALL = {
     "literals": c_literals,
     "dups": c_dups,
 }
-FAST = ("ruff", "bounds", "scope", "i18n", "registry", "literals", "dups")
+FAST = ("gen", "ruff", "bounds", "scope", "i18n", "registry", "literals", "dups")

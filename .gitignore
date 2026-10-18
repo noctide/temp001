@@ -52,3 +52,6 @@ tmp/
 
 # --- 本地工具缓存 ---
 .uv-cache/
+
+# --- tl check 的最近结果（状态页读，不入库）---
+plan/.last-check.json

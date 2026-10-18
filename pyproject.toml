@@ -32,7 +32,7 @@ dev = [
 [tool.ruff]
 line-length = 120
 target-version = "py312"
-extend-exclude = ["packages/contracts"]
+extend-exclude = ["packages/contracts", "apps/api/titanloom/kernel/reg"]   # reg 是生成物，格式以 tl.py gen 为准
 
 [tool.ruff.lint]
 # 错误、导入、复杂度、安全、异步、时间、简化（工程规范 4.1）

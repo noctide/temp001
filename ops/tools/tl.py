@@ -2,9 +2,10 @@
 
 用法：
     uv run python ops/tools/tl.py scaffold            按 projects.yaml 补齐模块骨架（只补缺的文件，不覆盖）
-    uv run python ops/tools/tl.py check               全套门禁（A2 落成）
-    uv run python ops/tools/tl.py gen                 生成常量、代码地图（A3 落成）
-    uv run python ops/tools/tl.py status              生成 plan/STATUS.md（A3 落成）
+    uv run python ops/tools/tl.py check [--fast] [--only a,b]   全套门禁（本地与 CI 同一条）
+    uv run python ops/tools/tl.py gen                 从正本生成常量（kernel/reg、前端 shared/base/reg）与 plan/CODEMAP.md
+    uv run python ops/tools/tl.py status              生成 plan/STATUS.md
+    uv run python ops/tools/tl.py wp start|launch|merge <编号> [--agent 名字]   工作包（见 wp.py）
 
 所有规则从 projects.yaml 读，不另写一份。
 """
@@ -19,6 +20,8 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import checks
+import gen
+import wp
 
 ROOT = Path(__file__).resolve().parents[2]
 API = ROOT / "apps" / "api" / "titanloom"
@@ -142,6 +145,26 @@ def check(fast: bool, only: list[str]) -> int:
                 print("    " + line)
     fails = [r for r in results if r.status == "fail"]
     warns = [r for r in results if r.status == "warn"]
+    try:  # 给状态页用（plan/.last-check.json 不入库）
+        import json
+        from datetime import UTC, datetime
+
+        wp.LAST.write_text(
+            json.dumps(
+                {
+                    "at": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
+                    "branch": checks.branch(),
+                    "total": len(results),
+                    "fail": len(fails),
+                    "warn": len(warns),
+                    "problems": [f"{MARK[r.status]} {r.name}" for r in results if r.status in ("fail", "warn")],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+    except OSError:
+        pass
     print()
     print(
         f"{'没过' if fails else '通过'}：{len(results)} 项 · ✗ {len(fails)} · ! {len(warns)}（! 是提醒，架构审核时看）"
@@ -159,9 +182,27 @@ def main(argv: list[str] | None = None) -> int:
     pc = sub.add_parser("check", help="全套门禁：本地和推送后的 CI 跑同一条")
     pc.add_argument("--fast", action="store_true", help="只跑快的（不跑类型检查、测试、契约测试、前端）")
     pc.add_argument("--only", default="", help="只跑某几项，逗号分隔：" + ",".join(checks.ALL))
-    for c in ("gen", "status"):
-        sub.add_parser(c, help="（A3 落成）")
+    sub.add_parser("gen", help="从正本生成常量与代码地图")
+    sub.add_parser("status", help="生成 plan/STATUS.md")
+    pw = sub.add_parser("wp", help="工作包：start 建 worktree · launch 打启动指令 · merge 审核通过后合入")
+    pw.add_argument("action", choices=["start", "launch", "merge"])
+    pw.add_argument("id")
+    pw.add_argument("--agent", default=None, help="交给哪个 Agent（start 时记下）")
     args = ap.parse_args(argv)
+    if args.cmd == "gen":
+        changed = gen.write_all()
+        for c in changed:
+            print("已更新", c.relative_to(ROOT).as_posix())
+        print(f"生成完毕（{len(changed)} 个文件有变化）")
+        return 0
+    if args.cmd == "status":
+        return wp.status()
+    if args.cmd == "wp":
+        return {
+            "start": lambda: wp.start(args.id, args.agent),
+            "launch": lambda: wp.launch(args.id),
+            "merge": lambda: wp.merge(args.id),
+        }[args.action]()
     if args.cmd == "scaffold":
         return scaffold()
     if args.cmd == "check":
