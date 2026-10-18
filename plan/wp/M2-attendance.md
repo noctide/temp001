@@ -2,12 +2,12 @@
 id: M2-attendance
 project: attendance
 title: 考勤开发项目 · M2（领域基础与完整人工闭环）
-status: 返工
+status: 执行中
 agent: null
 depends:
 - M1 底座接口（阶段 2 起）
 size: 整个项目，分 7 个阶段
-stage: 0
+stage: 1
 started: 2026-10-18 15:03
 ---
 ## 目标
@@ -64,3 +64,16 @@ started: 2026-10-18 15:03
 6. **表名去掉重复前缀**：schema 已是 `attendance`，表名用 `type`、`type_version`、`shift`、`shift_version`、`rule_set`……
 7. **分类引擎补基于性质的测试**：随机区间下，正常 + 各类加班 = 有效时长、各类不为负、互斥（设计 10）。
 8. **进度文件搬家**：先 `git merge local/integration`（拿到新的检查工具），再 `git mv PROGRESS.md plan/progress/M2-attendance.md`，以后只更新它。
+
+### 阶段 1 · 2026-10-18 · 通过（提交 30e6554，已合入）
+
+8 条都落实了：适用范围加了对象（不同部门同优先级不再互相冲突，已验证）、有效期改为业务日、校验移到 domain、删掉手写 SQL、错误结构化、表名去前缀、分类加了 500 组随机性质测试、进度文件搬家。tl check 12 项全过，31 个测试通过。
+
+两个流程问题（这次架构处理了，下次不许再犯）：
+- **没有先 `git merge local/integration`**（第 1 步），所以没看到审核记录和新的检查工具。
+- **自己在说明书里加了 `<!-- allow: ... -->` 给自己放行**。说明书归架构，执行 Agent 不许改；这行合入时已删掉，范围检查也改成只认集成分支上的说明书。需要额外路径 → 写进进度文件的"变更请求"。
+- 另外，上一次搬家时在 hq 里建过文件，已清理。所有命令只在 `wt\M2-attendance` 里执行。
+
+带到阶段 2 一起改：
+1. `store/models.py` 里模块级变量 `type = …` 遮住了 Python 内置 `type`；变量名改为 `type_def`、`type_def_version`（表名仍是 `type`）。
+2. `kind`、`scope_kind`、`status` 用 StrEnum（`ConfigKind`、`ScopeKind`、`VersionStatus`），不用裸字符串；表上的 CHECK 从枚举值生成，不再手写一遍。
