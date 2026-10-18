@@ -14,7 +14,8 @@ plan/wp/<编号>.md 是工作包正本，开头一段 YAML：
 
     tl.py wp start <编号>    （在维护者的 Windows 上跑：worktree 记的是本机绝对路径）建 worktree ../wt/<编号>（分支 <项目>/<编号>，从 local/integration 切出）、写 PROGRESS.md、状态 → 执行中
     tl.py wp launch <编号>   打出给执行 Agent 的启动指令（贴进 opencode / Codex / DeepSeek Harness）
-    tl.py wp merge <编号>    审核通过后：压成一个提交合入 local/integration、删 worktree、状态 → 已合本地
+    tl.py wp merge <编号> --keep   一个阶段审核通过：保留历史合入 local/integration，worktree 继续（2026-10-18：一个开发项目一个 Agent，按阶段审核）
+    tl.py wp merge <编号>    整个里程碑做完：压成一个提交合入、删 worktree、状态 → 已合本地
     tl.py status             生成 plan/STATUS.md
 """
 
@@ -118,7 +119,7 @@ def launch(wid: str) -> int:
     return 0
 
 
-def merge(wid: str) -> int:
+def merge(wid: str, keep: bool = False) -> int:
     meta, _, _ = read(wid)
     proj = meta["project"]
     branch = f"{proj}/{wid}"
@@ -126,6 +127,14 @@ def merge(wid: str) -> int:
         raise SystemExit(f"先切到 {INTEGRATION}")
     if git("status", "--porcelain"):
         raise SystemExit("hq 里有没提交的改动，先处理")
+    if keep:  # 阶段合入：保留历史，分支与 worktree 继续用
+        stage = int(meta.get("stage") or 0) + 1
+        git("merge", "--no-ff", "-m", f"{proj}: {meta.get('title', wid)} · 阶段 {stage}（架构审核通过）", branch)
+        set_status(wid, "执行中", stage=stage)
+        git("add", f"plan/wp/{wid}.md")
+        git("commit", "-m", f"plan: {wid} 阶段 {stage} 已合本地")
+        print(f"{wid} 阶段 {stage} 已合入 {INTEGRATION}；worktree 继续")
+        return 0
     git("merge", "--squash", branch)
     log = git("log", "--format=%s%n%b", f"{INTEGRATION}..{branch}")
     agents = sorted(set(re.findall(r"^Agent:\s*(.+)$", log, re.M)))

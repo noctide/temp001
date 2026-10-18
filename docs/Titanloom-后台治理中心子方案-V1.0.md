@@ -349,7 +349,7 @@ flowchart TD
   插件带来的功能         按登记的出厂档位进"新能力待审"，装上之前就能先定给谁
   ---------------------- ------------------------------------------------------------------------------------
 
-首批登记（以各子方案为准）：表单 `form.create`（中，出厂指定的人）、`form.publishAll`（高）；自动化 `auto.self`（低，所有人）、`auto.others`（高）、`auto.svc`（固定没人）；可视化 `viz.make`（低，所有人）、`viz.publish`（中）；知识 `kn.note`（低）、`kn.space`（中）；数据处理 `data.conn`（高）、`data.upload`（G-ISO 前不开放）；个人 `agent.use`（中，所有人）、`me.skin`（低）、`perm.apply`（固定所有人）。其中归部门 / 项目、可往紧了收的是 `form.create`、`form.publishAll`、`auto.self`、`auto.others`、`viz.make`、`viz.publish`、`data.conn`。
+首批登记（以各子方案为准）：表单 `forms.create`（中，出厂指定的人）、`forms.publishAll`（高）；自动化 `auto.self`（低，所有人）、`auto.others`（高）、`auto.svc`（固定没人）；可视化 `viz.make`（低，所有人）、`viz.publish`（中）；知识 `kn.note`（低）、`kn.space`（中）；数据处理 `data.conn`（高）、`data.upload`（G-ISO 前不开放）；个人 `agent.use`（中，所有人）、`me.skin`（低）、`perm.apply`（固定所有人）。其中归部门 / 项目、可往紧了收的是 `forms.create`、`forms.publishAll`、`auto.self`、`auto.others`、`viz.make`、`viz.publish`、`data.conn`。
 
 ## 5. 管理对象与持久化模型
 

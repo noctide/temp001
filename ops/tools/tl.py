@@ -188,6 +188,7 @@ def main(argv: list[str] | None = None) -> int:
     pw.add_argument("action", choices=["start", "launch", "merge"])
     pw.add_argument("id")
     pw.add_argument("--agent", default=None, help="交给哪个 Agent（start 时记下）")
+    pw.add_argument("--keep", action="store_true", help="merge 时只合入这一阶段，worktree 继续")
     args = ap.parse_args(argv)
     if args.cmd == "gen":
         changed = gen.write_all()
@@ -201,7 +202,7 @@ def main(argv: list[str] | None = None) -> int:
         return {
             "start": lambda: wp.start(args.id, args.agent),
             "launch": lambda: wp.launch(args.id),
-            "merge": lambda: wp.merge(args.id),
+            "merge": lambda: wp.merge(args.id, args.keep),
         }[args.action]()
     if args.cmd == "scaffold":
         return scaffold()

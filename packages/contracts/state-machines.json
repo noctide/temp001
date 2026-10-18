@@ -1,25 +1,218 @@
 {
   "_note": "M0 草案。来源：能力契约 6.5（命令）、8.3（JobRun）。终态不复活。",
   "command": {
-    "initial": ["prepared","awaiting_confirmation","ready"],
+    "initial": [
+      "prepared",
+      "awaiting_confirmation",
+      "ready"
+    ],
     "transitions": {
-      "prepared": ["awaiting_confirmation","ready","canceled","expired"],
-      "awaiting_confirmation": ["ready","canceled","expired"],
-      "ready": ["accepted","canceled","expired"],
-      "accepted": [], "canceled": [], "expired": []
+      "prepared": [
+        "awaiting_confirmation",
+        "ready",
+        "canceled",
+        "expired"
+      ],
+      "awaiting_confirmation": [
+        "ready",
+        "canceled",
+        "expired"
+      ],
+      "ready": [
+        "accepted",
+        "canceled",
+        "expired"
+      ],
+      "accepted": [],
+      "canceled": [],
+      "expired": []
     },
-    "terminal": ["accepted","canceled","expired"]
+    "terminal": [
+      "accepted",
+      "canceled",
+      "expired"
+    ]
   },
   "jobRun": {
-    "initial": ["queued"],
+    "initial": [
+      "queued"
+    ],
     "transitions": {
-      "queued": ["running","canceled","timed_out","failed"],
-      "running": ["succeeded","failed","retry_wait","cancel_requested","reconciling","timed_out"],
-      "retry_wait": ["queued","canceled","timed_out","failed"],
-      "cancel_requested": ["canceled","succeeded","failed","reconciling","timed_out"],
-      "reconciling": ["succeeded","failed","canceled","retry_wait","timed_out"],
-      "succeeded": [], "failed": [], "canceled": [], "timed_out": []
+      "queued": [
+        "running",
+        "canceled",
+        "timed_out",
+        "failed"
+      ],
+      "running": [
+        "succeeded",
+        "failed",
+        "retry_wait",
+        "cancel_requested",
+        "reconciling",
+        "timed_out"
+      ],
+      "retry_wait": [
+        "queued",
+        "canceled",
+        "timed_out",
+        "failed"
+      ],
+      "cancel_requested": [
+        "canceled",
+        "succeeded",
+        "failed",
+        "reconciling",
+        "timed_out"
+      ],
+      "reconciling": [
+        "succeeded",
+        "failed",
+        "canceled",
+        "retry_wait",
+        "timed_out"
+      ],
+      "succeeded": [],
+      "failed": [],
+      "canceled": [],
+      "timed_out": []
     },
-    "terminal": ["succeeded","failed","canceled","timed_out"]
+    "terminal": [
+      "succeeded",
+      "failed",
+      "canceled",
+      "timed_out"
+    ]
+  },
+  "attendanceDeclaration": {
+    "_source": "考勤子方案 12、20.5；后端详细设计·考勤 3。首期处理即确认，reviewing 留给以后的审批流程；更正 = 从 confirmed 提交新修订",
+    "initial": [
+      "draft"
+    ],
+    "transitions": {
+      "draft": [
+        "submitted",
+        "discarded"
+      ],
+      "submitted": [
+        "reviewing",
+        "confirmed",
+        "rejected",
+        "withdrawn"
+      ],
+      "reviewing": [
+        "confirmed",
+        "rejected"
+      ],
+      "rejected": [
+        "draft"
+      ],
+      "withdrawn": [
+        "draft"
+      ],
+      "confirmed": [
+        "submitted"
+      ],
+      "discarded": []
+    },
+    "terminal": [
+      "discarded"
+    ]
+  },
+  "attendanceAlertHandling": {
+    "_source": "考勤子方案 13：处理状态与是否仍存在（active / cleared）分开；忽略 / 已处理后新证据可重开",
+    "initial": [
+      "open"
+    ],
+    "transitions": {
+      "open": [
+        "acknowledged",
+        "resolved",
+        "ignored"
+      ],
+      "acknowledged": [
+        "resolved",
+        "ignored"
+      ],
+      "resolved": [
+        "open"
+      ],
+      "ignored": [
+        "open"
+      ]
+    },
+    "terminal": []
+  },
+  "attendanceBatch": {
+    "_source": "考勤子方案 14.4、20.5：生成状态；撤销须写原因；外部状态另存（not_submitted…unknown），不在本状态机",
+    "initial": [
+      "preparing"
+    ],
+    "transitions": {
+      "preparing": [
+        "generating",
+        "failed",
+        "canceled"
+      ],
+      "generating": [
+        "generated",
+        "failed",
+        "canceled"
+      ],
+      "generated": [
+        "revoked"
+      ],
+      "failed": [],
+      "canceled": [],
+      "revoked": []
+    },
+    "terminal": [
+      "failed",
+      "canceled",
+      "revoked"
+    ]
+  },
+  "attendancePeriod": {
+    "_source": "考勤子方案 12：期间 open → closing → closed；重开须授权、原因与审计",
+    "initial": [
+      "open"
+    ],
+    "transitions": {
+      "open": [
+        "closing"
+      ],
+      "closing": [
+        "closed",
+        "open"
+      ],
+      "closed": [
+        "open"
+      ]
+    },
+    "terminal": []
+  },
+  "formsTask": {
+    "_source": "表单子方案 14、26.3.3；后端详细设计·表单 5：办理任务。转交 = 原任务 transferred + 新任务；组待办先办先得，其余 canceled",
+    "initial": [
+      "open"
+    ],
+    "transitions": {
+      "open": [
+        "completed",
+        "returned",
+        "transferred",
+        "canceled"
+      ],
+      "completed": [],
+      "returned": [],
+      "transferred": [],
+      "canceled": []
+    },
+    "terminal": [
+      "completed",
+      "returned",
+      "transferred",
+      "canceled"
+    ]
   }
 }

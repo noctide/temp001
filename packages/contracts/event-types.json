@@ -1,0 +1,110 @@
+{
+  "_note": "事件类型登记（开发项目划分规范 5.5：唯一正本）。信封见 outbox-event.schema.json；类型名 = 模块.对象.动作；新增先登记再发。",
+  "types": [
+    {
+      "type": "attendance.schedule.published",
+      "desc": "排班版本已发布（含调班产生的新版本）",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.declaration.submitted",
+      "desc": "填报已提交（新修订）",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.declaration.confirmed",
+      "desc": "填报已确认（标记已提报或只记录）",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.declaration.rejected",
+      "desc": "填报已退回",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.declaration.withdrawn",
+      "desc": "填报已撤回",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.declaration.corrected",
+      "desc": "已确认的填报提交了更正修订",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.result.versioned",
+      "desc": "正式结果产生新版本（更正事件带 correctionOf）",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.alert.opened",
+      "desc": "考勤异常出现（含疑似漏报）",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.alert.cleared",
+      "desc": "考勤异常条件不再存在",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.batch.generated",
+      "desc": "提报批次已生成",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.batch.revoked",
+      "desc": "提报批次已撤销",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "attendance.period.closed",
+      "desc": "考勤期间已结账",
+      "source": "后端详细设计·考勤 8"
+    },
+    {
+      "type": "forms.form.published",
+      "desc": "表单发布了新版本",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.form.disabled",
+      "desc": "表单已停用",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.record.submitted",
+      "desc": "记录已提交（新修订）",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.record.corrected",
+      "desc": "记录已更正",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.record.voided",
+      "desc": "记录已作废",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.record.withdrawn",
+      "desc": "审批中的记录已撤回",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.workflow.node_entered",
+      "desc": "流程进入某节点",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.workflow.node_completed",
+      "desc": "流程某节点完成",
+      "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "forms.import.completed",
+      "desc": "导入批次处理完成",
+      "source": "后端详细设计·表单 7"
+    }
+  ]
+}

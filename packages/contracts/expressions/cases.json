@@ -1,0 +1,322 @@
+{
+  "_note": "两端求值器共用的用例（数值以十进制字符串比较，不经 float）。增加用例须经架构（变更请求）。",
+  "cases": [
+    {
+      "id": "c01",
+      "expr": "daysBetween($end, $start) + 1",
+      "fields": {
+        "end": {
+          "type": "date",
+          "value": "2026-10-05"
+        },
+        "start": {
+          "type": "date",
+          "value": "2026-10-01"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5"
+      }
+    },
+    {
+      "id": "c02",
+      "expr": "daysBetween($end, $start)",
+      "fields": {
+        "end": {
+          "type": "date",
+          "value": "2026-10-01"
+        },
+        "start": {
+          "type": "date",
+          "value": "2026-10-01"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "c03",
+      "expr": "daysBetween($end, $start)",
+      "fields": {
+        "end": {
+          "type": "date",
+          "value": "2026-11-01"
+        },
+        "start": {
+          "type": "date",
+          "value": "2026-10-31"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1"
+      }
+    },
+    {
+      "id": "c04",
+      "expr": "workdays($start, $end)",
+      "fields": {
+        "start": {
+          "type": "date",
+          "value": "2026-10-01"
+        },
+        "end": {
+          "type": "date",
+          "value": "2026-10-07"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5"
+      }
+    },
+    {
+      "id": "c05",
+      "expr": "workdays($start, $end)",
+      "fields": {
+        "start": {
+          "type": "date",
+          "value": "2026-10-03"
+        },
+        "end": {
+          "type": "date",
+          "value": "2026-10-04"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "c06",
+      "expr": "hoursBetween($from, $to)",
+      "fields": {
+        "from": {
+          "type": "time",
+          "value": "09:00"
+        },
+        "to": {
+          "type": "time",
+          "value": "18:00"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9"
+      }
+    },
+    {
+      "id": "c07",
+      "expr": "hoursBetween($from, $to)",
+      "fields": {
+        "from": {
+          "type": "time",
+          "value": "22:00"
+        },
+        "to": {
+          "type": "time",
+          "value": "06:00"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "8"
+      }
+    },
+    {
+      "id": "c08",
+      "expr": "hoursBetween($from, $to)",
+      "fields": {
+        "from": {
+          "type": "time",
+          "value": "08:30"
+        },
+        "to": {
+          "type": "time",
+          "value": "12:00"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3.5"
+      }
+    },
+    {
+      "id": "c09",
+      "expr": "sum($a, $b, $c)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1.1"
+        },
+        "b": {
+          "type": "number",
+          "value": "2.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "3.3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6.6"
+      }
+    },
+    {
+      "id": "c10",
+      "expr": "round($x, 1)",
+      "fields": {
+        "x": {
+          "type": "number",
+          "value": "7.25"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7.3"
+      }
+    },
+    {
+      "id": "c11",
+      "expr": "round($x, 0)",
+      "fields": {
+        "x": {
+          "type": "number",
+          "value": "2.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3"
+      }
+    },
+    {
+      "id": "c12",
+      "expr": "if($h > 8, $h - 8, 0)",
+      "fields": {
+        "h": {
+          "type": "number",
+          "value": "10"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2"
+      }
+    },
+    {
+      "id": "c13",
+      "expr": "if($h > 8, $h - 8, 0)",
+      "fields": {
+        "h": {
+          "type": "number",
+          "value": "7.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "c14",
+      "expr": "$a / $b",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1"
+        },
+        "b": {
+          "type": "number",
+          "value": "4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.25"
+      }
+    },
+    {
+      "id": "c15",
+      "expr": "$a * 3 - 1",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "0.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.7"
+      }
+    },
+    {
+      "id": "e01",
+      "expr": "daysBetween($end, $nope)",
+      "fields": {
+        "end": {
+          "type": "date",
+          "value": "2026-10-05"
+        }
+      },
+      "expectError": "UNKNOWN_FIELD"
+    },
+    {
+      "id": "e02",
+      "expr": "eval($a)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1"
+        }
+      },
+      "expectError": "UNKNOWN_FUNCTION"
+    },
+    {
+      "id": "e03",
+      "expr": "daysBetween($a, $b)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1"
+        },
+        "b": {
+          "type": "date",
+          "value": "2026-10-01"
+        }
+      },
+      "expectError": "TYPE_MISMATCH"
+    },
+    {
+      "id": "e04",
+      "expr": "sum($a, ",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1"
+        }
+      },
+      "expectError": "SYNTAX"
+    },
+    {
+      "id": "e05",
+      "expr": "$a / $b",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1"
+        },
+        "b": {
+          "type": "number",
+          "value": "0"
+        }
+      },
+      "expectError": "DIVIDE_BY_ZERO"
+    }
+  ]
+}

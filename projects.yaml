@@ -46,11 +46,11 @@ integration:
 forms:
   module: forms
   paths: [apps/api/titanloom/forms/, apps/web/src/domains/forms/, i18n/forms.yaml]
-  read: [表单平台, 平台能力契约#6, 平台能力契约#7, 插件与扩展体系#2]
+  read: [后端详细设计-表单, 表单平台, 平台能力契约#6, 平台能力契约#7, 插件与扩展体系#2]
 attendance:
   module: attendance
   paths: [apps/api/titanloom/attendance/, apps/web/src/domains/attendance/, i18n/attendance.yaml]
-  read: [考勤签到, 平台能力契约#6, 平台能力契约#7, 平台能力契约#8, 总框架#8.7]
+  read: [后端详细设计-考勤, 考勤签到, 平台能力契约#6, 平台能力契约#7, 平台能力契约#8, 总框架#8.7]
 dataproc:
   module: dataproc
   paths: [apps/api/titanloom/dataproc/, apps/web/src/domains/dataproc/, i18n/dataproc.yaml]

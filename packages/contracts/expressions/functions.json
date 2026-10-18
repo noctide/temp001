@@ -1,0 +1,94 @@
+{
+  "_note": "表单公式（表单子方案 7.3、26.4；后端详细设计·表单 4）。唯一正本：Python 与 TypeScript 求值器都只实现这里的函数，并都跑 cases.json。规范写法：字段写 $<字段编号>；函数名用 name；设计器显示 zh / en。值类型：number（十进制字符串）、date（YYYY-MM-DD）、time（HH:MM）、text、bool。",
+  "operators": [
+    "+",
+    "-",
+    "*",
+    "/",
+    "=",
+    "!=",
+    "<",
+    "<=",
+    ">",
+    ">=",
+    "and",
+    "or",
+    "not"
+  ],
+  "functions": [
+    {
+      "name": "daysBetween",
+      "zh": "天数差",
+      "en": "DAYS_BETWEEN",
+      "args": [
+        "date",
+        "date"
+      ],
+      "returns": "number",
+      "doc": "第一个日期减第二个日期的天数"
+    },
+    {
+      "name": "workdays",
+      "zh": "工作日数",
+      "en": "WORKDAYS",
+      "args": [
+        "date",
+        "date"
+      ],
+      "returns": "number",
+      "doc": "含首尾；按考勤工作日历，没有日历时按周一至周五"
+    },
+    {
+      "name": "hoursBetween",
+      "zh": "小时差",
+      "en": "HOURS_BETWEEN",
+      "args": [
+        "time",
+        "time"
+      ],
+      "returns": "number",
+      "doc": "结束早于开始时按跨夜计算"
+    },
+    {
+      "name": "sum",
+      "zh": "求和",
+      "en": "SUM",
+      "args": [
+        "number..."
+      ],
+      "returns": "number",
+      "doc": "多个数相加；明细表某列传入列"
+    },
+    {
+      "name": "if",
+      "zh": "如果",
+      "en": "IF",
+      "args": [
+        "bool",
+        "any",
+        "any"
+      ],
+      "returns": "any",
+      "doc": "条件为真取第二个，否则第三个"
+    },
+    {
+      "name": "round",
+      "zh": "四舍五入",
+      "en": "ROUND",
+      "args": [
+        "number",
+        "number"
+      ],
+      "returns": "number",
+      "doc": "按位数四舍五入（半数进位）"
+    }
+  ],
+  "errors": [
+    "UNKNOWN_FIELD",
+    "UNKNOWN_FUNCTION",
+    "TYPE_MISMATCH",
+    "SYNTAX",
+    "DIVIDE_BY_ZERO",
+    "CYCLE"
+  ]
+}

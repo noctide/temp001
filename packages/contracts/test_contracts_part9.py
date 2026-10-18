@@ -76,7 +76,7 @@ check("不返回 SQL 字符串", not ok("access-filter", x))
 check("必须是三种之一", not ok("access-filter", {"policyRev": 32}))
 
 # ---- 功能开放收紧
-fl = {"scopeKind": "dept", "scopeId": "dept-assembly-1", "featureId": "form.create", "mode": "only",
+fl = {"scopeKind": "dept", "scopeId": "dept-assembly-1", "featureId": "forms.create", "mode": "only",
       "onlyRoles": ["dept-role-lead"], "reason": "本部门表单统一由负责人建", "changedBy": "p-liuchang", "changedAt": T}
 check("部门收紧示例有效", ok("feature-layer", fl))
 x = copy.deepcopy(fl); del x["onlyRoles"]

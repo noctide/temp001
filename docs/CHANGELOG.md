@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### 2026-10-18｜M2 后端详细设计：考勤、表单平台
+
+设计页 sketch-backend-attendance v1、sketch-backend-forms v1 经维护者确认（各 H 节 3 处"可以"）。
+
+-   **新增《后端详细设计 · 考勤》《后端详细设计 · 表单平台》**；**ADR-031、ADR-032**。
+-   **考勤**：时长计算纯函数；待确认加班提交即占额度；跨月按业务日；签到原始记录在线 3 年后归档；子方案 23 节第 2、4 项结清。
+-   **表单**：通用记录表 + 生成列索引；公式一份函数清单与用例两端共用；隐藏分区不存值；组件写入受字段权限；记录存提交时的人与部门；功能编号改为 forms.create / forms.publishAll；子方案 26.7 第 2、4 项结清。
+-   **契约**：state-machines 新增 attendanceDeclaration、attendanceAlertHandling、attendanceBatch、attendancePeriod、formsTask；新增 event-types.json、expressions/functions.json、expressions/cases.json、test_contracts_part13。
+-   **协作规范 5.4**：一个开发项目一个 Agent，项目说明书分阶段，每阶段审核合入。
+
+
 ### 2026-10-17｜我的设置（含外观）
 
 设计页 sketch-appearance v2 经维护者确认（v1 三处：跟账号、预设色系 + 自己取色并加背景图片、部门关换皮肤时字号密度仍归个人；v2 两处："我的设置"单独一页六个标签、放「管家」标签）。
