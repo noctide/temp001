@@ -2,11 +2,13 @@
 id: M2-attendance
 project: attendance
 title: 考勤开发项目 · M2（领域基础与完整人工闭环）
-status: 待派
+status: 返工
 agent: null
-depends: [M1 底座接口（阶段 2 起）]
+depends:
+- M1 底座接口（阶段 2 起）
 size: 整个项目，分 7 个阶段
 stage: 0
+started: 2026-10-18 15:03
 ---
 ## 目标
 
@@ -49,4 +51,16 @@ stage: 0
 
 ## 审核记录
 
-（架构每阶段审核意见写在这里）
+### 阶段 1 · 2026-10-18 · 返工（提交 3572efd）
+
+做得好：区间引擎正确，子方案 10.1 三例、重叠 / 越界休息、跨夜都有测试；分类"同一秒只进一类"有测试；没碰底座、没造替代品。
+
+必须改（改完再报"阶段 1 做完了"）：
+1. **适用范围缺"对象"**：`ConfigVersionRef` 只有范围种类（org / dept / person），没有是哪个部门、哪个人。两个不同部门、同优先级、有效期重叠的配置会互相拒绝发布（已复现）。定义表改为 `scope_kind` + `scope_ref`（部门或人员编号；全公司为空），重叠判定按（配置类别, scope_kind, scope_ref, priority）。补一条"不同部门不冲突"的测试。
+2. **有效期用业务日**：`effective_from / effective_to` 改为 `date`（半开，业务日），不用 timestamptz（设计 2："时间存 UTC，业务日另存"，配置按业务日启用）。
+3. **发布冲突是业务规则，放 domain**：`store/config.py` 的校验移到 `domain/`（如 `domain/config_publish.py`）；store 只放表与读写（总图 5 四层）。
+4. **删掉手写 `migrations/versions/0001_initial.sql`**：它和 `store/models.py` 是同一份表结构写两遍（规范 5.5）。迁移脚手架（Alembic，每模块独立 version 表 `attendance_alembic`）由架构随底座发布，之后从 models 生成。阶段 1 只保留 models.py。
+5. **错误不拼中文句子**：`PublishConflictError` 改为带结构化字段（冲突版本编号、scope_kind、scope_ref、priority、两个区间），不写 message 文案；之后 api 层映射为 `INPUT_VALIDATION_FAILED` + details，界面用文案键。`interval` 里的 ValueError 是程序断言，可保留但不要中文。
+6. **表名去掉重复前缀**：schema 已是 `attendance`，表名用 `type`、`type_version`、`shift`、`shift_version`、`rule_set`……
+7. **分类引擎补基于性质的测试**：随机区间下，正常 + 各类加班 = 有效时长、各类不为负、互斥（设计 10）。
+8. **进度文件搬家**：先 `git merge local/integration`（拿到新的检查工具），再 `git mv PROGRESS.md plan/progress/M2-attendance.md`，以后只更新它。

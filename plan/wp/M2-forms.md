@@ -2,11 +2,13 @@
 id: M2-forms
 project: forms
 title: 表单开发项目 · M2（表单平台阶段一）
-status: 待派
+status: 返工
 agent: null
-depends: [M1 底座接口（阶段 3 起）]
+depends:
+- M1 底座接口（阶段 3 起）
 size: 整个项目，分 7 个阶段
 stage: 0
+started: 2026-10-18 15:03
 ---
 ## 目标
 
@@ -48,4 +50,17 @@ stage: 0
 
 ## 审核记录
 
-（架构每阶段审核意见写在这里）
+### 阶段 1 · 2026-10-18 · 返工（提交 ae711d7）
+
+做得好：只做 domain、不碰数据库与底座，符合当前约束；字段用稳定编号、改名只改显示名的思路对。
+
+必须改（改完再报"阶段 1 做完了"）：
+1. **FW06 实际不成立**：发布后在草稿里 `rename_field`，已发布版本的显示名也跟着变了（已复现）——`FormRelease.fields` 只是浅拷贝，和草稿共用同一个 `FieldDefinition` 对象。`FieldDefinition` 改为 frozen，改名 / 改设置返回新对象；发布时快照不可变（`Mapping` / tuple）。补测试："发布后改名、改设置、删字段，旧版本都不变"。
+2. **公式放错了位置**：公式是"计算字段"的设置，不是分区属性。`Section` 只留标题、字段列表、显示条件；去掉 `Section.formula`，计算字段的表达式放进该字段的 settings。
+3. **settings 要是正式字段**：现在在 `__post_init__` 里赋值，不参与复制和比较。改为 dataclass 字段（不可变映射）；`FieldKind` 改为 `StrEnum`，`kind: FieldKind`。
+4. **检查结果结构化**：`PublishCheckFailed` 带问题列表（字段编号、在哪个字段 / 分区、问题种类），不拼中文句子；之后 api 层映射为 `INPUT_VALIDATION_FAILED` + details，界面用文案键。`remove_field` / `field()` 的中文 KeyError 同理。
+5. **进度文件搬家**：先 `git merge local/integration`（拿到新的检查工具），再 `git mv PROGRESS.md plan/progress/M2-forms.md`，以后只更新它。
+
+阶段 2 提前说明：
+- `publish_check` 里用正则找 `$引用` 是临时做法；阶段 2 必须改为用表达式解析器给出的"引用字段列表"，删掉正则，否则同一件事两套写法（规范 5.5）。阶段 2 审核会查。
+- 持久化（表单、版本、字段表）阶段 1、2 不做可以；迁移脚手架由架构随底座发布，阶段 3 开工前补 store。
