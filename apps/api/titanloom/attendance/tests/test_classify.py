@@ -6,12 +6,15 @@
 
 from __future__ import annotations
 
+import random
+
 import pytest
 
 from titanloom.attendance.domain.classify import (
     DayKind,
     classify,
 )
+from titanloom.attendance.domain.interval import Interval, merge, subtract, total_seconds
 
 H = 3600
 
@@ -84,6 +87,51 @@ def test_classify_empty() -> None:
     assert c.overtime_workday == 0
     assert c.overtime_restday == 0
     assert c.overtime_holiday == 0
+
+
+def test_classify_property_random() -> None:
+    """基于性质：随机区间下，正常 + 三类加班 = 有效时长；各类 ≥ 0；有效 ≤ 工作总长；互斥。"""
+    rng = random.Random(20261018)  # noqa: S311 — 固定种子，仅用于属性测试，非加密场景
+    for _ in range(500):
+        # 随机工作区间（1-5 段）
+        work: list[Interval] = []
+        for _ in range(rng.randint(1, 5)):
+            s = rng.randint(0, 48 * H - 1)
+            e = s + rng.randint(1, 2 * H)
+            work.append((s, e))
+        work = merge(work)
+
+        # 随机休息区间（0-5 段）
+        breaks: list[Interval] = []
+        for _ in range(rng.randint(0, 5)):
+            s = rng.randint(0, 48 * H - 1)
+            e = s + rng.randint(1, 2 * H)
+            breaks.append((s, e))
+
+        effective = subtract(work, breaks)
+
+        # 随机正常区间（0-5 段）
+        normal: list[Interval] = []
+        for _ in range(rng.randint(0, 5)):
+            s = rng.randint(0, 48 * H - 1)
+            e = s + rng.randint(1, 2 * H)
+            normal.append((s, e))
+        normal = merge(normal)
+
+        day_kind = rng.choice(list(DayKind))
+        c = classify(effective, normal, day_kind)
+
+        eff_total = total_seconds(effective)
+        assert c.normal_seconds >= 0, f"work={work} breaks={breaks} normal={normal} day={day_kind}"
+        assert c.overtime_workday >= 0
+        assert c.overtime_restday >= 0
+        assert c.overtime_holiday >= 0
+        # 正常 + 三类加班 = 有效时长（同一秒只进一类，互斥）
+        assert c.normal_seconds + c.total_overtime == eff_total, (
+            f"work={work} breaks={breaks} normal={normal} day={day_kind}"
+        )
+        # 有效时长 ≤ 工作区间总长
+        assert eff_total <= total_seconds(work), f"work={work} breaks={breaks}"
 
 
 def total_effective(intervals: list[tuple[int, int]]) -> int:

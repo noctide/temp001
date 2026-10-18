@@ -1,46 +1,62 @@
-"""配置发布纯校验测试：同范围同优先级有效期重叠拒绝发布。"""
+"""配置发布纯校验测试：同类别/同范围/同优先级有效期重叠拒绝发布。"""
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import date
 
 import pytest
 
-from titanloom.attendance.store.config import (
+from titanloom.attendance.domain.config_publish import (
     ConfigVersionRef,
     PublishConflictError,
     assert_no_publish_overlap,
 )
 
-D1 = datetime(2026, 11, 1, tzinfo=UTC)
-D2 = datetime(2026, 12, 1, tzinfo=UTC)
-D3 = datetime(2027, 1, 1, tzinfo=UTC)
+D1 = date(2026, 11, 1)
+D2 = date(2026, 12, 1)
+D3 = date(2027, 1, 1)
 
 
 def ref(
     *,
     id: str = "v1",
-    scope: str = "org",
+    kind: str = "type",
+    scope_kind: str = "org",
+    scope_ref: str | None = None,
     priority: int = 0,
-    start: datetime | None = None,
-    end: datetime | None = None,
+    start: date | None = None,
+    end: date | None = None,
     status: str = "published",
 ) -> ConfigVersionRef:
     return ConfigVersionRef(
-        id=id, scope=scope, priority=priority, effective_from=start, effective_to=end, status=status
+        id=id,
+        kind=kind,
+        scope_kind=scope_kind,
+        scope_ref=scope_ref,
+        priority=priority,
+        effective_from=start,
+        effective_to=end,
+        status=status,
     )
 
 
 def test_same_scope_same_priority_overlap_rejected() -> None:
     existing = [ref(id="v1", start=D1, end=D2)]
-    candidate = ref(id="v2", start=datetime(2026, 11, 15, tzinfo=UTC), end=D3)
-    with pytest.raises(PublishConflictError, match="重叠"):
+    candidate = ref(id="v2", start=date(2026, 11, 15), end=D3)
+    with pytest.raises(PublishConflictError):
         assert_no_publish_overlap(existing, candidate)
 
 
-def test_different_scope_allowed() -> None:
-    existing = [ref(id="v1", scope="org", start=D1, end=D2)]
-    candidate = ref(id="v2", scope="dept", start=D1, end=D2)
+def test_different_dept_same_priority_not_conflict() -> None:
+    """不同部门、同优先级、有效期重叠：不冲突，可并发布。"""
+    existing = [ref(id="v1", scope_kind="dept", scope_ref="dept-a", start=D1, end=D2)]
+    candidate = ref(id="v2", scope_kind="dept", scope_ref="dept-b", start=D1, end=D2)
+    assert_no_publish_overlap(existing, candidate)  # 不抛
+
+
+def test_different_scope_kind_allowed() -> None:
+    existing = [ref(id="v1", scope_kind="org", scope_ref=None, start=D1, end=D2)]
+    candidate = ref(id="v2", scope_kind="dept", scope_ref="dept-a", start=D1, end=D2)
     assert_no_publish_overlap(existing, candidate)  # 不抛
 
 
@@ -72,7 +88,7 @@ def test_exclude_self_on_update() -> None:
 
 def test_contains_fully() -> None:
     existing = [ref(id="v1", start=D1, end=D3)]
-    candidate = ref(id="v2", start=D2, end=datetime(2026, 12, 15, tzinfo=UTC))
+    candidate = ref(id="v2", start=D2, end=date(2026, 12, 15))
     with pytest.raises(PublishConflictError):
         assert_no_publish_overlap(existing, candidate)
 

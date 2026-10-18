@@ -107,9 +107,9 @@ def test_total_seconds_empty() -> None:
 
 
 def test_interval_must_have_start_before_end() -> None:
-    with pytest.raises(ValueError, match="区间非法"):
+    with pytest.raises(ValueError, match="interval start must be < end"):
         merge([(_h(12), _h(9))])
-    with pytest.raises(ValueError, match="区间非法"):
+    with pytest.raises(ValueError, match="interval start must be < end"):
         subtract([(_h(12), _h(9))], [])
 
 

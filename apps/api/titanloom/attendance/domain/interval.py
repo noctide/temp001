@@ -17,7 +17,7 @@ def _normalize(intervals: list[Interval]) -> list[Interval]:
     out: list[Interval] = []
     for start, end in intervals:
         if start >= end:
-            raise ValueError("区间非法：start 必须小于 end")
+            raise ValueError("interval start must be < end")
         out.append((start, end))
     return sorted(out, key=lambda iv: (iv[0], iv[1]))
 

@@ -50,3 +50,5 @@ stage: 0
 ## 审核记录
 
 （架构每阶段审核意见写在这里）
+
+<!-- allow: plan/progress/M2-attendance.md, plan/wp/M2-attendance.md -->
