@@ -2,11 +2,13 @@
 id: M2-forms
 project: forms
 title: 表单开发项目 · M2（表单平台阶段一）
-status: 待派
+status: 执行中
 agent: null
-depends: [M1 底座接口（阶段 3 起）]
+depends:
+- M1 底座接口（阶段 3 起）
 size: 整个项目，分 7 个阶段
 stage: 0
+started: 2026-10-18 15:03
 ---
 ## 目标
 

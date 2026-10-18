@@ -2,11 +2,13 @@
 id: M2-attendance
 project: attendance
 title: 考勤开发项目 · M2（领域基础与完整人工闭环）
-status: 待派
+status: 执行中
 agent: null
-depends: [M1 底座接口（阶段 2 起）]
+depends:
+- M1 底座接口（阶段 2 起）
 size: 整个项目，分 7 个阶段
 stage: 0
+started: 2026-10-18 15:03
 ---
 ## 目标
 
