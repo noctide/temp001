@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date, time, timedelta
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_HALF_UP, Decimal, localcontext
 from typing import cast
 
 from titanloom.forms.domain.expr.errors import ExprError
@@ -107,8 +107,14 @@ def round_fn(args: list[Value]) -> Value:
     n = _as_number(args[1], "round 第 2 个参数")
     if n != n.to_integral_value():
         raise ExprError("TYPE_MISMATCH", "round 第 2 个参数必须是整数")
-    step = Decimal(1).scaleb(-int(n))
-    return Value(ValueKind.NUMBER, x.quantize(step, rounding=ROUND_HALF_UP))
+    digits = int(n)
+    step = Decimal(1).scaleb(-digits)
+    # 精确运算的 + − × 结果可能超过默认 28 位，量化时按操作数给足精度。
+    prec = max(len(x.as_tuple().digits), x.adjusted() + 1) + abs(digits) + 2
+    with localcontext() as ctx:
+        ctx.prec = max(prec, 1)
+        result = x.quantize(step, rounding=ROUND_HALF_UP)
+    return Value(ValueKind.NUMBER, result)
 
 
 FUNCTIONS: dict[str, Callable[[list[Value]], Value]] = {

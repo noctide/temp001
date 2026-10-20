@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, time
-from decimal import Decimal
+from decimal import ROUND_HALF_EVEN, Decimal, localcontext
 from typing import assert_never, cast
 
 from titanloom.forms.domain.expr import ast as ast_
@@ -26,6 +26,8 @@ COMPUTE_BUDGET_MS = int(_PARAMS.get(P.forms.expr.computeMs))
 _ARITHMETIC_OPS = frozenset({"+", "-", "*", "/"})
 _COMPARISON_OPS = frozenset({"=", "!=", "<", "<=", ">", ">="})
 _LOGICAL_OPS = frozenset({"and", "or"})
+# functions.json · arithmetic.divisionSignificantDigits
+_DIVISION_SIGNIFICANT_DIGITS = 28
 
 
 @dataclass
@@ -100,17 +102,35 @@ def _arithmetic(
         raise ExprError("TYPE_MISMATCH", f"{op} 两侧须为 number")
     a = cast(Decimal, lv.value)
     b = cast(Decimal, rv.value)
-    if op == "+":
-        return Value(ValueKind.NUMBER, a + b)
-    if op == "-":
-        return Value(ValueKind.NUMBER, a - b)
-    if op == "*":
-        return Value(ValueKind.NUMBER, a * b)
+    if op in ("+", "-", "*"):
+        # 契约要求 + − × 精确：默认上下文只有 28 位，会截断长结果，按操作数定精度。
+        with localcontext() as ctx:
+            ctx.prec = _exact_precision(a, b, op)
+            if op == "+":
+                result = a + b
+            elif op == "-":
+                result = a - b
+            else:
+                result = a * b
+        return Value(ValueKind.NUMBER, result)
     if op == "/":
         if b == 0:
             raise ExprError("DIVIDE_BY_ZERO", "除数不能为零")
-        return Value(ValueKind.NUMBER, a / b)
+        with localcontext() as ctx:
+            ctx.prec = _DIVISION_SIGNIFICANT_DIGITS
+            ctx.rounding = ROUND_HALF_EVEN
+            result = a / b
+        return Value(ValueKind.NUMBER, result)
     raise AssertionError(f"未知算术运算符：{op}")  # pragma: no cover
+
+
+def _exact_precision(a: Decimal, b: Decimal, op: str) -> int:
+    """+ − × 不截断所需的有效数字位数（两操作数结果的位数上界）。"""
+    if op == "*":
+        return len(a.as_tuple().digits) + len(b.as_tuple().digits) + 1
+    int_digits = max(a.adjusted() + 1, b.adjusted() + 1, 0)
+    frac_digits = max(0, -int(a.as_tuple().exponent), -int(b.as_tuple().exponent))
+    return int_digits + frac_digits + 1
 
 
 def _comparison(

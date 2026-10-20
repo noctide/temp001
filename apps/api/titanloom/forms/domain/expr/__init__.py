@@ -10,7 +10,13 @@ from titanloom.forms.domain.expr.evaluator import (
 from titanloom.forms.domain.expr.functions import FUNCTIONS
 from titanloom.forms.domain.expr.parser import field_refs, parse, referenced_fields
 from titanloom.forms.domain.expr.static import static_type
-from titanloom.forms.domain.expr.types import Value, ValueKind, number, parse_field_value
+from titanloom.forms.domain.expr.types import (
+    Value,
+    ValueKind,
+    format_number,
+    number,
+    parse_field_value,
+)
 
 __all__ = [
     "COMPUTE_BUDGET_MS",
@@ -22,6 +28,7 @@ __all__ = [
     "evaluate",
     "expression_depth",
     "field_refs",
+    "format_number",
     "number",
     "parse",
     "parse_field_value",

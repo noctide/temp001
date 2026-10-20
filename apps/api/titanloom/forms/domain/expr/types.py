@@ -32,6 +32,14 @@ def number(text: str) -> Decimal:
     return dec(text)
 
 
+def format_number(value: Decimal) -> str:
+    """规范数字输出：去掉小数末尾 0（2.50 → 2.5），整数不去 0（10 → 10），-0 → 0。"""
+    text = format(value, "f")
+    if "." in text:
+        text = text.rstrip("0").rstrip(".")
+    return "0" if text in ("", "-0") else text
+
+
 def parse_field_value(kind: str, text: str) -> Value:
     """把契约里的字段值（type + value 字符串）转成 Value。"""
     if kind == ValueKind.NUMBER:

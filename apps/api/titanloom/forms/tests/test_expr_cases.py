@@ -7,12 +7,20 @@ from __future__ import annotations
 
 import json
 from datetime import date, time
+from decimal import Decimal
 from pathlib import Path
-from typing import TypedDict
+from typing import TypedDict, cast
 
 import pytest
 
-from titanloom.forms.domain.expr import ExprError, Value, ValueKind, evaluate, parse_field_value
+from titanloom.forms.domain.expr import (
+    ExprError,
+    Value,
+    ValueKind,
+    evaluate,
+    format_number,
+    parse_field_value,
+)
 from titanloom.kernel.exact import dec
 
 CASES_PATH = Path(__file__).resolve().parents[5] / "packages" / "contracts" / "expressions" / "cases.json"
@@ -47,7 +55,8 @@ def _expect_value(result: Value, expect: dict[str, str]) -> None:
     typ = expect["type"]
     val = expect["value"]
     if typ == "number":
-        assert result.value == dec(val)
+        # 与前端同一套规范输出比较（去小数末尾 0、整数不去、-0 → 0），不比 Decimal 字符串。
+        assert format_number(cast(Decimal, result.value)) == format_number(dec(val))
     elif typ == "date":
         assert result.value == date.fromisoformat(val)
     elif typ == "time":

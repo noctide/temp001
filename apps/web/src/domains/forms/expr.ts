@@ -107,12 +107,19 @@ export function decDiv(a: Dec, b: Dec): Dec {
   if (a.digits === 0n) return { neg: false, digits: 0n, scale: 0 };
   const neg = a.neg !== b.neg;
   // value = (a.digits / b.digits) × 10^(b.scale − a.scale)
-  const est = a.digits.toString().length - b.digits.toString().length + 1;
-  const scale = Math.max(0, DIV_SIG + 2 - est); // 先多算两位保护位
-  const scaled = a.digits * pow10(scale);
-  let digits = scaled / b.digits;
-  let resultScale = scale;
-  const remainder = scaled % b.digits;
+  const exp = b.scale - a.scale;
+  // 让整数商至少 DIV_SIG+1 位（多一位保护位），再按有效数字舍入
+  const dA = a.digits.toString().length;
+  const dB = b.digits.toString().length;
+  const guard = Math.max(0, DIV_SIG + 1 - (dA - dB));
+  const numerator = a.digits * pow10(guard);
+  let digits = numerator / b.digits;
+  const remainder = numerator % b.digits;
+  let resultScale = guard - exp;
+  if (resultScale < 0) {
+    digits *= pow10(-resultScale);
+    resultScale = 0;
+  }
   const len = digits.toString().length;
   if (len > DIV_SIG) {
     const drop = len - DIV_SIG;
@@ -125,11 +132,11 @@ export function decDiv(a: Dec, b: Dec): Dec {
     else if (dropped < half) roundUp = false;
     else roundUp = remainder !== 0n || kept % 2n === 1n; // HALF_EVEN
     digits = kept + (roundUp ? 1n : 0n);
-    resultScale = scale - drop;
-  }
-  if (resultScale < 0) {
-    digits *= pow10(-resultScale);
-    resultScale = 0;
+    resultScale -= drop;
+    if (resultScale < 0) {
+      digits *= pow10(-resultScale);
+      resultScale = 0;
+    }
   }
   return norm({ neg, digits, scale: resultScale });
 }
