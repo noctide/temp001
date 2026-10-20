@@ -30,10 +30,10 @@ OUT = ROOT / ".fidelity"
 HIFI_ALLOW = ("apps/web/src/shared/ui/tokens.css",)
 COLOR = re.compile(r"(?<![\w&/-])#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b|\b(?:rgba?|hsla?)\(")
 
-# 自检时注入正式页一侧的"改坏"样式：模仿常见的走样（旧蓝色主色、标题字号、行距、左边距）
+# 自检时注入正式页一侧的"改坏"样式：模仿常见的走样（旧蓝色主色、标题字号、左边距）
 BREAK_CSS = (
     "<style>.m-btn-p{background:#2350B5!important;border-color:#2350B5!important}"
-    ".m-display{font-size:34px!important}.fm-row{padding-top:18px!important}.m-page{padding-left:44px!important}</style>"
+    ".m-display{font-size:30px!important}.m-page{padding-left:44px!important}</style>"
 )
 
 

@@ -1,5 +1,5 @@
 # 高保真比对清单（架构维护；执行 Agent 不改，要改提给架构）
-# 每页：原型文件、正式页路由、要比的状态（URL 参数）、关键位置。
+# 每页：原型文件、正式页路由、要比的状态（URL 参数；可单独写 viewport，例如手机 390×844）、关键位置。
 # `tl.py fidelity` 跑全部或指定页；`tl.py check` 只跑 enabled: true 的页（正式页做出来以后由架构打开）。
 #
 # 正式页的约定（写进 AGENTS.md / 高保真规范）：
@@ -33,6 +33,7 @@ pages:
       - { name: 空, query: empty=1 }
       - { name: 我负责的, query: scope=mine }
       - { name: 新建, query: new=1 }
+      - { name: 手机, query: "", viewport: { width: 390, height: 844 } }
     probes:
       页头标题: ".fm-head h1"
       新建按钮: ".fm-newbtn"

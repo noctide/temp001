@@ -223,7 +223,7 @@ h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:28px 0 4px;border-top:
 b.ok{color:var(--ok)}b.bad{color:var(--bad)}.meta{color:var(--mut);margin:0 0 6px}.why{color:var(--bad)}
 .shots{display:flex;gap:12px;overflow-x:auto}figure{margin:0;flex:1 1 0;min-width:260px}figcaption{font-size:12px;color:var(--mut)}
 img{width:100%;border:1px solid var(--line);display:block}summary{cursor:pointer;margin-top:8px}ul{margin:4px 0;padding-left:20px}</style></head>
-<body><h1>高保真比对</h1><p class="meta">${esc(new Date().toISOString())} · 窗口 ${cfg.viewport.width}×${cfg.viewport.height}</p>${body}</body></html>`;
+<body><h1>高保真比对</h1><p class="meta">${esc(new Date().toISOString())} · 默认窗口 ${cfg.viewport.width}×${cfg.viewport.height}</p>${body}</body></html>`;
 }
 
 // ---------------------------------------------------------------- 主流程
@@ -249,8 +249,8 @@ const browser = await chromium.launch(cfg.chromium ? { executablePath: cfg.chrom
 const rows = [];
 let envBad = false;
 for (const page of cfg.pages) {
-  const viewport = page.viewport || cfg.viewport;
   for (const st of page.states || [{ name: "默认", query: "" }]) {
+    const viewport = st.viewport || page.viewport || cfg.viewport;
     const id = `${page.name}·${st.name}`;
     const q = (s) => (s ? (s.startsWith("?") ? s : "?" + s) : "");
     const protoUrl = `${proto.url}/${page.proto}${q([st.query, cfg.proto_query].filter(Boolean).join("&"))}`;
