@@ -62,7 +62,7 @@ function serve(root, inject) {
 const PROBE_PROPS = ["fontSize", "fontWeight", "lineHeight", "color", "backgroundColor", "borderTopColor", "borderTopWidth",
   "borderTopLeftRadius", "paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "letterSpacing"];
 
-function collect({ props, probes, maxText }) {
+function collect({ props, probes, maxText, scope }) {
   const vis = (el) => {
     const r = el.getBoundingClientRect();
     if (r.width < 1 || r.height < 1) return null;
@@ -80,7 +80,9 @@ function collect({ props, probes, maxText }) {
   // 1. 文字配对：每个"自己带文字"的可见元素，按 文字 + 第几次出现 当钥匙
   const texts = {};
   const seen = {};
-  for (const el of document.body.querySelectorAll("*")) {
+  const roots = scope && scope.length ? scope.flatMap((s) => [...document.querySelectorAll(s)]) : [document.body];
+  const els = roots.flatMap((r) => [r, ...r.querySelectorAll("*")]);
+  for (const el of els) {
     if (["SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE", "svg"].includes(el.tagName)) continue;
     let own = "";
     for (const n of el.childNodes) if (n.nodeType === 3) own += n.textContent;
@@ -102,7 +104,7 @@ function collect({ props, probes, maxText }) {
 }
 
 // ---------------------------------------------------------------- 截图
-async function shoot(browser, url, viewport, now, maskSel, probes) {
+async function shoot(browser, url, viewport, now, maskSel, probes, opt) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 1, locale: "zh-CN", timezoneId: cfg.timezone || "Asia/Shanghai", reducedMotion: "reduce" });
   const page = await ctx.newPage();
   const errors = [];
@@ -120,11 +122,12 @@ async function shoot(browser, url, viewport, now, maskSel, probes) {
     return { error: `打不开：${url}（HTTP ${resp.status()}）` };
   }
   await page.addStyleTag({ content: "*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}" });
+  if (opt.hide && opt.hide.length) await page.addStyleTag({ content: opt.hide.join(",") + "{visibility:hidden!important}" });
   await page.evaluate(() => document.fonts && document.fonts.ready);
   await page.waitForTimeout(cfg.settle_ms ?? 400);
-  const data = await page.evaluate(collect, { props: PROBE_PROPS, probes, maxText: 40 });
+  const data = await page.evaluate(collect, { props: PROBE_PROPS, probes, maxText: 40, scope: opt.scope || null });
   const mask = (maskSel || []).map((s) => page.locator(s));
-  const png = await page.screenshot({ fullPage: true, animations: "disabled", caret: "hide", mask, maskColor: "#FF00FF" });
+  const png = await page.screenshot({ fullPage: opt.fullPage, animations: "disabled", caret: "hide", mask, maskColor: "#FF00FF" });
   await ctx.close();
   return { png, data, errors };
 }
@@ -262,10 +265,11 @@ for (const page of cfg.pages) {
     const probesP = {}, probesA = {};
     for (const [name, sel] of Object.entries(page.probes || {})) {
       probesP[name] = typeof sel === "string" ? sel : sel.proto;
-      probesA[name] = cfg.self_test ? probesP[name] : (typeof sel === "string" ? `[data-fid="${name}"]` : sel.app || `[data-fid="${name}"]`);
+      probesA[name] = cfg.self_test || page.same_selectors ? probesP[name] : (typeof sel === "string" ? `[data-fid="${name}"]` : sel.app || `[data-fid="${name}"]`);
     }
-    const P = await shoot(browser, protoUrl, viewport, cfg.now, maskP, probesP);
-    const A = P.error ? null : await shoot(browser, appUrl, viewport, cfg.now, maskA, probesA);
+    const opt = { scope: page.scope || null, fullPage: page.full_page ?? true, hide: page.hide || [] };
+    const P = await shoot(browser, protoUrl, viewport, cfg.now, maskP, probesP, opt);
+    const A = P.error ? null : await shoot(browser, appUrl, viewport, cfg.now, maskA, probesA, opt);
     const err = P.error || (A && A.error);
     if (err) { rows.push({ id, error: err }); envBad = true; console.log(`✗ ${id}：${err}`); continue; }
     const dir = join(OUT, page.name, st.name);

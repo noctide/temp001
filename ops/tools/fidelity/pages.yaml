@@ -5,7 +5,7 @@
 # 正式页的约定（写进 AGENTS.md / 高保真规范）：
 # - 开发模式下认同样的 URL 参数切换示例身份和数据（role=member、empty=1、tab=records ……），数据用原型里的同一份示例数据。
 # - probes 里每个名字，正式页对应元素要带 data-fid="<名字>"（或在下面写 app: 选择器）。
-# - 动态区域（时钟、随机图）用 mask 盖住，两边一起盖。
+# - 动态区域（时钟、随机图）用 mask 盖住（涂成品红），两边一起盖；不在本项比的部分用 hide 两边一起藏掉（留空白）。
 
 defaults:
   viewport: { width: 1440, height: 900 }
@@ -22,6 +22,34 @@ prototype_roots:
   - ../../fidelity/Prototype                  # 架构 VM：$HOME/mnt/02_Titanloom-dev/hq → $HOME/mnt/fidelity/Prototype
 
 pages:
+  - name: 外壳
+    project: shell
+    enabled: true           # 导航 + 顶栏，10-20 落成
+    proto: Forms.html       # 任意一页的外壳都一样，取表单页（导航当前项 = 表单）
+    app: /forms
+    full_page: false        # 只截一屏
+    scope: [".m-rail", ".m-top"]   # 只比这两块的文字
+    same_selectors: true    # 外壳用的是公共类名，两边选择器一样（不用 data-fid）
+    states:
+      - { name: 部门负责人, query: "" }
+      - { name: 普通成员, query: role=member }
+      - { name: 表单管理员, query: role=zym }
+      - { name: 手机, query: "", viewport: { width: 390, height: 844 } }
+    probes:
+      导航: ".m-rail"
+      导航当前项: ".m-rail a.on"
+      标志: ".m-logo"
+      顶栏: ".m-top"
+      部门菜单: ".m-space"
+      搜索框: ".m-search"
+      消息: ".m-top .m-ib"
+      头像: ".m-ava"
+    hide:                   # 两边都藏起来（留空白）再截：页面内容不在这一项比；悬浮窗还没做
+      - ".m-page > *"
+      - "#dk-root"
+    mask: []
+    ignore_text: []
+
   - name: 表单列表
     project: forms
     enabled: false          # 表单第 7 阶段做出正式页后打开

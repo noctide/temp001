@@ -2,7 +2,7 @@
 
 正本 → 生成物
     packages/contracts/error-codes.json   → kernel/reg/errors.py、web shared/base/reg/errors.ts
-    i18n/<命名空间>.yaml                   → kernel/reg/i18n.py、web shared/base/reg/i18n.ts
+    i18n/<命名空间>.yaml                   → kernel/reg/i18n.py、web shared/base/reg/i18n.ts、i18n.seed.ts
     各模块 manifest.yaml（参数、功能）      → kernel/reg/manifest.py、web shared/base/reg/manifest.ts
     各模块 api 层 + kernel 的公开函数       → plan/CODEMAP.md
 """
@@ -158,6 +158,26 @@ def gen_i18n_ts(keys: dict[str, dict[str, Any]]) -> str:
     )
 
 
+SEED_LANGS = ("zh-CN", "en-US")
+
+
+def gen_i18n_seed_ts(keys: dict[str, dict[str, Any]]) -> str:
+    """出厂默认文案（国际化规范 5.2）。语言包服务接通前，前端用它兜底；上线后以后台发布的语言包为准。"""
+    seed: dict[str, dict[str, str]] = {lang: {} for lang in SEED_LANGS}
+    for k, v in keys.items():
+        defaults: dict[str, str] = v.get("defaults") or {}
+        for lang in SEED_LANGS:
+            if defaults.get(lang):
+                seed[lang][k] = defaults[lang]
+    return (
+        HEAD_TS
+        + "// 出厂默认文案：语言包服务接通前前端用它兜底（国际化规范 5.2）；只由 shared/base/i18n.ts 引用。\n"
+        + "export const SEED: Record<string, Record<string, string>> = "
+        + json.dumps(seed, ensure_ascii=False, indent=2)
+        + ";\n"
+    )
+
+
 def _entries(lst: str) -> list[tuple[str, dict[str, Any]]]:
     out: list[tuple[str, dict[str, Any]]] = []
     for m, data in _manifests().items():
@@ -259,6 +279,7 @@ def outputs() -> dict[Path, str]:
         REG_PY / "manifest.py": gen_manifest_py(),
         REG_TS / "errors.ts": gen_errors_ts(codes),
         REG_TS / "i18n.ts": gen_i18n_ts(keys),
+        REG_TS / "i18n.seed.ts": gen_i18n_seed_ts(keys),
         REG_TS / "manifest.ts": gen_manifest_ts(),
         REG_TS / "index.ts": HEAD_TS
         + 'export * from "./errors";\nexport * from "./i18n";\nexport * from "./manifest";\n',

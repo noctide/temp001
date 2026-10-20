@@ -35,4 +35,33 @@ export const K = {
     secondApprovalRequired: "errors.secondApprovalRequired",
     tokenExpired: "errors.tokenExpired",
   },
+  shell: {
+    rail: {
+      admin: "shell.rail.admin",
+      agent: "shell.rail.agent",
+      attendance: "shell.rail.attendance",
+      automation: "shell.rail.automation",
+      data: "shell.rail.data",
+      forms: "shell.rail.forms",
+      home: "shell.rail.home",
+      knowledge: "shell.rail.knowledge",
+      label: "shell.rail.label",
+      plugins: "shell.rail.plugins",
+      studio: "shell.rail.studio",
+      workbench: "shell.rail.workbench",
+    },
+    top: {
+      language: {
+        label: "shell.top.language.label",
+      },
+      messages: {
+        label: "shell.top.messages.label",
+      },
+      search: {
+        label: "shell.top.search.label",
+        placeholder: "shell.top.search.placeholder",
+        shortcut: "shell.top.search.shortcut",
+      },
+    },
+  },
 } as const;

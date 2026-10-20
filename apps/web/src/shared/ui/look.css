@@ -1,0 +1,8 @@
+/* 外观附带的样式（和原型 assets/look.js 注入的一致；不写颜色值） */
+/* 整页缩放后导航仍占满一屏高（只在电脑上；手机导航是横排） */
+@media (min-width: 721px) {
+  html[data-tl-zoom] .m-rail {
+    height: calc(100vh / var(--tl-zoom, 1));
+    overflow-y: auto;
+  }
+}

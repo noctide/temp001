@@ -9,7 +9,7 @@
     uv run python ops/tools/tl.py db upgrade [模块]            跑迁移到最新（不写模块名 = 所有有表的模块）
     uv run python ops/tools/tl.py db modules                   列出有表的模块（建库脚本用）
     uv run python ops/tools/tl.py db revision <模块> -m 说明   从 store/models.py 与库的差别生成迁移脚本（生成后要人看一遍）
-    uv run python ops/tools/tl.py fidelity [页名…] [--state 状态] [--app-url 地址] [--self-test same|broken]
+    uv run python ops/tools/tl.py fidelity [页名…] [--state 状态] [--app-url 地址] [--self-test same|broken] [--sync]
                                                    高保真比对：截原型页和正式页逐像素比，报告在 .fidelity/report.html
 
 所有规则从 projects.yaml 读，不另写一份。
@@ -235,6 +235,7 @@ def main(argv: list[str] | None = None) -> int:
     pf = sub.add_parser("fidelity", help="高保真比对：截原型页和正式页逐像素比，报告在 .fidelity/report.html")
     pf.add_argument("pages", nargs="*", help="页名或原型文件名（ops/tools/fidelity/pages.yaml；不写 = 全部）")
     pf.add_argument("--state", action="append", default=None, help="只比某个状态，可写多次")
+    pf.add_argument("--sync", action="store_true", help="把原型的公共样式和字体同步进 apps/web（原型改了样式后跑）")
     pf.add_argument("--app-url", default=None, help="正式页地址（不写就用环境变量 TL_APP_URL，再不行自己起 vite）")
     pf.add_argument(
         "--self-test",
@@ -266,6 +267,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "fidelity":
         import hifi
 
+        if args.sync:
+            code, out = hifi.sync()
+            print(out)
+            return code
         code, out = hifi.run(args.pages or None, args.state, args.app_url, self_test=args.self_test)
         print(out)
         return 0 if code == 3 else code

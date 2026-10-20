@@ -1,3 +1,90 @@
 # 文案键清单与出厂默认文案（国际化规范 3、5.2）。键 = shell.页面.区域….名称
 namespace: shell
-keys: {}
+keys:
+  rail.label:
+    description: 左侧主导航的无障碍名称（读屏软件念）
+    defaults:
+      zh-CN: 主导航
+      en-US: Main navigation
+  rail.home:
+    description: 左侧导航 · 首页
+    defaults:
+      zh-CN: 首页
+      en-US: Home
+  rail.workbench:
+    description: 左侧导航 · 个人工作台
+    defaults:
+      zh-CN: 工作台
+      en-US: Workbench
+  rail.forms:
+    description: 左侧导航 · 表单平台
+    defaults:
+      zh-CN: 表单
+      en-US: Forms
+  rail.attendance:
+    description: 左侧导航 · 考勤
+    defaults:
+      zh-CN: 考勤
+      en-US: Attendance
+  rail.automation:
+    description: 左侧导航 · 自动化
+    defaults:
+      zh-CN: 自动化
+      en-US: Automation
+  rail.data:
+    description: 左侧导航 · 数据处理
+    defaults:
+      zh-CN: 数据
+      en-US: Data
+  rail.studio:
+    description: 左侧导航 · 可视化
+    defaults:
+      zh-CN: 可视化
+      en-US: Visualize
+  rail.knowledge:
+    description: 左侧导航 · 知识
+    defaults:
+      zh-CN: 知识
+      en-US: Knowledge
+  rail.agent:
+    description: 左侧导航 · 智能管家
+    defaults:
+      zh-CN: 管家
+      en-US: Assistant
+  rail.plugins:
+    description: 左侧导航 · 插件
+    defaults:
+      zh-CN: 插件
+      en-US: Plugins
+  rail.admin:
+    description: 左侧导航 · 平台管理
+    defaults:
+      zh-CN: 管理
+      en-US: Admin
+  top.search.label:
+    description: 顶栏全局搜索框的无障碍名称
+    defaults:
+      zh-CN: 全局搜索
+      en-US: Search everything
+  top.search.placeholder:
+    description: 顶栏全局搜索框里的提示字
+    defaults:
+      zh-CN: 搜索表单、看板、文档、人员…
+      en-US: Search forms, dashboards, docs, people…
+  top.search.shortcut:
+    description: 顶栏搜索框右侧的快捷键提示
+    defaults:
+      zh-CN: Ctrl K
+      en-US: Ctrl K
+  top.messages.label:
+    description: 顶栏消息按钮的无障碍名称，带未读条数
+    params:
+      count: number
+    defaults:
+      zh-CN: 消息 {{count}} 条
+      en-US: "Messages: {{count}} unread"
+  top.language.label:
+    description: 顶栏切换语言按钮的无障碍名称
+    defaults:
+      zh-CN: 切换语言
+      en-US: Change language

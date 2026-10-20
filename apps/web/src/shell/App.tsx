@@ -1,4 +1,8 @@
-// Shell 外壳（shell 项目）。M1 A1 落成导航、资源路由、ShellContext；现在只是空壳。
+// Shell 外壳（shell 项目）。导航、顶栏已按高保真落成；领域页面以后按路由懒加载进 <main>。
+import { AppShell } from "./AppShell";
+import { devSession } from "./devSession";
+import { activeNav } from "./nav";
+
 export function App() {
-  return <main data-shell="titanloom" />;
+  return <AppShell active={activeNav(location.pathname)} session={devSession()} />;
 }

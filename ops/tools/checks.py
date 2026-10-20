@@ -539,6 +539,16 @@ def c_hifi() -> Result:
     hits = hifi.color_literals()
     for h in hits[:30]:
         r.fail(f"直接写了颜色，改用设计变量 var(--m-*)：{h}")
+    proto = hifi.prototype_root(hifi.config())
+    if proto:
+        stale = hifi.sync_stale(proto)
+        if stale:
+            r.fail(
+                f"公共样式 / 字体和原型对不上 {len(stale)} 个——跑 uv run python ops/tools/tl.py fidelity --sync（不要手改）："
+            )
+            r.lines += [f"  {p.relative_to(hifi.ROOT).as_posix()}" for p in stale[:10]]
+    else:
+        r.warn("找不到原型目录，没核对公共样式是否和原型一致（设环境变量 TL_PROTOTYPE）")
     code, out = hifi.run(only_enabled=True)
     if code == 3:
         r.lines.append("还没有页面进入截图比对（正式页做出来后由架构在 ops/tools/fidelity/pages.yaml 打开 enabled）")

@@ -35,3 +35,26 @@ class K:
         resultTooLarge = "errors.resultTooLarge"
         secondApprovalRequired = "errors.secondApprovalRequired"
         tokenExpired = "errors.tokenExpired"
+    class shell:
+        class rail:
+            admin = "shell.rail.admin"
+            agent = "shell.rail.agent"
+            attendance = "shell.rail.attendance"
+            automation = "shell.rail.automation"
+            data = "shell.rail.data"
+            forms = "shell.rail.forms"
+            home = "shell.rail.home"
+            knowledge = "shell.rail.knowledge"
+            label = "shell.rail.label"
+            plugins = "shell.rail.plugins"
+            studio = "shell.rail.studio"
+            workbench = "shell.rail.workbench"
+        class top:
+            class language:
+                label = "shell.top.language.label"
+            class messages:
+                label = "shell.top.messages.label"
+            class search:
+                label = "shell.top.search.label"
+                placeholder = "shell.top.search.placeholder"
+                shortcut = "shell.top.search.shortcut"
