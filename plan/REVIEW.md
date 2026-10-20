@@ -101,6 +101,32 @@
 **审核结论记录**（每审一步加一行）
 | 步骤 | 提交 | 结论 |
 | --- | --- | --- |
-| 1 数据库与迁移脚手架 | b806593 | 待审 |
-| 2 access.api | 0fb2942 | 待审 |
-| 3 execution.api | 05b164d | 待审 |
+| 1 数据库与迁移脚手架 | b806593 | **通过**（10-20 底座审核），带 1 项：R1-1 须在下一个模块加表之前修 |
+| 2 access.api | 0fb2942 + 10fb0a3 | **返工**（10-20 底座审核）：R2-1、R2-2 必改，R2-3 定下的接口口径改 docstring |
+| 3 execution.api | 05b164d | **返工**（10-20 底座审核）：R3-1、R3-2 必改，R3-3 顺手改 |
+| 4 facilities.api | eaaa8fc | 待审（表里原来没登记，补上） |
+
+**底座审核记录 · 2026-10-20**
+
+环境：VM 克隆 `local/integration`@10fb0a3；`tl check` 12 项过（tsc 跳过，本步无前端）。另在 VM 里起了 PostgreSQL 16.2（pip 包 pgserver 自带的二进制），`TITANLOOM_TEST_DB_URL` 指向它跑全部后端测试：227 passed、0 skipped——第 1 步"没在真实 PG 上验证"这一项已补上。
+
+*第 1 步（通过）*
+- 实测：照 `create.ps1` 的 SQL 建 owner / app 两个账号与 attendance schema → `tl db revision attendance -m init` 生成 10 张表 → `tl db upgrade` 成功 → 再 revision 一次是空迁移（模型与库一致）→ app 账号能读写、不能建表。临时 schema fixture 在真库上两条测试都过。
+- **R1-1（必改，下一个模块加表之前）**：运行账号的权限只在 `create.ps1` 里按"当时已有表的模块"授予。之后新模块（表单、access、execution、facilities 都快加表了）由 `tl db upgrade` 的 `CREATE SCHEMA IF NOT EXISTS` 自动建 schema，运行账号对它**没有 USAGE、也没有默认权限**。复现：删掉 attendance schema → `tl db upgrade` 重建 → 用 titanloom_app 查 `attendance.type` → `permission denied for schema attendance`。应该：`run_env` 建 schema 时一并 `GRANT USAGE` 并设 `ALTER DEFAULT PRIVILEGES … TO <运行账号>`（运行账号名从连接串 `TITANLOOM_DB_URL` 取，或固定 `titanloom_app`）；或者 schema 不存在时直接报错"先重跑 create.ps1"。二选一，补一条带库测试。
+- 小项（不挡）：模块 metadata 的 schema 不等于模块名时，`only_mine` 会把所有表滤掉、静默生成空迁移，`module_metadata` 里加一句断言；运行账号也能改 `<模块>_alembic` 版本表，以后可以收回（REVOKE 该表的写权限）。
+
+*第 2 步（返工）*
+- 第 6 节 access.api 的四条决定逐条核过：模块级函数 + provider 可替换、`to_sqlalchemy` 只生成表达式且缺字段报错、本轮不写的四个接口没写签名、`require()` 错误码映射与 details 只含 failedStep / reasonKey——都符合。拒绝优先、无允许即拒、filter 与逐条 check（纯函数层面）一致都有测试。
+- **R2-1（必改）筛选条件翻成 SQL 后，字段为空的行与 check 结论相反。** 复现（真 PG）：给 A0004 "全部" + 拒绝 `projectId = pr1`；一行 `projectId = NULL` 的记录 → `check` 允许、`AccessFilter.matches` 允许、`to_sqlalchemy` 查不出来（`NOT (proj = 'pr1')` 遇到 NULL 得 NULL）。应该：`not` 里的每个谓词翻成 `col IS NULL OR NOT (…)`（或 `coalesce`），`test_types_sql` 的样本行加 NULL 值（`ids()` 已经同时比对 SQL 与 matches，加上就能抓住）。
+- **R2-2（必改，数据外泄）filter 给的遮挡列比逐条 check 少。** 复现：A0004 有"全部（遮 idNumber）"+"本部门（不遮）"两条允许 → `filter` 的 `mask_columns = ()`；对质检部的记录 `check` 返回 `maskColumns: [idNumber]`。也就是列表页会把别的部门的身份证号露出来。原因：`_mask` 取"所有允许条件共同要遮的列"，但这只对逐行判定成立。应该：本轮先保守——filter 的遮挡列取**会被用到的允许条件的并集**（宁可本部门也遮），并在属性测试里加一条"filter 的遮挡列 ⊇ 每一行 check 的遮挡列"；"按行解除遮挡"（契约里给遮挡列附上 unless 谓词）留到真实实现之前再定。
+- **R2-3（接口口径，架构定）**：`check(subject=别人)` 的 docstring 写"查别人需要诊断资格"，但 facilities 发通知时要用它筛收件人。定为：`subject=` 是进程内模块调用，可信、不做诊断资格校验；"诊断资格"只在 HTTP `/explain` 与以后的 `explain()` 上校验。改 docstring 即可。
+- 带到真实实现：① 行为测试现在写在桩的造数据方法上（`registered.grant`、直接清 `_grants`），真实实现出来时要拆出"同一批接口行为测试对桩和真实各跑一遍"（第 3 节第 3 条）；② 桩没有办法造"管家代办"（execution 的测试是临时替换 `whoami` 做的），给 `as_principal` 加 `acting_for=` 参数，表单 / 考勤的管家场景都会用到。
+
+*第 3 步（返工）*
+- 第 6 节 execution.api 的五条决定逐条核过：confirm 只能本人、管家 / 服务身份 / 别人一律 ACCESS_DENIED、一次性且绑定 commandId 与摘要；run = 同事务 prepare + submit、要确认的抛 CONFIRMATION_REQUIRED；预览进摘要；`cmd_` + 32 位 hex、任务 `JR-` 序号；subscribe 按序投递 + `redeliver`——都符合，也都有测试。
+- **R3-1（必改）给了 expected_version、但能力没登记 version_validator 时，提交不检查版本、直接通过。** 复现：LEAVE 不登记校验器，`prepare(…, target=leave/L1, expected_version="v1")` → `submit` 成功。验收要点"准备后版本变化提交被拒"因此会被"忘了登记"悄悄绕过。应该：`prepare` 时带了 expected_version 而该能力没有校验器 → 直接报 `NotRegistered`（与"未登记的能力直接报错"同一口径），补测试。
+- **R3-2（必改，桩与真实行为不一致）事务还没提交，订阅者就收到了事件。** 复现：在 tx_session 里 `emit_in_tx` → `drain()` → 订阅者收到 → `rollback()` → 事件没了，但订阅者已经处理过。真实的发件箱只投递已提交的事件，Agent 在桩上测过的东西到真实环境会不一样。应该：桩里事件在所在会话提交后才可投递（`after_commit` 时标为可投递；不在事务里写的不存在，因为 emit 必须在事务里），`drain()` 不投递未提交的事件，补测试。
+- **R3-3（顺手改，重复代码）**：`InMemoryExecution._touch` 和第 4 步挪到 kernel 的 `track_rollback` 是同一套逻辑（快照 + 回滚还原），改成调用 `track_rollback`；"连续 8 行相同"的检查没抓到它。
+- 本步不涉及、留给真实实现验收：并发提交只产生一个调用、旧 fencing token 被拒、原进程存活不回收租约、重道无饥饿（桩单线程，测不了）。
+
+返工完成后：code 模式跑 `tl check`，并在本表把对应行改成"待复审 <提交号>"。
