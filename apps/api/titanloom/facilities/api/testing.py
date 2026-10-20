@@ -9,10 +9,10 @@
         tx_session.commit()
         assert facilities_stub.audits[-1].result == "succeeded"
 
-它做什么：审计的哈希链、待办（多人先到先得、幂等）、通知（收件人按权限筛、5 分钟合并、按收件人语言渲染）、
-文案按语言取字、文件引用（内容指纹去重、按挂靠对象授权、隔离区不可下载）。
+它做什么：审计的哈希链、待办（多人先到先得、按 (类型, 来源, 版本) 幂等）、通知（收件人按权限筛、幂等键去重、
+合并键 5 分钟合并、发送时定稿文字与语言包版本）、文案按语言取字、文件引用（同样字节只在 blob 层去重、按挂靠对象授权、
+隔离区不可下载）。
 它不做什么：不上传 / 检查 / 派生文件，不存保留期，不做通知偏好、免打扰与外发，不做搜索。
-
 事务：名字带 in_tx 的不在 kernel.db 事务里就报错；事务里做的一切随会话回滚一起撤销。
 测试要用带库的会话时，用 execution.api.testing 的 `tx_session` fixture。
 """
@@ -29,6 +29,7 @@ from typing import Any
 import pytest
 
 from titanloom.access import api as access_api
+from titanloom.access.api import Target
 from titanloom.access.api.testing import InMemoryAccess
 from titanloom.facilities.api import _provider
 from titanloom.facilities.api import types as t
@@ -70,6 +71,7 @@ class _Todo:
     seq: int
     todo_id: str
     key: t.TodoKey
+    source_version: int
     title_key: str
     params: Mapping[str, Any]
     due_at: datetime | None
@@ -88,6 +90,8 @@ class _Notif:
     draft: t.NotifyDraft
     params: Mapping[str, Any]
     lang: t.Lang
+    text: str  # 发送（或合并更新）时渲染好的，读取不再重渲染
+    pack_version: str  # 渲染时用的语言包版本
     created_at: datetime
     last_at: datetime
     count: int = 1
@@ -107,12 +111,28 @@ class _Asset:
 
 
 @dataclass(slots=True)
+class _Blob:
+    sha256: str
+    size: int
+    ref_count: int
+
+
+@dataclass(frozen=True, slots=True)
+class BlobState:
+    """测试用：blob（字节内容）一层。同样字节只一份 blob，引用计数是引用它的 asset 版本数。"""
+
+    sha256: str
+    size: int
+    ref_count: int
+
+
+@dataclass(slots=True)
 class _State:
     audits: list[t.AuditEvent] = field(default_factory=lambda: [])
     todos: dict[t.TodoKey, _Todo] = field(default_factory=lambda: {})
     notifs: list[_Notif] = field(default_factory=lambda: [])
     assets: dict[tuple[str, int], _Asset] = field(default_factory=lambda: {})
-    by_hash: dict[str, tuple[str, int]] = field(default_factory=lambda: {})
+    blobs: dict[str, _Blob] = field(default_factory=lambda: {})
     refs: list[t.AssetRef] = field(default_factory=lambda: [])
     seq: int = 0
 
@@ -165,6 +185,11 @@ class InMemoryFacilities:
         return tuple(self._asset_view(a) for a in self._s.assets.values())
 
     @property
+    def blobs(self) -> tuple[BlobState, ...]:
+        """所有 blob（同样字节只一份），带引用它的 asset 版本数。"""
+        return tuple(BlobState(b.sha256, b.size, b.ref_count) for b in self._s.blobs.values())
+
+    @property
     def refs(self) -> tuple[t.AssetRef, ...]:
         return tuple(self._s.refs)
 
@@ -198,7 +223,8 @@ class InMemoryFacilities:
         size: int | None = None,
         state: t.AssetState = "available",
     ) -> tuple[str, int]:
-        """测试用：代替“上传 + 检查”，直接造一个文件版本。相同内容只存一份，返回已有的 (asset_id, version)。
+        """测试用：代替“上传 + 检查”，直接造一个文件版本。每次调用都是一个新文件（自己的名字与状态），
+        只在 blob（字节）层按 sha256 去重：同样字节只存一份。
 
         size 可以声明一个比 data 大的尺寸，用来测上限而不必真造那么多字节。
         """
@@ -210,11 +236,12 @@ class InMemoryFacilities:
             raise AppError(ErrorCode.INVALID_REQUEST, details={"field": "name", "reason": "file_type_blocked"})
         sha = hashlib.sha256(data).hexdigest()
         self._touch()
-        if sha in self._s.by_hash:
-            return self._s.by_hash[sha]
+        blob = self._s.blobs.get(sha)
+        if blob is None:
+            blob = self._s.blobs[sha] = _Blob(sha, len(data), 0)
+        blob.ref_count += 1
         asset_id = "ast_" + uuid7().hex
         self._s.assets[(asset_id, 1)] = _Asset(asset_id, 1, state, name, content_type, real, sha, self.clock.now())
-        self._s.by_hash[sha] = (asset_id, 1)
         return asset_id, 1
 
     def set_asset_state(self, asset_id: str, version: int, state: t.AssetState) -> None:
@@ -298,10 +325,18 @@ class InMemoryFacilities:
         return self._append_audit(draft)
 
     def audit_for(
-        self, target: t.ObjectRef, *, cursor: str | None = None, limit: int | None = None
+        self,
+        target: t.ObjectRef,
+        *,
+        access_target: Target | None = None,
+        cursor: str | None = None,
+        limit: int | None = None,
     ) -> Page[t.AuditEvent]:
         if self.enforce_access:
-            access_api.check(t.AUDIT_READ_CAPABILITY).require()
+            # access_target 是对象的真实归属；不给 = 归属未知，只有“全部”范围的授权能过。
+            access_api.check(
+                t.AUDIT_READ_CAPABILITY, access_target if access_target is not None else Target()
+            ).require()
         rows = [(i, ev.event_id, ev) for i, ev in enumerate(self._s.audits, 1) if ev.target == target]
         page = _page(rows[::-1], cursor, limit)
         self._append_audit(t.AuditDraft(t.AUDIT_READ_CAPABILITY, "1.0.0", target, "succeeded"))  # 查看审计本身也留痕
@@ -317,7 +352,17 @@ class InMemoryFacilities:
 
     def _todo_view(self, x: _Todo) -> t.TodoView:
         return t.TodoView(
-            x.todo_id, x.key, x.title_key, x.params, x.due_at, x.state, x.opened_at, x.assignees, x.done_by, x.done_at
+            x.todo_id,
+            x.key,
+            x.title_key,
+            x.params,
+            x.due_at,
+            x.state,
+            x.opened_at,
+            x.assignees,
+            x.done_by,
+            x.done_at,
+            source_version=x.source_version,
         )
 
     def _todo(self, key: t.TodoKey) -> _Todo:
@@ -331,17 +376,22 @@ class InMemoryFacilities:
         decl = self._todo_types.get(draft.key.type)
         if decl is None:
             raise NotRegistered(f"待办类型 {draft.key.type!r} 没有登记")
-        old = self._s.todos.get(draft.key)
-        if old is not None:
-            if old.state != "open":
-                raise AppError(ErrorCode.RESOURCE_VERSION_CONFLICT, details={"state": old.state})
-            return self._todo_view(old)
+        current = self._s.todos.get(draft.key)
+        if current is not None:
+            if draft.source_version <= current.source_version:
+                return self._todo_view(current)  # 同一事件重投 / 迟到的旧事件：什么也不做
+            if current.state == "open":
+                raise AppError(
+                    ErrorCode.RESOURCE_VERSION_CONFLICT,
+                    details={"state": current.state, "sourceVersion": current.source_version},
+                )
         self._touch()
         now = self.clock.now()
         x = _Todo(
             self._next_seq(),
             "td_" + uuid7().hex,
             draft.key,
+            draft.source_version,
             draft.title_key or decl.title_key,
             dict(draft.params),
             draft.due_at,
@@ -441,9 +491,9 @@ class InMemoryFacilities:
             d.subject,
             d.message_key,
             n.params,
-            self._render(d.message_key, n.params, n.lang),
+            n.text,
             n.lang,
-            self.pack_version(n.lang),
+            n.pack_version,
             n.count,
             n.created_at,
             n.last_at,
@@ -462,13 +512,16 @@ class InMemoryFacilities:
                 and not access_api.check(draft.view_capability, draft.access_target, subject=who).allowed
             ):
                 continue
+            # 幂等键：同一收件人同一事件已经发过，重投时什么也不做（合并计数也不变）
+            if any(n.recipient == who and n.draft.idempotency_key == draft.idempotency_key for n in self._s.notifs):
+                continue
             same = next(
                 (
                     n
                     for n in reversed(self._s.notifs)
-                    if draft.dedupe_key is not None
+                    if draft.merge_key is not None
                     and n.recipient == who
-                    and n.draft.dedupe_key == draft.dedupe_key
+                    and n.draft.merge_key == draft.merge_key
                     and n.read_at is None
                     and now - n.last_at < MERGE_WINDOW
                 ),
@@ -478,7 +531,10 @@ class InMemoryFacilities:
                 same.count += 1
                 same.last_at = now
                 same.params = dict(draft.params)
+                same.text = self._render(same.draft.message_key, same.params, same.lang)
+                same.pack_version = self.pack_version(same.lang)
                 continue
+            lang = self._langs.get(who, t.DEFAULT_LANG)
             self._s.notifs.append(
                 _Notif(
                     self._next_seq(),
@@ -486,7 +542,9 @@ class InMemoryFacilities:
                     who,
                     draft,
                     dict(draft.params),
-                    self._langs.get(who, t.DEFAULT_LANG),
+                    lang,
+                    self._render(draft.message_key, draft.params, lang),
+                    self.pack_version(lang),
                     now,
                     now,
                 )
@@ -596,7 +654,7 @@ def _copy(state: _State) -> _State:
         {k: replace(v) for k, v in state.todos.items()},
         [replace(n) for n in state.notifs],
         {k: replace(v) for k, v in state.assets.items()},
-        dict(state.by_hash),
+        {k: replace(v) for k, v in state.blobs.items()},
         list(state.refs),
         state.seq,
     )

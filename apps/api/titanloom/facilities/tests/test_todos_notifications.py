@@ -16,9 +16,9 @@ KEY = fac.TodoKey(TODO_TYPE, "attendance:leave:LV-0001")
 AMY, BOB, CAT = "acc-A0004", "acc-H0012", "acc-I0002"
 
 
-def _open(*who: str) -> fac.TodoView:
+def _open(*who: str, version: int = 1) -> fac.TodoView:
     with db.transaction():
-        return fac.todo_open_in_tx(fac.TodoDraft(KEY, who, params={"name": "小王"}))
+        return fac.todo_open_in_tx(fac.TodoDraft(KEY, who, source_version=version, params={"name": "小王"}))
 
 
 # ---- 待办 ----
@@ -27,12 +27,12 @@ def _open(*who: str) -> fac.TodoView:
 def test_todo_needs_a_transaction(facilities_stub: InMemoryFacilities) -> None:
     fac.register_todo_type(fac.TodoTypeDecl(TODO_TYPE, "attendance", "attendance.leave.approveTitle", TODO_TYPE))
     with pytest.raises(NotInTransaction):
-        fac.todo_open_in_tx(fac.TodoDraft(KEY, (AMY,)))
+        fac.todo_open_in_tx(fac.TodoDraft(KEY, (AMY,), source_version=1))
 
 
 def test_todo_needs_registered_type(ready: InMemoryFacilities) -> None:
     with pytest.raises(NotRegistered), db.transaction():
-        fac.todo_open_in_tx(fac.TodoDraft(fac.TodoKey("x.unknown", "s"), (AMY,)))
+        fac.todo_open_in_tx(fac.TodoDraft(fac.TodoKey("x.unknown", "s"), (AMY,), source_version=1))
 
 
 def test_open_is_idempotent_and_shows_in_my_todos(ready: InMemoryFacilities) -> None:
@@ -43,6 +43,25 @@ def test_open_is_idempotent_and_shows_in_my_todos(ready: InMemoryFacilities) -> 
         assert [x.todo_id for x in fac.my_todos().items] == [first.todo_id]
     with as_principal(CAT):
         assert fac.my_todos().items == []
+
+
+def test_todo_key_idempotent_by_source_version(ready: InMemoryFacilities) -> None:
+    """R4-4：来源对象版本推进后可以再开一条；同一版本重投是幂等；旧一条还开着则冲突。"""
+    first = _open(AMY, version=1)
+    with db.transaction():
+        fac.todo_close_in_tx(KEY, done_by=AMY)
+    retry = _open(AMY, version=1)  # 同一个事件重投：不要再开一条
+    assert retry.todo_id == first.todo_id and retry.state == "done"
+    second = _open(AMY, version=2)  # 退回重提：来源版本更新，旧的已办完 → 新开一条
+    assert second.todo_id != first.todo_id and second.state == "open" and second.source_version == 2
+    assert _open(AMY, version=2).todo_id == second.todo_id  # 同一版本重投还是同一条
+    with pytest.raises(AppError) as err, db.transaction():
+        fac.todo_open_in_tx(fac.TodoDraft(KEY, (AMY,), source_version=3))
+    assert err.value.code == ErrorCode.RESOURCE_VERSION_CONFLICT  # 旧的还开着
+    with db.transaction():
+        fac.todo_withdraw_in_tx(KEY)
+    third = _open(AMY, version=3)  # 旧的撤回了，新版本可以开
+    assert third.todo_id != second.todo_id and third.state == "open" and third.source_version == 3
 
 
 def test_group_todo_first_to_finish_wins(ready: InMemoryFacilities) -> None:
@@ -99,7 +118,14 @@ def test_unknown_todo_is_not_found(ready: InMemoryFacilities) -> None:
 # ---- 通知 ----
 
 
-def _notify(*who: str, dedupe: str | None = None, view: bool = True, name: str = "小王") -> None:
+_notify_seq = 0
+
+
+def _notify(
+    *who: str, idem: str | None = None, merge: str | None = None, view: bool = True, name: str = "小王"
+) -> None:
+    global _notify_seq
+    _notify_seq += 1
     with db.transaction():
         fac.notify_in_tx(
             fac.NotifyDraft(
@@ -108,9 +134,10 @@ def _notify(*who: str, dedupe: str | None = None, view: bool = True, name: str =
                 "info",
                 tuple(who),
                 "attendance.leave.submitted",
+                idem or f"event-{_notify_seq}",
                 {"name": name},
+                merge_key=merge,
                 subject=fac.ObjectRef("leave", "LV-0001"),
-                dedupe_key=dedupe,
                 view_capability=LEAVE if view else None,
                 access_target=LEAVE_TARGET if view else None,
             )
@@ -136,17 +163,60 @@ def test_rendered_in_recipient_language_with_pack_version(ready: InMemoryFacilit
     assert zh.pack_version == fac.pack_version("zh-CN") and en.pack_version.startswith("en-US@")
 
 
-def test_same_dedupe_key_merges_within_five_minutes(ready: InMemoryFacilities, access_stub: object) -> None:
-    _notify(AMY, dedupe="leave-LV-0001", name="一")
+def test_redelivered_event_is_not_counted_again(ready: InMemoryFacilities) -> None:
+    """R4-2：同一事件重投（至少一次投递）什么也不做，合并计数不涨。"""
+    _notify(AMY, idem="evt-1", merge="leave-LV-0001", name="一")
+    _notify(AMY, idem="evt-1", merge="leave-LV-0001", name="一")  # 同一个事件重投
+    with as_principal(AMY):
+        items = fac.my_notifications().items
+    assert len(items) == 1 and items[0].count == 1
+    # 之后真正的新事件才合并计数
+    _notify(AMY, idem="evt-2", merge="leave-LV-0001", name="二")
+    with as_principal(AMY):
+        items = fac.my_notifications().items
+    assert len(items) == 1 and items[0].count == 2
+
+
+def test_same_merge_key_merges_within_five_minutes(ready: InMemoryFacilities, access_stub: object) -> None:
+    _notify(AMY, idem="evt-1", merge="leave-LV-0001", name="一")
     ready.clock.advance(minutes=4)  # type: ignore[attr-defined]
-    _notify(AMY, dedupe="leave-LV-0001", name="二")
+    _notify(AMY, idem="evt-2", merge="leave-LV-0001", name="二")
     with as_principal(AMY):
         items = fac.my_notifications().items
     assert len(items) == 1 and items[0].count == 2 and items[0].text.startswith("二")
     ready.clock.advance(minutes=6)  # type: ignore[attr-defined]
-    _notify(AMY, dedupe="leave-LV-0001")
+    _notify(AMY, idem="evt-3", merge="leave-LV-0001")
     with as_principal(AMY):
         assert len(fac.my_notifications().items) == 2  # 超过 5 分钟另起一条
+
+
+def test_notification_text_is_frozen_at_send_time(ready: InMemoryFacilities) -> None:
+    """R4-5：渲染好的文字与语言包版本在发送时存下，之后改文案不影响已发的通知。"""
+    _notify(AMY)
+    with as_principal(AMY):
+        before = fac.my_notifications().items[0]
+    sent_pack = before.pack_version
+    fac.register_texts(
+        "attendance", {"attendance.leave.submitted": fac.TextEntry("{name} 交了请假（改过）", "{name} changed")}
+    )
+    assert fac.pack_version("zh-CN") != sent_pack  # 语言包确实更新了
+    with as_principal(AMY):
+        after = fac.my_notifications().items[0]
+    assert after.text == before.text == "小王 提交了请假"
+    assert after.pack_version == sent_pack
+
+
+def test_merge_updates_stored_text_at_merge_time(ready: InMemoryFacilities) -> None:
+    _notify(AMY, idem="evt-1", merge="leave-LV-0001", name="一")
+    fac.register_texts(
+        "attendance", {"attendance.leave.submitted": fac.TextEntry("{name} 交了请假（改过）", "{name} changed")}
+    )
+    ready.clock.advance(minutes=1)  # type: ignore[attr-defined]
+    _notify(AMY, idem="evt-2", merge="leave-LV-0001", name="二")
+    with as_principal(AMY):
+        item = fac.my_notifications().items[0]
+    assert item.count == 2 and item.text == "二 交了请假（改过）"
+    assert item.pack_version == fac.pack_version("zh-CN")
 
 
 def test_read_state_is_per_recipient(ready: InMemoryFacilities) -> None:
@@ -171,11 +241,13 @@ def test_mandatory_categories(ready: InMemoryFacilities) -> None:
 
 def test_notify_rolls_back_and_requires_registered_text(ready: InMemoryFacilities, tx_session: Session) -> None:
     with db.transaction():
-        fac.notify_in_tx(fac.NotifyDraft("a.b", "system", "info", (AMY,), "attendance.leave.submitted", {"name": "x"}))
+        fac.notify_in_tx(
+            fac.NotifyDraft("a.b", "system", "info", (AMY,), "attendance.leave.submitted", "evt-rb", {"name": "x"})
+        )
     tx_session.rollback()
     assert ready.notifications == ()
     with pytest.raises(NotRegistered), db.transaction():
-        fac.notify_in_tx(fac.NotifyDraft("a.b", "system", "info", (AMY,), "attendance.leave.nope"))
+        fac.notify_in_tx(fac.NotifyDraft("a.b", "system", "info", (AMY,), "attendance.leave.nope", "evt-nope"))
 
 
 # ---- 文案 ----

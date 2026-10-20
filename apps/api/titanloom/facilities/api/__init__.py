@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 
+from titanloom.access.api import Target
 from titanloom.facilities.api import _provider
 from titanloom.facilities.api._provider import FacilitiesApi, set_provider, use_provider
 from titanloom.facilities.api.types import (
@@ -107,9 +108,19 @@ def audit_in_tx(draft: AuditDraft) -> str:
     return _provider.provider().audit_in_tx(draft)
 
 
-def audit_for(target: ObjectRef, *, cursor: str | None = None, limit: int | None = None) -> Page[AuditEvent]:
-    """按对象查审计，新的在前。需要 `facilities.audit.read`；查看本身也会记一条审计。"""
-    return _provider.provider().audit_for(target, cursor=cursor, limit=limit)
+def audit_for(
+    target: ObjectRef,
+    *,
+    access_target: Target | None = None,
+    cursor: str | None = None,
+    limit: int | None = None,
+) -> Page[AuditEvent]:
+    """按对象查审计，新的在前。需要 `facilities.audit.read`；access_target 决定数据范围，不给只有“全部”能过。
+
+    access_target 是对象的真实归属（与 NotifyDraft.access_target 同一口径）：部门负责人只看本部门相关；
+    不给 = 归属未知，只有“全部”范围的授权能过。查看本身也会记一条审计。
+    """
+    return _provider.provider().audit_for(target, access_target=access_target, cursor=cursor, limit=limit)
 
 
 # ---- 待办 ----
@@ -121,7 +132,10 @@ def register_todo_type(decl: TodoTypeDecl) -> None:
 
 
 def todo_open_in_tx(draft: TodoDraft) -> TodoView:
-    """新建待办。同一 (类型, 来源引用) 已有未关闭的，原样返回（幂等）。多个办理人 = 一条多人待办。"""
+    """新建待办。按 (类型, 来源引用, 来源版本) 幂等；版本推进且旧的已办完 / 撤回才另开一条。
+
+    同一版本重投原样返回；旧的还开着又来新版本则 RESOURCE_VERSION_CONFLICT。多个办理人 = 一条多人待办。
+    """
     return _provider.provider().todo_open_in_tx(draft)
 
 
@@ -154,8 +168,11 @@ def my_todos(*, state: TodoState | None = None, cursor: str | None = None, limit
 
 
 def notify_in_tx(draft: NotifyDraft) -> None:
-    """在事务里发应用内通知。看不到对象的收件人被去掉；按收件人语言渲染并记语言包版本；
-    同一收件人同一去重键 5 分钟内合并计数。不返回谁收到了谁没有。"""
+    """在事务里发应用内通知。idempotency_key 管重投、merge_key 管 5 分钟合并；发送时定稿文字与语言包版本。
+
+    idempotency_key 相同（同一事件重投）什么也不做；merge_key 相同的 5 分钟内合并计数。
+    看不到对象的收件人被去掉；按收件人语言渲染。不返回谁收到了谁没有。
+    """
     _provider.provider().notify_in_tx(draft)
 
 

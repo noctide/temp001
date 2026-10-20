@@ -9,6 +9,7 @@ from collections.abc import Callable, Generator, Mapping, Sequence
 from contextlib import contextmanager
 from typing import Protocol
 
+from titanloom.access.api import Target
 from titanloom.facilities.api import types as t
 from titanloom.kernel.paging import Page
 
@@ -18,7 +19,12 @@ class FacilitiesApi(Protocol):
     def audit_in_tx(self, draft: t.AuditDraft) -> str: ...
 
     def audit_for(
-        self, target: t.ObjectRef, *, cursor: str | None = None, limit: int | None = None
+        self,
+        target: t.ObjectRef,
+        *,
+        access_target: Target | None = None,
+        cursor: str | None = None,
+        limit: int | None = None,
     ) -> Page[t.AuditEvent]: ...
 
     # 待办

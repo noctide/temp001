@@ -39,12 +39,25 @@ def _grant(asset: tuple[str, int], obj: fac.ObjectRef = LV1, field: str = "attac
     return fac.download_grant(*asset, ref_module="attendance", ref_object=obj, ref_field=field)
 
 
+def test_same_bytes_are_two_files_one_blob(ready: InMemoryFacilities) -> None:
+    """R4-1：同样字节上传两次是两个文件（各自的名字与状态），只在 blob 层去重。"""
+    zhang = ready.put_asset(b"same", "张三-病假条.pdf")
+    li = ready.put_asset(b"same", "李四-病假条.pdf")
+    assert zhang != li and len(ready.assets) == 2
+    assert {a.name for a in ready.assets} == {"张三-病假条.pdf", "李四-病假条.pdf"}
+    assert len({a.sha256 for a in ready.assets}) == 1
+    assert len(ready.blobs) == 1 and ready.blobs[0].ref_count == 2
+    # 各自状态互不影响：撤回张三那份，李四那份仍可用
+    ready.set_asset_state(*zhang, "withdrawn")
+    states = {a.asset_id: a.state for a in ready.assets}
+    assert states[zhang[0]] == "withdrawn" and states[li[0]] == "available"
+
+
 def test_same_bytes_are_stored_once_but_authorized_per_reference(ready: InMemoryFacilities) -> None:
     a = ready.put_asset(b"same", "a.pdf")
     b = ready.put_asset(b"same", "b.pdf")
-    assert a == b and len(ready.assets) == 1
     _ref(a, LV1)
-    _ref(a, LV2)
+    _ref(b, LV2)
     SEES.add("acc-H0012")
     with as_principal("acc-A0004"):
         assert _grant(a, LV1).asset_id == a[0]

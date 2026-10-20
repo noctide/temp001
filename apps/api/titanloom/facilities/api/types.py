@@ -32,6 +32,7 @@ AUDIT_READ_CAPABILITY = "facilities.audit.read"
 
 _TEXT_KEY_RE = re.compile(r"^(plugin\.[a-z0-9-]+|[a-z][a-z0-9]*)(\.[a-z][A-Za-z0-9]*)+$")
 _TYPE_RE = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$")
+_DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
 
 def digest(value: Any) -> str:
@@ -62,7 +63,10 @@ class ObjectRef:
 
 @dataclass(frozen=True, slots=True)
 class AuditDraft:
-    """调用方交的内容；谁、何时、哪个代办、策略版本由实现从请求上下文与时钟补。"""
+    """调用方交的内容；谁、何时、哪个代办、策略版本由实现从请求上下文与时钟补。前后摘要只收 `digest()` 的输出。
+
+    前后值只收摘要：`digest()` 的输出（sha256:<64 位 hex>），不收明文与其它格式。
+    """
 
     capability_id: str
     contract_version: str
@@ -75,6 +79,12 @@ class AuditDraft:
     command_id: str | None = None
     job_id: str | None = None
     evidence_ref: str | None = None
+
+    def __post_init__(self) -> None:
+        for name in ("before_digest", "after_digest"):
+            value = getattr(self, name)
+            if value is not None and not _DIGEST_RE.match(value):
+                raise ValueError(f"{name} 只收 digest() 的摘要（sha256:<64 位 hex>），不收明文：{value!r}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,8 +144,11 @@ class TodoTypeDecl:
 
 @dataclass(frozen=True, slots=True)
 class TodoDraft:
+    """模块在事务里发出的新待办 / 换人事件。source_version 是来源对象事件的版本：(类型, 来源引用, 版本) 幂等。"""
+
     key: TodoKey
     assignees: tuple[str, ...]
+    source_version: int
     title_key: str | None = None  # 不给就用类型登记的
     params: Mapping[str, Any] = field(default_factory=lambda: {})
     due_at: datetime | None = None
@@ -143,12 +156,17 @@ class TodoDraft:
     def __post_init__(self) -> None:
         if not self.assignees:
             raise ValueError("待办至少要有一个办理人")
+        if self.source_version < 1:
+            raise ValueError(f"来源版本从 1 起：{self.source_version!r}")
         _need_tz(self.due_at)
 
 
 @dataclass(frozen=True, slots=True)
 class TodoView:
-    """契约 todo-item。多人待办只有一条：先办的人记在 done_by，其余人看到“已由他人办理”（done_by 不是自己）。"""
+    """契约 todo-item。多人待办一条、先办先得；source_version 是开这条待办时的来源版本。
+
+    done_by 不是自己即“已由他人办理”。来源版本推进后旧的已办完 / 撤回才另开一条。
+    """
 
     todo_id: str
     key: TodoKey
@@ -160,6 +178,7 @@ class TodoView:
     assignees: tuple[str, ...]
     done_by: str | None = None
     done_at: datetime | None = None
+    source_version: int = 1
 
 
 # ---- 通知 ----
@@ -167,22 +186,32 @@ class TodoView:
 
 @dataclass(frozen=True, slots=True)
 class NotifyDraft:
-    """应用内通知。收件人是账户；设了 view_capability 的，看不到对象的收件人会被去掉（不报错、不回告）。"""
+    """应用内通知。idempotency_key 管同一事件重投、merge_key 管 5 分钟同类合并；看不到对象的收件人被去掉。
+
+    收件人是账户；设了 view_capability 的，看不到对象的收件人会被去掉（不报错、不回告）。
+    idempotency_key 是同一事件的幂等键（至少一次投递重投时什么也不做），merge_key 是同类合并键
+    （同一收件人 5 分钟内合并计数）。不给 merge_key 就不合并。
+    """
 
     type: str
     category: Category
     severity: Severity
     recipients: tuple[str, ...]
     message_key: str
+    idempotency_key: str
     params: Mapping[str, Any] = field(default_factory=lambda: {})
+    merge_key: str | None = None
     subject: ObjectRef | None = None
-    dedupe_key: str | None = None
     view_capability: str | None = None
     access_target: Target | None = None  # 传给 access.api.check 判定收件人能不能看到对象
 
     def __post_init__(self) -> None:
         if not _TYPE_RE.match(self.type) or not _TEXT_KEY_RE.match(self.message_key):
             raise ValueError(f"通知类型或文案键不合法：{self.type!r} / {self.message_key!r}")
+        if not self.idempotency_key:
+            raise ValueError("通知必须有幂等键（同一事件重投时什么也不做）")
+        if self.merge_key is not None and not self.merge_key:
+            raise ValueError("合并键给了就不能是空串")
 
 
 @dataclass(frozen=True, slots=True)

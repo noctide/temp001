@@ -5,7 +5,8 @@ from dataclasses import replace
 import pytest
 from sqlalchemy.orm import Session
 
-from titanloom.access.api.testing import InMemoryAccess, as_principal
+from titanloom.access.api import Target
+from titanloom.access.api.testing import Cond, InMemoryAccess, as_principal
 from titanloom.facilities import api as fac
 from titanloom.facilities.api.testing import InMemoryFacilities, NotInTransaction
 from titanloom.kernel import context, db
@@ -13,6 +14,8 @@ from titanloom.kernel.errors import AppError
 from titanloom.kernel.reg.errors import ErrorCode
 
 LEAVE = fac.ObjectRef("leave", "LV-0001")
+# 装配一部（asm1）的请假单：真实归属用于数据范围判定
+LEAVE_TARGET = Target("leave", "LV-0001", dept_id="asm1")
 
 
 def _draft(result: fac.AuditResult = "succeeded", **kw: object) -> fac.AuditDraft:
@@ -102,6 +105,37 @@ def test_audit_for_pages_newest_first_and_filters_by_object(ready: InMemoryFacil
         with pytest.raises(AppError) as err:
             fac.audit_for(LEAVE, cursor="bad!")
     assert err.value.code == ErrorCode.INVALID_REQUEST
+
+
+def test_audit_read_follows_the_objects_data_scope(ready: InMemoryFacilities, access_stub: InMemoryAccess) -> None:
+    """R4-3：仓储物流负责人只被授予“本部门”的 audit.read，不能看装配一部请假单的审计。"""
+    access_stub.grant("acc-W0003", fac.AUDIT_READ_CAPABILITY, Cond.own_dept("deptId"))
+    with as_principal("acc-A0004"), db.transaction():
+        fac.audit_in_tx(_draft())
+    with as_principal("acc-W0003"), pytest.raises(AppError) as err:
+        fac.audit_for(LEAVE, access_target=LEAVE_TARGET)  # 装配一部的对象，不在他部门
+    assert err.value.code == ErrorCode.ACCESS_DENIED
+    own = fac.ObjectRef("leave", "LV-0009")
+    with as_principal("acc-W0003"):
+        assert fac.audit_for(own, access_target=Target("leave", "LV-0009", dept_id="wh")).items == []
+    # 不给对象归属：只有“全部”范围的授权能过
+    with as_principal("acc-W0003"), pytest.raises(AppError) as err:
+        fac.audit_for(LEAVE)
+    assert err.value.code == ErrorCode.ACCESS_DENIED
+    with as_principal("acc-H0012"):
+        assert len(fac.audit_for(LEAVE).items) == 1
+
+
+def test_audit_digests_must_be_hashes(ready: InMemoryFacilities) -> None:
+    """R4-6：前后摘要只收 digest() 的输出，塞明文直接拒绝。"""
+    with pytest.raises(ValueError):
+        _draft(before_digest="身份证 110101199001011234")
+    with pytest.raises(ValueError):
+        _draft(after_digest="sha256:xyz")
+    with pytest.raises(ValueError):
+        _draft(before_digest="md5:" + "a" * 32)
+    ok = _draft(before_digest=fac.digest({"days": 1}), after_digest=None)
+    assert ok.before_digest is not None and ok.before_digest.startswith("sha256:")
 
 
 def test_acting_for_records_executor(ready: InMemoryFacilities, access_stub: InMemoryAccess) -> None:
