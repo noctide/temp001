@@ -37,7 +37,7 @@
    - 先做：`whoami`、`check`、`filter`、`members`、`register`（考勤阶段 2 要用的就这五个）。
    - 接口用 Protocol + 数据类定义在 `access/api/`；同时给 `access/api/testing.py` 一个**测试桩**（内存里的人、部门、授权，按合成人设表），其他模块的测试只用它。
    - 契约：`packages/contracts` 里 access-decision、access-filter。
-3. **`execution.api`**（命令与任务 12 节）
+3. **`execution.api`**（命令与任务 12 节）—— ✅ 接口 + 测试桩已做（2026-10-20，维护者已确认签名）：模块级函数 `register_binding / job_handler / reconcile_handler / version_validator / prepare / confirm / submit / run / cancel / cancel_job / enqueue_in_tx / emit_in_tx / schedule / pause_schedule / resume_schedule / end_schedule / get_job / subscribe`，实现经 `_provider.set_provider()` 装入；桩 `execution.api.testing`：`execution_stub`（依赖 `access_stub`，共用时钟）+ `tx_session`（内存 SQLite 会话，用来测回滚）。确认以外的要点：`confirm` 仅命令本人（人）可调，管家 / 服务身份 / 代办一律 ACCESS_DENIED，确认一次性、绑定 commandId + 摘要；`run` = 同事务 prepare + submit，要确认的能力抛 CONFIRMATION_REQUIRED；commandId = `cmd_`+uuid7 全 32 位十六进制；任务号 `JR-0001`；事件至少一次投递，桩有 `redeliver(event_id)`，订阅者必须幂等。**与确认稿的差异**：登记类用普通调用（`job_handler` / `reconcile_handler` / `version_validator` / `subscribe`）不用装饰器；多了 `cancel_job`；`submit` 的键必须与 `prepare` 的键相同。**局限**：桩只有一个工作区；不展开 rrule（`fire(rule_id, planned_at)` 手动触发）；新订阅者从“现在”起收；`drain()` 手动推进后台任务与事件；能力编号在命令 / 调用契约里是短编号，在 execution-binding 契约里加 `titanloom.` 前缀；没有命令的任务（直接 `enqueue_in_tx`）还没有对应的 job-run 契约输出。原要求如下：
    - 先做：`register_binding`、`prepare` / `submit`（含幂等键）、`enqueue_in_tx`、`emit_in_tx`、`schedule`；同样配测试桩（同步执行、记录发出的事件和任务，供断言）。
 4. **`facilities.api`**（公共设施 8 节）
    - 先做：审计（事务内写入）、待办（事务内发出 / 办完、登记类型）、通知（事务内发出）、文件（登记 / 取消引用、按引用下载）、文案（后端按语言取字）；同样配测试桩。
@@ -47,6 +47,12 @@
 接口规矩：模块之间只 import 对方的 `api` 和 `kernel`；接口签名一次定好（同一功能不出两套参数）；错误一律 `AppError(ErrorCode…)`；时间带时区；分页用 kernel 的游标。
 
 > 待维护者确认的两点：① 首期用同步 SQLAlchemy 会话（路由写普通 `def`）；② 运行账号目前是一个 `titanloom_app`（对各模块 schema 读写），按模块分账号需要每模块一个引擎，先不做，模块间隔离靠 import-linter 与审核。
+
+### 待维护者决定（累计）
+
+1. **access-filter 的 all + not 缺口**（2026-10-20 提出）：契约规定 `all` 不能再带 `not`，所以"全部减去拒绝条件"无法表达，测试桩现在直接 `NotImplementedError`。选项：A. 契约改为允许 `all` + `not`（改 access-filter 契约与 `access.api.types`、`sql.to_sqlalchemy` 已能支持）；B. 真实实现把它改写成 `any`（要把"全部"展开成枚举，部门多了会很长）。我倾向 A。
+2. 首期用同步 SQLAlchemy 会话；运行账号先用单一 `titanloom_app`（见上）。
+3. 第 1 步迁移与建库脚本需在装了 PostgreSQL 的环境验证。
 
 ## 4. 审核与合入（Agent 报"阶段 N 做完了"时）
 

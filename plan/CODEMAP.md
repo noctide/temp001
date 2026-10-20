@@ -144,7 +144,57 @@
 
 登记：params 0 · features 0 · pages 0 · objects 0
 
-（api 层还没有对外函数）
+- `execution.api.__init__.register_binding` — 登记能力的执行方式。同样内容重复登记没有影响；同一能力内容不同则报错。
+- `execution.api.__init__.job_handler` — 登记“拿到任务怎么干”。任务类型就是能力编号，或 enqueue_in_tx 用的类型名。
+- `execution.api.__init__.reconcile_handler` — 登记领域的核对方法：副作用不确定时由平台调用，结论必须附证据。
+- `execution.api.__init__.version_validator` — 登记“目标版本还是不是准备时的那个”。提交时返回 False 则拒绝，要求重新准备。
+- `execution.api.__init__.prepare` — 准备一条命令：固定参数与版本、算摘要、查权限、存预览。主体取自 kernel.context。
+- `execution.api.__init__.confirm` — 确认。只给 HTTP 确认界面调用：只有命令本人（人）能确认，管家、服务身份、代办一律 ACCESS_DENIED。
+- `execution.api.__init__.submit` — 提交 = 一次写完：复查权限与版本、消费确认、写调用与任务。同一事务。重复提交返回原调用。
+- `execution.api.__init__.run` — 低影响操作：同一请求、同一事务里 prepare + submit，参数与 prepare 完全相同。
+- `execution.api.__init__.cancel` — 取消还没接收的命令。已接收的要取消任务（cancel_job）。
+- `execution.api.__init__.cancel_job` — 请求取消任务：没开始直接取消，运行中在检查点停；已完成的如实返回完成。
+- `execution.api.__init__.enqueue_in_tx` — 在调用者自己的事务里放一个后台任务；事务回滚则任务也没有。不在事务里报错。
+- `execution.api.__init__.emit_in_tx` — 在调用者自己的事务里写一条事件到发件箱，返回事件编号。不在事务里报错。
+- `execution.api.__init__.schedule` — 登记或修改定时规则（按 rule_id）。返回规则编号。
+- `execution.api.__init__.pause_schedule` — （没写说明）
+- `execution.api.__init__.resume_schedule` — （没写说明）
+- `execution.api.__init__.end_schedule` — （没写说明）
+- `execution.api.__init__.get_job` — （没写说明）
+- `execution.api.__init__.subscribe` — 订阅事件（event_type 可带 * 通配，如 attendance.*）。至少一次投递，handler 必须幂等（按 event_id 去重）。
+- `execution.api._provider.ExecutionApi` — （没写说明）
+- `execution.api._provider.set_provider` — 装入实现，返回原来的（用完要装回去）。
+- `execution.api._provider.use_provider` — （没写说明）
+- `execution.api._provider.provider` — （没写说明）
+- `execution.api.testing.BindingConflict` — 同一个能力重复登记且内容不同。
+- `execution.api.testing.NotRegistered` — 用了没登记的能力、处理器或规则。
+- `execution.api.testing.NotInTransaction` — enqueue_in_tx / emit_in_tx 必须在 kernel.db 事务里调用。
+- `execution.api.testing.key_at` — 造一个时间戳在 when 的 UUIDv7 防重复编号（不碰 kernel.ids 的全局单调状态）。
+- `execution.api.testing.InMemoryExecution` — execution.api 的测试桩。time 取 clock，主体与代办取 access.api。
+- `execution.api.testing.execution_stub` — 装入测试桩（时钟与 access_stub 共用）；测试结束恢复原来的实现，状态不外漏。
+- `execution.api.testing.tx_session` — 一个内存 SQLite 会话并设为当前事务：测试里 session.commit() / rollback() 模拟请求成功 / 失败。
+- `execution.api.types.command_id` — 对外命令编号：cmd_ + uuid7 的全部 32 位十六进制；内部仍是同一个 uuid。
+- `execution.api.types.command_uuid` — （没写说明）
+- `execution.api.types.TargetRef` — 命令作用的对象。id 必须是具体的，不能是 latest（规范 6.3）。
+- `execution.api.types.ScopeKey` — 重道按范围轮流、限排队（命令与任务 7）。
+- `execution.api.types.RetryPolicy` — （没写说明）
+- `execution.api.types.ReconcilePolicy` — （没写说明）
+- `execution.api.types.ExecutionBinding` — 能力的执行登记。id 与 access 的能力编号一致（模块.资源.动作），输出契约时加 titanloom. 前缀。
+- `execution.api.types.PreviewSpec` — 影响预览：由领域算好传入，结构化（文案键 + 参数 + 数量 + 受影响对象），不是成句文字。会进命令摘要。
+- `execution.api.types.PrepareResult` — （没写说明）
+- `execution.api.types.Confirmation` — （没写说明）
+- `execution.api.types.JobRef` — job_id 是内部 uuid7；code 是给人看的 JR-xxxx。
+- `execution.api.types.Invocation` — （没写说明）
+- `execution.api.types.EventDraft` — 要写进发件箱的事件。只带类型、对象、版本，不带业务明细（契约 outbox-event）。
+- `execution.api.types.Event` — 交给订阅者的事件。至少一次投递：处理必须幂等，按 event_id 去重。
+- `execution.api.types.JobRetry` — （没写说明）
+- `execution.api.types.JobResult` — 处理器交回的结果。effect_status=unknown 表示不知道做没做成：进待核对，不自动重发。
+- `execution.api.types.Reconciliation` — 领域核对方法的结论，必须附证据。
+- `execution.api.types.JobContext` — 处理器拿到的东西：输入、检查点、进度、取消。
+- `execution.api.types.JobView` — （没写说明）
+- `execution.api.types.Misfire` — （没写说明）
+- `execution.api.types.ScheduleRuleSpec` — （没写说明）
+- `execution.api.types.Occurrence` — 一个计划时刻的去向。同一规则同一时刻只记一条（唯一）。
 
 ## facilities
 
