@@ -4,7 +4,21 @@
 module: forms
 project: forms
 db_schema: forms
-params: []      # 业务参数：key、名称、单位、默认值、范围、层级、读取方（后台治理 7.5、ADR-022）
+params:         # 业务参数：key、名称、单位、默认值、范围、层级、读取方（后台治理 7.5、ADR-022）
+  - key: forms.expr.depthLimit
+    name: 公式嵌套深度上限
+    unit: 层
+    default: 32
+    range: [1, 128]
+    layers: [platform]
+    desc: 单条公式语法树的最大嵌套层数；发布前检查与求值共用，超出即拒绝（后端详细设计·表单 4）
+  - key: forms.expr.computeMs
+    name: 单次公式计算时限
+    unit: 毫秒
+    default: 10
+    range: [1, 1000]
+    layers: [platform]
+    desc: 单次公式求值的时间预算；应用层按它计时，超出按计算失败处理（后端详细设计·表单 4）
 features: []    # 功能开放：id、名称、影响等级、出厂档位、是否归部门 / 项目（后台治理 4.6）
 pages: []       # 页面声明：可读视图、页面动作、可搜索操作（工程规范 4.4）
 objects: []     # 对象类型：给审计、文件引用、搜索用的类型名

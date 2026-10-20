@@ -1,0 +1,8327 @@
+{
+  "note": "前后端对拍用例（固定种子，后端求值器生成期望值）。不要手改；重新生成：uv run python -m titanloom.forms.tests.expr_crosscheck",
+  "seed": 20261020,
+  "count": 320,
+  "cases": [
+    {
+      "id": "x001",
+      "expr": "(((($a * $d)) / (($d / 5414.8) / ($a / $c))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-961.4312"
+        },
+        "b": {
+          "type": "number",
+          "value": "2786.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3315.3"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5838.04"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1509718.614271743405423340272"
+      }
+    },
+    {
+      "id": "x002",
+      "expr": "(((6758 * 8054.9) - ($a / $d)) / sum((2244.607 * 726), ($b - 4476), ($a + 9187)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "86.19"
+        },
+        "b": {
+          "type": "number",
+          "value": "6804.021"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3252.050"
+        },
+        "d": {
+          "type": "number",
+          "value": "3488.3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "33.16809778067699328048034795"
+      }
+    },
+    {
+      "id": "x003",
+      "expr": "((($b / $a)) / ((3715 * 3100) * (9369 - $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7649"
+        },
+        "b": {
+          "type": "number",
+          "value": "2981.10"
+        },
+        "c": {
+          "type": "number",
+          "value": "807.626"
+        },
+        "d": {
+          "type": "number",
+          "value": "3702.3442"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.00000000001967537075478691873708255826"
+      }
+    },
+    {
+      "id": "x004",
+      "expr": "(((2145.08) + (2360 + 89)) + (($b) / ($c + 4036.9)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5410"
+        },
+        "b": {
+          "type": "number",
+          "value": "9500.4897"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5632.033"
+        },
+        "d": {
+          "type": "number",
+          "value": "1756"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4588.124076763504986731513923917"
+      }
+    },
+    {
+      "id": "x005",
+      "expr": "(sum(2106, $a) * ($d * $a))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9588.568"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8585.82"
+        },
+        "c": {
+          "type": "number",
+          "value": "4269"
+        },
+        "d": {
+          "type": "number",
+          "value": "9169"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1028158117611.883456"
+      }
+    },
+    {
+      "id": "x006",
+      "expr": "(((7379) + sum($a, $b, $b)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4336.7167"
+        },
+        "b": {
+          "type": "number",
+          "value": "9972"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2014"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9921.2"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "22986.2833"
+      }
+    },
+    {
+      "id": "x007",
+      "expr": "(round($a, 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3328"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8291"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5929.76"
+        },
+        "d": {
+          "type": "number",
+          "value": "1069"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3328"
+      }
+    },
+    {
+      "id": "x008",
+      "expr": "((sum(2962.756, 2341.40, $d)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8134.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "2304.08"
+        },
+        "c": {
+          "type": "number",
+          "value": "6656"
+        },
+        "d": {
+          "type": "number",
+          "value": "9686.81"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "14990.966"
+      }
+    },
+    {
+      "id": "x009",
+      "expr": "((7864.2663 * $b) / (4392 / $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3235.55"
+        },
+        "b": {
+          "type": "number",
+          "value": "682.11"
+        },
+        "c": {
+          "type": "number",
+          "value": "4589"
+        },
+        "d": {
+          "type": "number",
+          "value": "1551.6"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "833114.5373848985040983606557"
+      }
+    },
+    {
+      "id": "x010",
+      "expr": "(((784 + 586) * (3653.2786 * 3965.4)) * ((1489 - 1269) * ($b - 339.318)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2022"
+        },
+        "b": {
+          "type": "number",
+          "value": "5390"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9209"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2149"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "22052765964531041.852112"
+      }
+    },
+    {
+      "id": "x011",
+      "expr": "((round($a, 3) * (1869.3 / $b)) * sum(($c - 7840.56), (5939 + 8358), round(2617.190, 2)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2138.9"
+        },
+        "b": {
+          "type": "number",
+          "value": "320.33"
+        },
+        "c": {
+          "type": "number",
+          "value": "5411"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2135"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "180792028.931149439640370867538402319495"
+      }
+    },
+    {
+      "id": "x012",
+      "expr": "(sum((6502 + $b), ($d + $d)) / (round($c, 3)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-938"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7547.131"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8304"
+        },
+        "d": {
+          "type": "number",
+          "value": "6494.8"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1.438399446050096339113680154"
+      }
+    },
+    {
+      "id": "x013",
+      "expr": "(sum((3334 + $a), (6680 + $d)) + ((3013.1827 - 40) - (3892.89 + $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4993"
+        },
+        "b": {
+          "type": "number",
+          "value": "5166.7268"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1905"
+        },
+        "d": {
+          "type": "number",
+          "value": "2979.251"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "18971.5437"
+      }
+    },
+    {
+      "id": "x014",
+      "expr": "round((sum($a, 7732, $a) - (3306.9852 * 454.2)), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5380"
+        },
+        "b": {
+          "type": "number",
+          "value": "4493"
+        },
+        "c": {
+          "type": "number",
+          "value": "-449"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6814.07"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1483540.68"
+      }
+    },
+    {
+      "id": "x015",
+      "expr": "sum(((($d - $a) / (7892)) * sum(round(457, 3), ($d))), round((($b + $d) / ($b * 8849)), 2), (((3557 - 7162) * (6756.653 / $a)) * round(($a / 4850.39), 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1006"
+        },
+        "b": {
+          "type": "number",
+          "value": "3627"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6957.57"
+        },
+        "d": {
+          "type": "number",
+          "value": "3456"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3627.7364132735266051939755286869"
+      }
+    },
+    {
+      "id": "x016",
+      "expr": "((((6437.29 - $b)) + ((4687.6308 + $b) + (8635.334 - 9725))) / (((6916 + $a) / ($b + 6117.556)) + (($a * 3716.3035) + ($a / 4013))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8710.9"
+        },
+        "b": {
+          "type": "number",
+          "value": "6838"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8395"
+        },
+        "d": {
+          "type": "number",
+          "value": "6365.396"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.0003099946196106909831410369406"
+      }
+    },
+    {
+      "id": "x017",
+      "expr": "(((round($d, 3) * round($c, 0)) / (($c * 4224) / (508.80 / $b))) / ((($a + 5653.1477) * round($d, 0)) / ((1732.923 - 8102.0111))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9341.5987"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8569.0"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2761"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2482.8"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.0000242712031526286326250317905"
+      }
+    },
+    {
+      "id": "x018",
+      "expr": "sum(round((($c) - (6983 - $b)), 3), (((5965.6 + $b) - round(5575, 1)) * ((6584.61 - 9163) / ($b - $d))), ((($a + 6470.1176) * sum(7691, $a, 8422)) / (round($d, 2))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-6709"
+        },
+        "b": {
+          "type": "number",
+          "value": "201"
+        },
+        "c": {
+          "type": "number",
+          "value": "-309.7864"
+        },
+        "d": {
+          "type": "number",
+          "value": "6245.2"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-7199.12414289272298182017124249588"
+      }
+    },
+    {
+      "id": "x019",
+      "expr": "(round(round($a, 3), 0) + (($b * $d) * (6261.2 * $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6409"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5305"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6388.4040"
+        },
+        "d": {
+          "type": "number",
+          "value": "9346.8"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1983345100278638.7952"
+      }
+    },
+    {
+      "id": "x020",
+      "expr": "sum(sum(((8347 + 1182) - ($b * 7237)), (($a / $d) - sum(8106, 9437, $d)), ((9841.91) / ($a - 5918.6058))), (sum((1223.18 - $b), round(9111.379, 1), (7812.0474 - $a)) + round(round($a, 2), 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4521"
+        },
+        "b": {
+          "type": "number",
+          "value": "6366.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "2206"
+        },
+        "d": {
+          "type": "number",
+          "value": "203.160"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-46072229.921182165661885018518899313"
+      }
+    },
+    {
+      "id": "x021",
+      "expr": "round((1872 + 7090), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6555.81"
+        },
+        "b": {
+          "type": "number",
+          "value": "7482.52"
+        },
+        "c": {
+          "type": "number",
+          "value": "6727.926"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3895"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "8962"
+      }
+    },
+    {
+      "id": "x022",
+      "expr": "(round((6650 + $c), 1) - sum((8875 / 7411.002), ($a - $c), ($b - $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9748"
+        },
+        "b": {
+          "type": "number",
+          "value": "2445.4305"
+        },
+        "c": {
+          "type": "number",
+          "value": "1904"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9744"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "167.371956132112769636278603082"
+      }
+    },
+    {
+      "id": "x023",
+      "expr": "round((7286 * 9548.4833), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3313"
+        },
+        "b": {
+          "type": "number",
+          "value": "8381.156"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8976.05"
+        },
+        "d": {
+          "type": "number",
+          "value": "3714.4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "69570249"
+      }
+    },
+    {
+      "id": "x024",
+      "expr": "sum((sum(round(9553.2185, 2), ($a + $a), ($a - 6629)) / round(($a - $d), 1)), ((($a / 9547.96) / round($a, 0)) + round(sum(2103, $a), 0)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3909.401"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3842.716"
+        },
+        "c": {
+          "type": "number",
+          "value": "3691"
+        },
+        "d": {
+          "type": "number",
+          "value": "5800"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6004.2499603465549061226132711953311"
+      }
+    },
+    {
+      "id": "x025",
+      "expr": "(($c * $c) + (1196.52 * 4458.0673))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9005.8"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9707"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7783"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3066"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "65909255.685796"
+      }
+    },
+    {
+      "id": "x026",
+      "expr": "(($a / 2050) + sum($b, $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4049.8"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2210"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8786.30"
+        },
+        "d": {
+          "type": "number",
+          "value": "9532"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-10994.324487804878048780487804878"
+      }
+    },
+    {
+      "id": "x027",
+      "expr": "round((sum(6875.91, $b, $d) + sum(2975.8, $a)), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7475"
+        },
+        "b": {
+          "type": "number",
+          "value": "2925.767"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5855.311"
+        },
+        "d": {
+          "type": "number",
+          "value": "6365.507"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "11667.984"
+      }
+    },
+    {
+      "id": "x028",
+      "expr": "((round($d, 3) / ($c / 5847.0683)) - ((2728.7 / 6965.5) - ($c * $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8512.7716"
+        },
+        "b": {
+          "type": "number",
+          "value": "4536.3"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1810"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4758"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3291469.9679076781104663037361325425"
+      }
+    },
+    {
+      "id": "x029",
+      "expr": "(round($d, 1) + (9493))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5324"
+        },
+        "b": {
+          "type": "number",
+          "value": "285.216"
+        },
+        "c": {
+          "type": "number",
+          "value": "1066.854"
+        },
+        "d": {
+          "type": "number",
+          "value": "9775"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "19268"
+      }
+    },
+    {
+      "id": "x030",
+      "expr": "(round($d, 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2398"
+        },
+        "b": {
+          "type": "number",
+          "value": "6971"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2809.1391"
+        },
+        "d": {
+          "type": "number",
+          "value": "6764.44"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6764"
+      }
+    },
+    {
+      "id": "x031",
+      "expr": "((round(($d + 6454), 0) / (($d / $c) * (3494.9 * 9541.5))) * sum(round((774 - 3586.4), 2), (round(2493.22, 2) - (5321.22))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3881"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2833.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8945"
+        },
+        "d": {
+          "type": "number",
+          "value": "2621.073"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5.23849287347279788649001490143944"
+      }
+    },
+    {
+      "id": "x032",
+      "expr": "round(sum($d, 8330, 4015), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5167"
+        },
+        "b": {
+          "type": "number",
+          "value": "7263.97"
+        },
+        "c": {
+          "type": "number",
+          "value": "4971.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "4787.215"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "17132"
+      }
+    },
+    {
+      "id": "x033",
+      "expr": "((sum($b, $c) / round(3045, 0)) + (round(427.41, 0) + sum($d, $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6857.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7852.4320"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2538.33"
+        },
+        "d": {
+          "type": "number",
+          "value": "2648"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9928.987598686371100164203612479"
+      }
+    },
+    {
+      "id": "x034",
+      "expr": "(((3854.3 * $d) - round(5421.3752, 1)) + (($a + $d) + ($d + 7245.1751)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3014"
+        },
+        "b": {
+          "type": "number",
+          "value": "1161"
+        },
+        "c": {
+          "type": "number",
+          "value": "4635.59"
+        },
+        "d": {
+          "type": "number",
+          "value": "8977.07"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "34623112.8161"
+      }
+    },
+    {
+      "id": "x035",
+      "expr": "((sum((7985 / 5856), round($d, 2)) - round(($c / 9313.8), 2)) * ((sum(5553.56, $a) * ($c / 2835)) * ((403.995 / 7329) - ($d - 4641.6511))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5367"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7817.42"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1598"
+        },
+        "d": {
+          "type": "number",
+          "value": "3903"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-17754544648.67772961828101282567858661629320605189882167773191418076343443611799200548737346627488"
+      }
+    },
+    {
+      "id": "x036",
+      "expr": "(sum($c, $a) / ($b - $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8459"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1062.3788"
+        },
+        "c": {
+          "type": "number",
+          "value": "6396.2313"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6364"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.2765620768941923911534134222"
+      }
+    },
+    {
+      "id": "x037",
+      "expr": "(sum($b, $c) - ($c * 5508))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4701.43"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9728.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "1493.968"
+        },
+        "d": {
+          "type": "number",
+          "value": "4328.3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-8237009.976"
+      }
+    },
+    {
+      "id": "x038",
+      "expr": "((sum(($b / 2874.260), (1719 + $d)) - (sum(5879.27, 5818.6) - ($c - $d))) + (((7564 / $b) / (1744.136 / 3610)) / ((909.14 * $d) + ($d + $c))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5227.1"
+        },
+        "b": {
+          "type": "number",
+          "value": "7509"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6904"
+        },
+        "d": {
+          "type": "number",
+          "value": "4553"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-16880.2575009746599637689724342350998746"
+      }
+    },
+    {
+      "id": "x039",
+      "expr": "((((4567.073 / 8556.9) * (936.795 / $c)) + ((7831 + $a) - ($b + $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4154.2"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9559.12"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5931.685"
+        },
+        "d": {
+          "type": "number",
+          "value": "7566.51"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "22794.95570768509701317193978979902629992355407067406571728151"
+      }
+    },
+    {
+      "id": "x040",
+      "expr": "((($b)) + ((9163.5)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4311"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3121.567"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5957.9810"
+        },
+        "d": {
+          "type": "number",
+          "value": "812"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6041.933"
+      }
+    },
+    {
+      "id": "x041",
+      "expr": "(round(sum((7210.99 * 9815), (4660.55 / $d), (5936 / 9262)), 2) * ((round($d, 2) - ($a)) - ((1442) + ($b + $d))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7481"
+        },
+        "b": {
+          "type": "number",
+          "value": "8370"
+        },
+        "c": {
+          "type": "number",
+          "value": "6833"
+        },
+        "d": {
+          "type": "number",
+          "value": "-1701"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1223927029121.75"
+      }
+    },
+    {
+      "id": "x042",
+      "expr": "sum(($b / 7030.9), ($c / $a))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "326.327"
+        },
+        "b": {
+          "type": "number",
+          "value": "-977.80"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5497.58"
+        },
+        "d": {
+          "type": "number",
+          "value": "3699.58"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-16.9859156216179207286711032568"
+      }
+    },
+    {
+      "id": "x043",
+      "expr": "round((($a + 5165.9206) / (6247)), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2639.272"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2443"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1034.660"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7659.2068"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "x044",
+      "expr": "(round($c, 2) / (5798.89 * $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7601.8049"
+        },
+        "b": {
+          "type": "number",
+          "value": "3297"
+        },
+        "c": {
+          "type": "number",
+          "value": "5640"
+        },
+        "d": {
+          "type": "number",
+          "value": "1189.2"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.0001724467958523096661602479095"
+      }
+    },
+    {
+      "id": "x045",
+      "expr": "(round(((1736 + 7166) - ($b + $b)), 3) * (((4990.8 * 9456.82) + ($c + 1920)) + (($d + $d))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-1653.032"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8092.10"
+        },
+        "c": {
+          "type": "number",
+          "value": "8435.405"
+        },
+        "d": {
+          "type": "number",
+          "value": "6214.4074"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1184567390678.21396"
+      }
+    },
+    {
+      "id": "x046",
+      "expr": "((($d + 7955)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1594"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8431.426"
+        },
+        "c": {
+          "type": "number",
+          "value": "3171"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8626"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-671"
+      }
+    },
+    {
+      "id": "x047",
+      "expr": "((($c) + sum($b, 3329)) * (round($d, 3) + ($a - 3982.89)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4293"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6562.6"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1575.2535"
+        },
+        "d": {
+          "type": "number",
+          "value": "6476.7"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-32636775.022335"
+      }
+    },
+    {
+      "id": "x048",
+      "expr": "((485.77 - $d) - ($b / $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4344"
+        },
+        "b": {
+          "type": "number",
+          "value": "5260"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7584.4"
+        },
+        "d": {
+          "type": "number",
+          "value": "3674"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3187.5364711776805020832234586783"
+      }
+    },
+    {
+      "id": "x049",
+      "expr": "((($b) + ($b - $a)) * ((7198 / 5800) + round($b, 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3082.3345"
+        },
+        "b": {
+          "type": "number",
+          "value": "3054"
+        },
+        "c": {
+          "type": "number",
+          "value": "9877"
+        },
+        "d": {
+          "type": "number",
+          "value": "-1348.4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "28078687.085022586206896551724139832483"
+      }
+    },
+    {
+      "id": "x050",
+      "expr": "sum(($b), (5808))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5459.345"
+        },
+        "b": {
+          "type": "number",
+          "value": "1988"
+        },
+        "c": {
+          "type": "number",
+          "value": "6784.29"
+        },
+        "d": {
+          "type": "number",
+          "value": "4307.17"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7796"
+      }
+    },
+    {
+      "id": "x051",
+      "expr": "((6714.4914 * 9189.16) / ($b - 528.9917))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4288"
+        },
+        "b": {
+          "type": "number",
+          "value": "3825.4104"
+        },
+        "c": {
+          "type": "number",
+          "value": "1637"
+        },
+        "d": {
+          "type": "number",
+          "value": "-1862.0"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "18717.44502396616060939103397"
+      }
+    },
+    {
+      "id": "x052",
+      "expr": "(round(($d + $d), 1) * ((5240.298 * 8076) - sum($c, 1787.24, $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6273"
+        },
+        "b": {
+          "type": "number",
+          "value": "5764.27"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3718"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8277"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-700504103170.032"
+      }
+    },
+    {
+      "id": "x053",
+      "expr": "(sum(($c * 3072.516), round(2141, 3), (8398.72)) + (sum($c, 2587.1) * round(3035, 2)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6550.828"
+        },
+        "b": {
+          "type": "number",
+          "value": "9120"
+        },
+        "c": {
+          "type": "number",
+          "value": "1899.746"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8583"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "19465117.310936"
+      }
+    },
+    {
+      "id": "x054",
+      "expr": "((round(2857.7, 2) * ($d)) / ((4950.31 + 4828)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "726.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "8810.30"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6455.99"
+        },
+        "d": {
+          "type": "number",
+          "value": "8121"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2373.35303339738666497584961"
+      }
+    },
+    {
+      "id": "x055",
+      "expr": "(($c * $d) * round($b, 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3209"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3259.5370"
+        },
+        "c": {
+          "type": "number",
+          "value": "3870.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "9441"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-119108123990.37"
+      }
+    },
+    {
+      "id": "x056",
+      "expr": "round((($d / $d) - ($a + 3032.4510)), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4271.10"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9389.658"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3628.6"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6511"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-7302.6"
+      }
+    },
+    {
+      "id": "x057",
+      "expr": "(((9972) * (9507 / 5951.0613)) + ((2346.105 + 6485.79) - (7401.425 * 2963.2)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6326.9310"
+        },
+        "b": {
+          "type": "number",
+          "value": "4997.01"
+        },
+        "c": {
+          "type": "number",
+          "value": "4227.5279"
+        },
+        "d": {
+          "type": "number",
+          "value": "4691.272"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-21907140.094094941435068060885207536"
+      }
+    },
+    {
+      "id": "x058",
+      "expr": "(((2142 - 9639.83) / ($a + $a)) - ((2124.5 - 2115.3655) * round($c, 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6279.24"
+        },
+        "b": {
+          "type": "number",
+          "value": "4736.68"
+        },
+        "c": {
+          "type": "number",
+          "value": "4148.8037"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6456"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-37897.8106332396914276249992037253"
+      }
+    },
+    {
+      "id": "x059",
+      "expr": "sum(((6977.6673 + 4342.2268) - round(5978.7, 3)), ((9394 * 9286.88) + ($c - $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6986.03"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7490"
+        },
+        "c": {
+          "type": "number",
+          "value": "5631.1774"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3220.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "87244937.0615"
+      }
+    },
+    {
+      "id": "x060",
+      "expr": "sum(((1059.7) - ($d / $c)), (($b + $a) / ($a * $d)), (round($d, 0) / (9570.036 / $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4682.709"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7591"
+        },
+        "c": {
+          "type": "number",
+          "value": "4290"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3213.1032"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2632.5994048732831151478124612866046"
+      }
+    },
+    {
+      "id": "x061",
+      "expr": "(sum(round(($d / 672), 3), (round(8669, 3) / round($c, 2)), (round(829.58, 1) / ($b * $c))) - ((round($c, 1) * ($d + $b)) * (sum(7500.6130, $a) - (3952))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5394"
+        },
+        "b": {
+          "type": "number",
+          "value": "7835.3430"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6243"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8463"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7231080022.15832481367622503721984115380973"
+      }
+    },
+    {
+      "id": "x062",
+      "expr": "((($d / 3502.340) / (9963 - $d)) + (round($c, 0) + (1291.0 - 615)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-6083.6"
+        },
+        "b": {
+          "type": "number",
+          "value": "6298"
+        },
+        "c": {
+          "type": "number",
+          "value": "685.633"
+        },
+        "d": {
+          "type": "number",
+          "value": "1775.20"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1362.00006190443429641001694186413818"
+      }
+    },
+    {
+      "id": "x063",
+      "expr": "((($c / $a) + (7626.3425 - $a)) - ((1910.15 + $c) * ($a / 1198)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4312"
+        },
+        "b": {
+          "type": "number",
+          "value": "2856.99"
+        },
+        "c": {
+          "type": "number",
+          "value": "9127"
+        },
+        "d": {
+          "type": "number",
+          "value": "295.477"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "51662.5954648207742650862135735903"
+      }
+    },
+    {
+      "id": "x064",
+      "expr": "round((3058.821 - 8430.523), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "742.331"
+        },
+        "b": {
+          "type": "number",
+          "value": "-949.3401"
+        },
+        "c": {
+          "type": "number",
+          "value": "-96"
+        },
+        "d": {
+          "type": "number",
+          "value": "1068.48"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-5372"
+      }
+    },
+    {
+      "id": "x065",
+      "expr": "(((1776.920 - $c) + ($c / $d)) - ((4756 * 7847) * (8439 + $d)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1912.66"
+        },
+        "b": {
+          "type": "number",
+          "value": "4180"
+        },
+        "c": {
+          "type": "number",
+          "value": "1462"
+        },
+        "d": {
+          "type": "number",
+          "value": "129"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-319760604249.74666666666666666666666667"
+      }
+    },
+    {
+      "id": "x066",
+      "expr": "((((9436.4 - $d)) + (($a / 8915.21) - round($a, 0))) * ((($a - $d) * round($c, 0)) + (($a) - round(3023.0443, 1))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2292.923"
+        },
+        "b": {
+          "type": "number",
+          "value": "888"
+        },
+        "c": {
+          "type": "number",
+          "value": "1579.8177"
+        },
+        "d": {
+          "type": "number",
+          "value": "2707.90"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2911603239.8515596476134605915059874724057"
+      }
+    },
+    {
+      "id": "x067",
+      "expr": "(round(($b + $b), 1) * round(($b / 3293.25), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8284"
+        },
+        "b": {
+          "type": "number",
+          "value": "7685"
+        },
+        "c": {
+          "type": "number",
+          "value": "2124.33"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8135"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "30740"
+      }
+    },
+    {
+      "id": "x068",
+      "expr": "(($c / $d) * sum(3881.5, $c, 815.641))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3708.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8555"
+        },
+        "c": {
+          "type": "number",
+          "value": "6239"
+        },
+        "d": {
+          "type": "number",
+          "value": "385.3093"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "177080.03336280748998272297089106052"
+      }
+    },
+    {
+      "id": "x069",
+      "expr": "((($c / 7355.2146)) / (($d + $a) + ($b + 6785)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2162"
+        },
+        "b": {
+          "type": "number",
+          "value": "7263.7301"
+        },
+        "c": {
+          "type": "number",
+          "value": "2233"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9065.9"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.0001076258130774382927958351317"
+      }
+    },
+    {
+      "id": "x070",
+      "expr": "sum(($d - 9043), ($c + $b), sum(2645.290, $c, $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "873.0630"
+        },
+        "b": {
+          "type": "number",
+          "value": "1896.4389"
+        },
+        "c": {
+          "type": "number",
+          "value": "8548"
+        },
+        "d": {
+          "type": "number",
+          "value": "123.2044"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "21265.9333"
+      }
+    },
+    {
+      "id": "x071",
+      "expr": "((sum($a, $a, 2003) * sum(9939, $a)) * (sum($d, 5782.3309) * sum(4510, 7800.0, $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2619"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3358.28"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3759"
+        },
+        "d": {
+          "type": "number",
+          "value": "415"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1422193354911742.38"
+      }
+    },
+    {
+      "id": "x072",
+      "expr": "round(((round(1943.4083, 1) / sum(1986, $a)) * (round($c, 0) * (3156.84))), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9908"
+        },
+        "b": {
+          "type": "number",
+          "value": "9474"
+        },
+        "c": {
+          "type": "number",
+          "value": "2797.5971"
+        },
+        "d": {
+          "type": "number",
+          "value": "4963"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1443226.7"
+      }
+    },
+    {
+      "id": "x073",
+      "expr": "(($b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7246.8"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2232.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "644.83"
+        },
+        "d": {
+          "type": "number",
+          "value": "3507"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2232.7"
+      }
+    },
+    {
+      "id": "x074",
+      "expr": "(((($b / $a) * (1865 + 4673.48)) / sum(sum($a, 6719, 1716.7476), sum(6823.31, 236.9, 4713), ($a))) * (sum(sum(321, $b, $c), ($a / $b)) * sum((2614 * 5537), (3473 - 1839.8))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2246.3543"
+        },
+        "b": {
+          "type": "number",
+          "value": "259.797"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3978.5781"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2430.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2372531881.638240421934888932973756440193001868045972513402641911856"
+      }
+    },
+    {
+      "id": "x075",
+      "expr": "((((2775 + 4107) + (9089.0 / 8854)) + ((1439 / $b) * ($c * 1069))) * round(round((1361.502 / 5823.3957), 2), 1))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7323"
+        },
+        "b": {
+          "type": "number",
+          "value": "1531.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2503.3432"
+        },
+        "d": {
+          "type": "number",
+          "value": "1243.332"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-501512.106996098346145742509488328773104"
+      }
+    },
+    {
+      "id": "x076",
+      "expr": "(sum(((5761 * $a) + (7891 - 9511)), sum(round($b, 1), (678 + $d)), ((1829.805 + 4676.21) - ($b + $c))) / ((($d - 7608.53) + (9487 - 3269.461)) / ((1746.5 + $d))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4760"
+        },
+        "b": {
+          "type": "number",
+          "value": "406.10"
+        },
+        "c": {
+          "type": "number",
+          "value": "9940"
+        },
+        "d": {
+          "type": "number",
+          "value": "334"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-53968113.85357822346642497429"
+      }
+    },
+    {
+      "id": "x077",
+      "expr": "(($d * $b) - (6202.9 - $a))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9523.8607"
+        },
+        "b": {
+          "type": "number",
+          "value": "5469.18"
+        },
+        "c": {
+          "type": "number",
+          "value": "2147.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "980.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5363664.2787"
+      }
+    },
+    {
+      "id": "x078",
+      "expr": "(round(4520, 1) + (9946 * 7781.4))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9836.27"
+        },
+        "b": {
+          "type": "number",
+          "value": "5692.3662"
+        },
+        "c": {
+          "type": "number",
+          "value": "3983.8753"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7425"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "77398324.4"
+      }
+    },
+    {
+      "id": "x079",
+      "expr": "round(sum(sum((4200 / $b), ($c * $c)), (round(7895.41, 3))), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5009.4510"
+        },
+        "b": {
+          "type": "number",
+          "value": "97"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8966.9447"
+        },
+        "d": {
+          "type": "number",
+          "value": "9828.0"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "80414035.96"
+      }
+    },
+    {
+      "id": "x080",
+      "expr": "sum(((round(3575, 1) + (2962 - $b)) + sum((4065.5391 - 9421.899), ($b + 2433))), ((($b / 6627.900) / round(9912.5, 2)) - ((1279.0873 / $c) + round($b, 3))), (((5122 + $b) * ($c)) - ((1133) * ($c / 2885.7501))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5950"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9128.98"
+        },
+        "c": {
+          "type": "number",
+          "value": "8198"
+        },
+        "d": {
+          "type": "number",
+          "value": "9664"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-32839698.2657204158769401962507473077222"
+      }
+    },
+    {
+      "id": "x081",
+      "expr": "(($c / 3914) * (271.8 / $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7050.1655"
+        },
+        "b": {
+          "type": "number",
+          "value": "6166.9"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5830.634"
+        },
+        "d": {
+          "type": "number",
+          "value": "9198"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.04402009815734975155670796887548822766785296796986481365"
+      }
+    },
+    {
+      "id": "x082",
+      "expr": "(((($c + $b) - (8332.8597 + $b)) + sum((1195 * $c), ($c * 7806.3), ($b * $c))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1501"
+        },
+        "b": {
+          "type": "number",
+          "value": "9284"
+        },
+        "c": {
+          "type": "number",
+          "value": "-444.4"
+        },
+        "d": {
+          "type": "number",
+          "value": "9623.9"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-8134764.5797"
+      }
+    },
+    {
+      "id": "x083",
+      "expr": "((round($d, 2) + ($b / $d)) - (($a * $d) / ($b + 5587)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4095.596"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2640"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8124"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4835.157"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1885.0499535729270637995871405945"
+      }
+    },
+    {
+      "id": "x084",
+      "expr": "(((($a + $c) / sum($c, $d))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7392.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "1979"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7290.1934"
+        },
+        "d": {
+          "type": "number",
+          "value": "-901.74"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.01242766451201861577634408014"
+      }
+    },
+    {
+      "id": "x085",
+      "expr": "(($a + $d) * (1715.188 * 2454))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1745.2"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4255.253"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7057.32"
+        },
+        "d": {
+          "type": "number",
+          "value": "4671"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "27006243608.7024"
+      }
+    },
+    {
+      "id": "x086",
+      "expr": "sum(round(($c / $d), 0), (($d - 3961) - (2495.3 / $d)), (($c + $b) / (5091.4524 / $d)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6631.2000"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3802.9"
+        },
+        "c": {
+          "type": "number",
+          "value": "3641.441"
+        },
+        "d": {
+          "type": "number",
+          "value": "777"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3206.851504565091171537693555651"
+      }
+    },
+    {
+      "id": "x087",
+      "expr": "sum(($d / $d), ($a - $c), round(2417.873, 1))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7249"
+        },
+        "b": {
+          "type": "number",
+          "value": "1058"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1361.73"
+        },
+        "d": {
+          "type": "number",
+          "value": "6689.424"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "11029.63"
+      }
+    },
+    {
+      "id": "x088",
+      "expr": "(($a + $a) / round(9911, 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3009.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "7368"
+        },
+        "c": {
+          "type": "number",
+          "value": "4355.9"
+        },
+        "d": {
+          "type": "number",
+          "value": "6249.6"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.6072041166380789022298456261"
+      }
+    },
+    {
+      "id": "x089",
+      "expr": "((((3212) - sum(9273.1287, $c, 1577.344)) - ((7779.1117) / sum($d, 4417))) + ((round(3723.059, 0) - round(1578, 1)) + ((8471.8963 - 5959.720) + (8017))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3655"
+        },
+        "b": {
+          "type": "number",
+          "value": "7540.8"
+        },
+        "c": {
+          "type": "number",
+          "value": "4226.41"
+        },
+        "d": {
+          "type": "number",
+          "value": "3675"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "808.3322663741967375185368264953"
+      }
+    },
+    {
+      "id": "x090",
+      "expr": "(round(((4563.8 + 3256) - round(3501.196, 1)), 1) / (((8023.681 / $d)) / round((7063.7306 + 9567), 0)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7967.105"
+        },
+        "b": {
+          "type": "number",
+          "value": "-147.056"
+        },
+        "c": {
+          "type": "number",
+          "value": "5424"
+        },
+        "d": {
+          "type": "number",
+          "value": "3099.593"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "27745487.59439760877831509004"
+      }
+    },
+    {
+      "id": "x091",
+      "expr": "(round(2737.8, 1) / round($c, 3))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8662.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "9913"
+        },
+        "c": {
+          "type": "number",
+          "value": "3924.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "-135.9508"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.6977064220183486238532110092"
+      }
+    },
+    {
+      "id": "x092",
+      "expr": "(((($a + $d) + (6645.7 - 9777.6354)) * ((8199.09 + $c) - ($b * $a))) / sum(round((6516.875), 0), ((6671.8458 + 7072.23) + (4224 / $a)), ((737.82 + $d) * ($a))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-688.633"
+        },
+        "b": {
+          "type": "number",
+          "value": "430.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "1150.13"
+        },
+        "d": {
+          "type": "number",
+          "value": "2124"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "266.1148364357735166998925029"
+      }
+    },
+    {
+      "id": "x093",
+      "expr": "(round(sum(7082.7, 8801.5680, $a), 0) + ((9812.350 + $d) * sum($d, 276, $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "717"
+        },
+        "b": {
+          "type": "number",
+          "value": "9916.40"
+        },
+        "c": {
+          "type": "number",
+          "value": "3141.75"
+        },
+        "d": {
+          "type": "number",
+          "value": "7763.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "153908998.745"
+      }
+    },
+    {
+      "id": "x094",
+      "expr": "(round(6890.1, 3) / (6248.7 - $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9125"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9019"
+        },
+        "c": {
+          "type": "number",
+          "value": "2736.341"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7996"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.4836956903269286120451817167"
+      }
+    },
+    {
+      "id": "x095",
+      "expr": "((4137.580 - $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1029.8461"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5873"
+        },
+        "c": {
+          "type": "number",
+          "value": "4396.07"
+        },
+        "d": {
+          "type": "number",
+          "value": "1258.02"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-258.49"
+      }
+    },
+    {
+      "id": "x096",
+      "expr": "round(($d), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1099"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3749.7920"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8411.550"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3941"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3941"
+      }
+    },
+    {
+      "id": "x097",
+      "expr": "(((sum(1775.610, 7449.9) - (4631.11 * $d)) / round(round($a, 0), 2)) / round(round(round($d, 3), 2), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2811"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8794"
+        },
+        "c": {
+          "type": "number",
+          "value": "-4877.14"
+        },
+        "d": {
+          "type": "number",
+          "value": "-368"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1.656413845838553508731226702"
+      }
+    },
+    {
+      "id": "x098",
+      "expr": "(($b - 6114) / (8291.39 / $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2900"
+        },
+        "b": {
+          "type": "number",
+          "value": "4091.1"
+        },
+        "c": {
+          "type": "number",
+          "value": "6071.8829"
+        },
+        "d": {
+          "type": "number",
+          "value": "2556.730"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-998.1301313772479644546933628"
+      }
+    },
+    {
+      "id": "x099",
+      "expr": "sum(sum($a, $a, 4262.0564), (3507 - 6656))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7417.785"
+        },
+        "b": {
+          "type": "number",
+          "value": "-577.1998"
+        },
+        "c": {
+          "type": "number",
+          "value": "5958"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9156.6"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-13722.5136"
+      }
+    },
+    {
+      "id": "x100",
+      "expr": "round((round((8116 - $c), 1) / sum((2542.2 - $a), (7248.293 + 4695.3))), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "335"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9991"
+        },
+        "c": {
+          "type": "number",
+          "value": "6496"
+        },
+        "d": {
+          "type": "number",
+          "value": "4907.805"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.114"
+      }
+    },
+    {
+      "id": "x101",
+      "expr": "(((($a * 3681.2) * sum(3424.1, $a)) * (($b + $d) * (391))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6205.3400"
+        },
+        "b": {
+          "type": "number",
+          "value": "8151.70"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3812.77"
+        },
+        "d": {
+          "type": "number",
+          "value": "4875.44"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1120422611416453251.7275648"
+      }
+    },
+    {
+      "id": "x102",
+      "expr": "round(round(((554.6847 * 5418.0579) / ($c)), 1), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5132.58"
+        },
+        "b": {
+          "type": "number",
+          "value": "5542.82"
+        },
+        "c": {
+          "type": "number",
+          "value": "-4712"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6824"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-637.8"
+      }
+    },
+    {
+      "id": "x103",
+      "expr": "sum((((6425.7 + $b) + ($c / $b)) / (sum($c, $b) / (135.624 + 3137))), ((($a * 7554)) + (sum($c, 3910, $b) / (7130.86 / 2100.124))), round(round(round($a, 2), 0), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8623.3861"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2280.367"
+        },
+        "c": {
+          "type": "number",
+          "value": "8952.68"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9064.2308"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "65154829.487619340214088764269703"
+      }
+    },
+    {
+      "id": "x104",
+      "expr": "round(round((($b - $a) * ($a / $d)), 3), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2275.713"
+        },
+        "b": {
+          "type": "number",
+          "value": "7820.9636"
+        },
+        "c": {
+          "type": "number",
+          "value": "6024.3"
+        },
+        "d": {
+          "type": "number",
+          "value": "1324.3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-17350.4"
+      }
+    },
+    {
+      "id": "x105",
+      "expr": "(($b / $c) / sum($d, $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4580"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5751"
+        },
+        "c": {
+          "type": "number",
+          "value": "-602.2103"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2949.926"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.001097563644898909907725762114"
+      }
+    },
+    {
+      "id": "x106",
+      "expr": "(($c / 6343) / sum($a, $d, 6318))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6736.71"
+        },
+        "b": {
+          "type": "number",
+          "value": "9696"
+        },
+        "c": {
+          "type": "number",
+          "value": "-370.6"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7120"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.00000984489756251660906408513568"
+      }
+    },
+    {
+      "id": "x107",
+      "expr": "((((1083.6870 / 9072.7315) / ($d - $c)) * ((4367.77 - 3271.6002) * sum($c, 7930, $a))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3677.36"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8572.05"
+        },
+        "c": {
+          "type": "number",
+          "value": "356"
+        },
+        "d": {
+          "type": "number",
+          "value": "-179"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2927.810929118444945065568129181665225328"
+      }
+    },
+    {
+      "id": "x108",
+      "expr": "round(($b + $d), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9401"
+        },
+        "b": {
+          "type": "number",
+          "value": "1303.848"
+        },
+        "c": {
+          "type": "number",
+          "value": "3220.426"
+        },
+        "d": {
+          "type": "number",
+          "value": "4175"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5478.85"
+      }
+    },
+    {
+      "id": "x109",
+      "expr": "((sum(7471, 8350.6, $a) + ($c - 7947.114)) - sum(($d + 2846.89), (7979.73 / 4424.6922)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1062"
+        },
+        "b": {
+          "type": "number",
+          "value": "6072.66"
+        },
+        "c": {
+          "type": "number",
+          "value": "7221"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7176"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "20484.79254573938499044069099315"
+      }
+    },
+    {
+      "id": "x110",
+      "expr": "(((3599 - $b)) / ((2055.0109 + $c) / (1200.4539 - 1912.2241)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2709.6"
+        },
+        "b": {
+          "type": "number",
+          "value": "844"
+        },
+        "c": {
+          "type": "number",
+          "value": "8917.9281"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7020"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-178.7057142120265135894768028"
+      }
+    },
+    {
+      "id": "x111",
+      "expr": "sum(sum($a, $b, $c), sum(820.0, 5859.06, 4839.3), (8644.8372 - $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4838.782"
+        },
+        "b": {
+          "type": "number",
+          "value": "-713.90"
+        },
+        "c": {
+          "type": "number",
+          "value": "7872.53"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3166"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "25649.0452"
+      }
+    },
+    {
+      "id": "x112",
+      "expr": "(round($d, 3) - round(4830, 1))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8992"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6073"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8118.1027"
+        },
+        "d": {
+          "type": "number",
+          "value": "9070.9"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4240.9"
+      }
+    },
+    {
+      "id": "x113",
+      "expr": "((9762 / $c) - round($c, 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7850.9"
+        },
+        "b": {
+          "type": "number",
+          "value": "9653.7957"
+        },
+        "c": {
+          "type": "number",
+          "value": "2391.183"
+        },
+        "d": {
+          "type": "number",
+          "value": "7090"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2387.097501922688476791613188953"
+      }
+    },
+    {
+      "id": "x114",
+      "expr": "(sum(($d / 5183), ($c)) / ((8575 / $d) - (3113 - $b)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "668.679"
+        },
+        "b": {
+          "type": "number",
+          "value": "5202.6"
+        },
+        "c": {
+          "type": "number",
+          "value": "2436"
+        },
+        "d": {
+          "type": "number",
+          "value": "8745"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.166033633449139513760877879"
+      }
+    },
+    {
+      "id": "x115",
+      "expr": "round((((8888.9965 * 3634) + sum(8398, $a)) / ((905.2298 + $d) + (6467 / $c))), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1837.6623"
+        },
+        "b": {
+          "type": "number",
+          "value": "1141.576"
+        },
+        "c": {
+          "type": "number",
+          "value": "6488.9973"
+        },
+        "d": {
+          "type": "number",
+          "value": "5785.4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4828.85"
+      }
+    },
+    {
+      "id": "x116",
+      "expr": "((4802.56 - 1396) * ($a - 7953.73))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3572.3"
+        },
+        "b": {
+          "type": "number",
+          "value": "-493"
+        },
+        "c": {
+          "type": "number",
+          "value": "3335.6"
+        },
+        "d": {
+          "type": "number",
+          "value": "8159.72"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-14925604.1808"
+      }
+    },
+    {
+      "id": "x117",
+      "expr": "(round($c, 3) - ($c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8171.746"
+        },
+        "b": {
+          "type": "number",
+          "value": "5299"
+        },
+        "c": {
+          "type": "number",
+          "value": "7498.731"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3629.62"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "x118",
+      "expr": "(($b * $d) / ($a - 7174.3))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8764"
+        },
+        "b": {
+          "type": "number",
+          "value": "5901.16"
+        },
+        "c": {
+          "type": "number",
+          "value": "3696"
+        },
+        "d": {
+          "type": "number",
+          "value": "7615.53"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2819.652096823375140385110081"
+      }
+    },
+    {
+      "id": "x119",
+      "expr": "(($d / $a) - sum(4516, $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2914"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3501"
+        },
+        "c": {
+          "type": "number",
+          "value": "3573.022"
+        },
+        "d": {
+          "type": "number",
+          "value": "3351"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-8087.872034317089910775566231984"
+      }
+    },
+    {
+      "id": "x120",
+      "expr": "sum((sum(round(3934.05, 1), (1978.62 * $b), round(3410, 0))), round((round($c, 0) * (1859.49)), 3), sum(sum((9166.859), round($b, 0), (9366.8 - $a)), ((5548.504 - 837.9) - ($b)), (sum(4855, 2912.2557) - ($a + 2048))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2522"
+        },
+        "b": {
+          "type": "number",
+          "value": "5801.4"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2134.7"
+        },
+        "d": {
+          "type": "number",
+          "value": "9272"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7550106.1367"
+      }
+    },
+    {
+      "id": "x121",
+      "expr": "(((($c - 9072.1)) + ((8439.6017 * $a))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8347.576"
+        },
+        "b": {
+          "type": "number",
+          "value": "9979"
+        },
+        "c": {
+          "type": "number",
+          "value": "9623"
+        },
+        "d": {
+          "type": "number",
+          "value": "7360.80"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "70450767.5004792"
+      }
+    },
+    {
+      "id": "x122",
+      "expr": "((($a * 360.858) + (3689.26 / 8641.672)) * (($a + 5575) * ($a * 3854.5050)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3972.704"
+        },
+        "b": {
+          "type": "number",
+          "value": "373.67"
+        },
+        "c": {
+          "type": "number",
+          "value": "1110.21"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9700.54"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "209592839909997588.968013000127514187710611501261755264"
+      }
+    },
+    {
+      "id": "x123",
+      "expr": "(sum(((5854.661 / 2487) + (9546.11 - 592.806)), ((3436 + 8500.061) + ($c + 2708.6821))) / (((839) * ($c / 3343.93)) - ((5300.1 - $c) + ($a / $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5760.9661"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5212.0786"
+        },
+        "c": {
+          "type": "number",
+          "value": "6125.785"
+        },
+        "d": {
+          "type": "number",
+          "value": "135.85"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "12.57578241537423297375207314"
+      }
+    },
+    {
+      "id": "x124",
+      "expr": "sum(round(3181, 1), ($d * $c), (7214.1 / 186.31))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4486"
+        },
+        "b": {
+          "type": "number",
+          "value": "7546"
+        },
+        "c": {
+          "type": "number",
+          "value": "9751"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5330.682"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-51976260.46105104395899307605603564"
+      }
+    },
+    {
+      "id": "x125",
+      "expr": "sum((4945.37 * $c), (6056.8 * 2861), ($d * 5133))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7142.8"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8593"
+        },
+        "c": {
+          "type": "number",
+          "value": "2178.08"
+        },
+        "d": {
+          "type": "number",
+          "value": "2217"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "39479777.2896"
+      }
+    },
+    {
+      "id": "x126",
+      "expr": "(sum((round(2172, 0)), (($a - $a) / (8986.5231 * 9562)), sum(round(5623.7518, 2), round($c, 0))) - (((2762 + $b) + ($d + $d)) + ((2300.378 - $c) * round($d, 2))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8915"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1062.68"
+        },
+        "c": {
+          "type": "number",
+          "value": "4742"
+        },
+        "d": {
+          "type": "number",
+          "value": "1092"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2674905.654"
+      }
+    },
+    {
+      "id": "x127",
+      "expr": "(round(6576, 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2306"
+        },
+        "b": {
+          "type": "number",
+          "value": "631.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7813.2273"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5536.162"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6576"
+      }
+    },
+    {
+      "id": "x128",
+      "expr": "(sum(8776.4, $b, 5057) + round(4562.89, 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4253"
+        },
+        "b": {
+          "type": "number",
+          "value": "7745"
+        },
+        "c": {
+          "type": "number",
+          "value": "1173"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3312.2417"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "26141.4"
+      }
+    },
+    {
+      "id": "x129",
+      "expr": "round(round(round(150.844, 2), 2), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2297"
+        },
+        "b": {
+          "type": "number",
+          "value": "986.438"
+        },
+        "c": {
+          "type": "number",
+          "value": "2527.3"
+        },
+        "d": {
+          "type": "number",
+          "value": "4584"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "150.84"
+      }
+    },
+    {
+      "id": "x130",
+      "expr": "((($d - $a) / (1652 - $a)) * (round(7100.5981, 3)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7504"
+        },
+        "b": {
+          "type": "number",
+          "value": "4029.951"
+        },
+        "c": {
+          "type": "number",
+          "value": "3876"
+        },
+        "d": {
+          "type": "number",
+          "value": "5403"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2549.2748458646616541353383459287272"
+      }
+    },
+    {
+      "id": "x131",
+      "expr": "((2598.539 * 923.7610))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8972"
+        },
+        "b": {
+          "type": "number",
+          "value": "1602.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "290"
+        },
+        "d": {
+          "type": "number",
+          "value": "7210.491"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2400428.985179"
+      }
+    },
+    {
+      "id": "x132",
+      "expr": "round((round($d, 0) - (1836.8 / 7219.2731)), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7957.5620"
+        },
+        "b": {
+          "type": "number",
+          "value": "8071.4"
+        },
+        "c": {
+          "type": "number",
+          "value": "4998"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3855"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3855.254"
+      }
+    },
+    {
+      "id": "x133",
+      "expr": "((6260.7 + 2046.33) - ($b - 5880))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7275.80"
+        },
+        "b": {
+          "type": "number",
+          "value": "3149"
+        },
+        "c": {
+          "type": "number",
+          "value": "2213.149"
+        },
+        "d": {
+          "type": "number",
+          "value": "225.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "11038.03"
+      }
+    },
+    {
+      "id": "x134",
+      "expr": "(($c - $b) * ($d + $a))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4557.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "6701.1281"
+        },
+        "c": {
+          "type": "number",
+          "value": "6376.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "1475"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1001736.6042"
+      }
+    },
+    {
+      "id": "x135",
+      "expr": "((($a / 3373)) - ((8845 - 9042.1472) + (3675.286 + $d)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4331.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "4827"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8571"
+        },
+        "d": {
+          "type": "number",
+          "value": "7941"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-11417.854572309516750667061962645"
+      }
+    },
+    {
+      "id": "x136",
+      "expr": "round((($a / $b) - ($d / 4465)), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2397.1922"
+        },
+        "b": {
+          "type": "number",
+          "value": "5038.0"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1831"
+        },
+        "d": {
+          "type": "number",
+          "value": "803.720"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.3"
+      }
+    },
+    {
+      "id": "x137",
+      "expr": "((($d - 9410.296) / (5684.141 * 3289)) / ((9373 * 6384)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3498.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "2959.54"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5478"
+        },
+        "d": {
+          "type": "number",
+          "value": "3711"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.000000000005094727991467408706169550415"
+      }
+    },
+    {
+      "id": "x138",
+      "expr": "sum(((round($b, 3) * (769)) / (($b - $d) + (5832 / $b))), (sum((6967 - 284.3), ($d * $b))), (round(sum(6659.7, 8342.696, 9116.04), 1) * sum(($a - $d), ($a + $a))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3877.976"
+        },
+        "b": {
+          "type": "number",
+          "value": "1990"
+        },
+        "c": {
+          "type": "number",
+          "value": "3553"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4300.98"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "375772460.7485606428969048507298536"
+      }
+    },
+    {
+      "id": "x139",
+      "expr": "((sum(round($c, 0), sum(3141, $b, $d)) / (($a * 6955) * (6843 - 9015.8))) + ((($d / 2291) / (3561.1522 - 1698)) - (round(8432.5, 2) / (9865.64 - 9803.1))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5554.07"
+        },
+        "b": {
+          "type": "number",
+          "value": "7440.716"
+        },
+        "c": {
+          "type": "number",
+          "value": "4356"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3373.29"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-134.8344968443314762015978386006192304"
+      }
+    },
+    {
+      "id": "x140",
+      "expr": "round(round(($b / $b), 1), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8587.373"
+        },
+        "b": {
+          "type": "number",
+          "value": "7803.5160"
+        },
+        "c": {
+          "type": "number",
+          "value": "2614"
+        },
+        "d": {
+          "type": "number",
+          "value": "2972"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1"
+      }
+    },
+    {
+      "id": "x141",
+      "expr": "(($a * $b) - ($d / $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1576.6759"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2621"
+        },
+        "c": {
+          "type": "number",
+          "value": "9237.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7072"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-4132470.232106791301030141167493323"
+      }
+    },
+    {
+      "id": "x142",
+      "expr": "((989.5105 / 927) * (6213.204 / 7854))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5073.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6809"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3698.7744"
+        },
+        "d": {
+          "type": "number",
+          "value": "4997"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.84443337355524734165510864559080026091048364035228684"
+      }
+    },
+    {
+      "id": "x143",
+      "expr": "((sum(sum($d, $a, 9808), (9744 - 7026)) - (($b + 4136.5526))) + ((sum(5288, $d) / (6302 + $b)) + round(sum($b, 766), 2)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8925"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2054"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9584.72"
+        },
+        "d": {
+          "type": "number",
+          "value": "4683.84"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4916.634819962335216572504708098"
+      }
+    },
+    {
+      "id": "x144",
+      "expr": "round(((sum(2874, 6726, $a) / round($c, 0)) / round(($a * 9916.9), 3)), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-6900"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9677"
+        },
+        "c": {
+          "type": "number",
+          "value": "4044"
+        },
+        "d": {
+          "type": "number",
+          "value": "2743.063"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "x145",
+      "expr": "((((90.086 / 2262.74) / sum(7999, 4748.4154)) + (($a - $b))) + ((sum(9475, $b, 6957.60) * ($b / 1744.46)) / ((8486 / $d) - ($a))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8475.3699"
+        },
+        "b": {
+          "type": "number",
+          "value": "1316.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "4240"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9050.2"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7157.590026547615788053279598114965408"
+      }
+    },
+    {
+      "id": "x146",
+      "expr": "((($d * $c) - ($b / 3827)) - ((962 + $b) / (8636 / $b)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-401"
+        },
+        "b": {
+          "type": "number",
+          "value": "8424.272"
+        },
+        "c": {
+          "type": "number",
+          "value": "5767.3424"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2312"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-13343253.979724980171480931965688217"
+      }
+    },
+    {
+      "id": "x147",
+      "expr": "((((3261.48 / 1210) + (3085 / 9412))) * (((3773.80 / 9814.1083))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8223.2971"
+        },
+        "b": {
+          "type": "number",
+          "value": "6358"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7432.9"
+        },
+        "d": {
+          "type": "number",
+          "value": "2385"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.16250948079286245267645920033008002958187964298659998057"
+      }
+    },
+    {
+      "id": "x148",
+      "expr": "round((3581.933 / 5998.1), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8784"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6924.23"
+        },
+        "c": {
+          "type": "number",
+          "value": "2776"
+        },
+        "d": {
+          "type": "number",
+          "value": "6245"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.6"
+      }
+    },
+    {
+      "id": "x149",
+      "expr": "sum(((($b + $a) + (4553 * 583)) * round((3078.27 * $d), 1)), round((($d * $a) - (649.8 / $b)), 3))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4113.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "7370"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3966.2"
+        },
+        "d": {
+          "type": "number",
+          "value": "2955"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "24249648702812.742"
+      }
+    },
+    {
+      "id": "x150",
+      "expr": "sum(((1306 + $c)), (($b + 9830.5277) / ($a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3125.119"
+        },
+        "b": {
+          "type": "number",
+          "value": "4011"
+        },
+        "c": {
+          "type": "number",
+          "value": "7402.23"
+        },
+        "d": {
+          "type": "number",
+          "value": "958.90"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "8712.659120203102665850484413554"
+      }
+    },
+    {
+      "id": "x151",
+      "expr": "sum((($d * 9409.4995) * (850.7)), round((7130.49 - $d), 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8313.910"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4105"
+        },
+        "c": {
+          "type": "number",
+          "value": "2256.66"
+        },
+        "d": {
+          "type": "number",
+          "value": "902.2589"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7222283059.655361885"
+      }
+    },
+    {
+      "id": "x152",
+      "expr": "(sum((8289.39 * $c), ($c * $b)) - (round($c, 1) - ($c / 5399.7723)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6903.6734"
+        },
+        "b": {
+          "type": "number",
+          "value": "427"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8338.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "600.56"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-72669794.903157704575802205585594785"
+      }
+    },
+    {
+      "id": "x153",
+      "expr": "(round(($c - $c), 3))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8596.6865"
+        },
+        "b": {
+          "type": "number",
+          "value": "201.6"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9562.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "3701"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "x154",
+      "expr": "(((($b - $d) - ($d / 5137)) * (($d + $c) + (8708 / 2934))) / sum((($c + 7105.04) + (7695.40 * 8585)), ((5784.359 + 5660) * ($d * $c)), ((6103.1785 * $c))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "645"
+        },
+        "b": {
+          "type": "number",
+          "value": "4541"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2756.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "1418.3264"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.00009326210077630569388626958298"
+      }
+    },
+    {
+      "id": "x155",
+      "expr": "(round((round($b, 3) * ($b / $b)), 1) - (sum(sum($d, $d), (9571.7794 * $a), round($d, 1)) * (($b - $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3283"
+        },
+        "b": {
+          "type": "number",
+          "value": "1146.4888"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7314.24"
+        },
+        "d": {
+          "type": "number",
+          "value": "7409.8992"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1146.5"
+      }
+    },
+    {
+      "id": "x156",
+      "expr": "(round($d, 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7750"
+        },
+        "b": {
+          "type": "number",
+          "value": "9220"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6962.9535"
+        },
+        "d": {
+          "type": "number",
+          "value": "1272.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1272"
+      }
+    },
+    {
+      "id": "x157",
+      "expr": "((($b * 5093) / (7495.8267 * 3595.539)) * (($a - 6217.2) - ($c / 5401)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-754.1778"
+        },
+        "b": {
+          "type": "number",
+          "value": "7887.627"
+        },
+        "c": {
+          "type": "number",
+          "value": "6594.93"
+        },
+        "d": {
+          "type": "number",
+          "value": "-166.7"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-10392.766752230504880560072109512575745255113425747328897587"
+      }
+    },
+    {
+      "id": "x158",
+      "expr": "sum((5661 + $c), ($b + $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3467"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4161.7303"
+        },
+        "c": {
+          "type": "number",
+          "value": "1237.26"
+        },
+        "d": {
+          "type": "number",
+          "value": "8542.2"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1425.2006"
+      }
+    },
+    {
+      "id": "x159",
+      "expr": "((8795.9619 - $b) * (4811.350 + $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3031"
+        },
+        "b": {
+          "type": "number",
+          "value": "-356"
+        },
+        "c": {
+          "type": "number",
+          "value": "145"
+        },
+        "d": {
+          "type": "number",
+          "value": "1364"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "56516567.919165"
+      }
+    },
+    {
+      "id": "x160",
+      "expr": "((($b + $d)) * ((2873.7 + $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4898.715"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9923.3"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8578"
+        },
+        "d": {
+          "type": "number",
+          "value": "4659.261"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "30027657.6677"
+      }
+    },
+    {
+      "id": "x161",
+      "expr": "((((4071 / $c) * round($c, 3)) * ((5833.971 - 3973.4) * (5201.6 + $d))) / ((round(3251.7, 0) + ($a + $c)) - (round($d, 2) * ($b * $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4249.91"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7274.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "5648.586"
+        },
+        "d": {
+          "type": "number",
+          "value": "5688.6932"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.2739961652437190228434291635"
+      }
+    },
+    {
+      "id": "x162",
+      "expr": "round((6018 * $b), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2136.56"
+        },
+        "b": {
+          "type": "number",
+          "value": "4567"
+        },
+        "c": {
+          "type": "number",
+          "value": "2528"
+        },
+        "d": {
+          "type": "number",
+          "value": "2485.716"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "27484206"
+      }
+    },
+    {
+      "id": "x163",
+      "expr": "round((sum($b, 85, $a) / (4385.164 + $a)), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4251.2"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5903"
+        },
+        "c": {
+          "type": "number",
+          "value": "7257"
+        },
+        "d": {
+          "type": "number",
+          "value": "8173"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-75.2"
+      }
+    },
+    {
+      "id": "x164",
+      "expr": "((($d + 2140.8966)) / round((7759.6 / $a), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4292"
+        },
+        "b": {
+          "type": "number",
+          "value": "5058.6824"
+        },
+        "c": {
+          "type": "number",
+          "value": "5721.4233"
+        },
+        "d": {
+          "type": "number",
+          "value": "8730"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-5435.4483"
+      }
+    },
+    {
+      "id": "x165",
+      "expr": "((($a / 6336) - ($b / 6988.0236)) + ((9816 + $c) + ($c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4182.5525"
+        },
+        "b": {
+          "type": "number",
+          "value": "7071.0"
+        },
+        "c": {
+          "type": "number",
+          "value": "8897"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5189.8891"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "27609.6482509919405370319238154484"
+      }
+    },
+    {
+      "id": "x166",
+      "expr": "((sum(($b), ($a / 278))) / round(sum(round(8153, 2), ($a * $b), (5463 / $b)), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5148.526"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1121.09"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9383.2187"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4273"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.0001971606206211408343023816741"
+      }
+    },
+    {
+      "id": "x167",
+      "expr": "sum(round(3596, 2), (2970.268 - $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3862"
+        },
+        "b": {
+          "type": "number",
+          "value": "1662"
+        },
+        "c": {
+          "type": "number",
+          "value": "3801"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8530"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4904.268"
+      }
+    },
+    {
+      "id": "x168",
+      "expr": "sum(sum(5419, 7774.738), round(8409, 1), (3573 / 8155.51))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "746"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1408.97"
+        },
+        "c": {
+          "type": "number",
+          "value": "2875"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3868.7030"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "21603.1761087142312375314358022981"
+      }
+    },
+    {
+      "id": "x169",
+      "expr": "(round(8696.8, 3) * (9723.1987 - $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9047"
+        },
+        "b": {
+          "type": "number",
+          "value": "5621"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6648.43"
+        },
+        "d": {
+          "type": "number",
+          "value": "-426.39"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "142380780.47816"
+      }
+    },
+    {
+      "id": "x170",
+      "expr": "((round((6297.2 + 5550.5228), 3) * ((546 * $d) + (6906.67 / 2308.585))) * ((($c) * (3583.7)) / (($a * $a) / ($d - 5622))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9054"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9994"
+        },
+        "c": {
+          "type": "number",
+          "value": "3904"
+        },
+        "d": {
+          "type": "number",
+          "value": "-967"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7034472410424.594053250301425697800830130650681914861255274005845816"
+      }
+    },
+    {
+      "id": "x171",
+      "expr": "(($d + $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-6691"
+        },
+        "b": {
+          "type": "number",
+          "value": "9597.97"
+        },
+        "c": {
+          "type": "number",
+          "value": "5125.456"
+        },
+        "d": {
+          "type": "number",
+          "value": "7046"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "16643.97"
+      }
+    },
+    {
+      "id": "x172",
+      "expr": "(((1930 + $d) * sum($d, 4603.3)) + (($c - $d) - ($a / $d)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3857.9"
+        },
+        "b": {
+          "type": "number",
+          "value": "3022"
+        },
+        "c": {
+          "type": "number",
+          "value": "3565.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "4802.0953"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "63316779.5950936147748206912928196156"
+      }
+    },
+    {
+      "id": "x173",
+      "expr": "(round(8546, 1) + round($d, 1))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2129"
+        },
+        "b": {
+          "type": "number",
+          "value": "3564"
+        },
+        "c": {
+          "type": "number",
+          "value": "1130.71"
+        },
+        "d": {
+          "type": "number",
+          "value": "999.567"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9545.6"
+      }
+    },
+    {
+      "id": "x174",
+      "expr": "sum(round(4450.7562, 3), (136 + $c), ($b / 490.4))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7309"
+        },
+        "b": {
+          "type": "number",
+          "value": "9938"
+        },
+        "c": {
+          "type": "number",
+          "value": "6337.03"
+        },
+        "d": {
+          "type": "number",
+          "value": "3903"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "10944.05108972267536704730831974"
+      }
+    },
+    {
+      "id": "x175",
+      "expr": "(($c + $d) / ($d + 2697))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8945.765"
+        },
+        "b": {
+          "type": "number",
+          "value": "5378"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9109.0127"
+        },
+        "d": {
+          "type": "number",
+          "value": "-217"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3.760488991935483870967741935"
+      }
+    },
+    {
+      "id": "x176",
+      "expr": "((4025 / 8273.1) - (4053 * $a))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "482.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9876"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2808.0451"
+        },
+        "d": {
+          "type": "number",
+          "value": "4796"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1953545.5134834584375868779538504309"
+      }
+    },
+    {
+      "id": "x177",
+      "expr": "(((($c) - ($b - 6870.537)) * (sum($d, 4533) * sum($b, 9148))) / sum(((6205.174) * (6312 * $c)), (($a + $b)), (round($b, 2) * (1296 - $a))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8040.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "3411"
+        },
+        "c": {
+          "type": "number",
+          "value": "7884"
+        },
+        "d": {
+          "type": "number",
+          "value": "-9145"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2.127931390740729023392707478"
+      }
+    },
+    {
+      "id": "x178",
+      "expr": "(($d / $c) - ($c / 2411.9514))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1134.329"
+        },
+        "b": {
+          "type": "number",
+          "value": "7483.88"
+        },
+        "c": {
+          "type": "number",
+          "value": "9313.3436"
+        },
+        "d": {
+          "type": "number",
+          "value": "1302"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3.7215319520526489865919288709"
+      }
+    },
+    {
+      "id": "x179",
+      "expr": "((sum(2783, $a) / sum($a, $c, 8623.53)) / ((2154 / 4851.1435)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6888"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8160"
+        },
+        "c": {
+          "type": "number",
+          "value": "2555"
+        },
+        "d": {
+          "type": "number",
+          "value": "6868"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.205577292559883023218564665"
+      }
+    },
+    {
+      "id": "x180",
+      "expr": "round(round($c, 2), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9452"
+        },
+        "b": {
+          "type": "number",
+          "value": "4848"
+        },
+        "c": {
+          "type": "number",
+          "value": "9022.6516"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2891.290"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9022.65"
+      }
+    },
+    {
+      "id": "x181",
+      "expr": "round(($a * $a), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1209.736"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3907"
+        },
+        "c": {
+          "type": "number",
+          "value": "6337.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "-110.612"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1463461.19"
+      }
+    },
+    {
+      "id": "x182",
+      "expr": "(sum($d, $b) / round($d, 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4177"
+        },
+        "b": {
+          "type": "number",
+          "value": "6780.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "4033.017"
+        },
+        "d": {
+          "type": "number",
+          "value": "8010"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.846529338327091136079900125"
+      }
+    },
+    {
+      "id": "x183",
+      "expr": "sum(((($d - $b) - round($b, 1)) + (($d / 6480.448) * ($a / $d))), (round((6580.1223 * 5858), 1) + (round(7467.2442, 2) * ($a - 7989))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9175.26"
+        },
+        "b": {
+          "type": "number",
+          "value": "1949"
+        },
+        "c": {
+          "type": "number",
+          "value": "4979"
+        },
+        "d": {
+          "type": "number",
+          "value": "-1556"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-89628747.8582373001372744600373307523249449841837714326799025707"
+      }
+    },
+    {
+      "id": "x184",
+      "expr": "((((1789.398 - $c) - ($b)) * (($a - 511.8641) / (2168.6 * $b))) + (round(($b + $c), 2) + ((6667 * $c) / ($a * $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2190.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "-609.390"
+        },
+        "c": {
+          "type": "number",
+          "value": "5269"
+        },
+        "d": {
+          "type": "number",
+          "value": "7469.88"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4636.93839361070017978991757683100244"
+      }
+    },
+    {
+      "id": "x185",
+      "expr": "sum((((8479.1)) - ((2068 * 7652.1512))), ((round($a, 2) / (2069.7 - 6924.5914)) + sum(($a), ($c + $d))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9099.651"
+        },
+        "b": {
+          "type": "number",
+          "value": "7115.2601"
+        },
+        "c": {
+          "type": "number",
+          "value": "3239.8106"
+        },
+        "d": {
+          "type": "number",
+          "value": "4325"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-15799506.994326169273322983084647372"
+      }
+    },
+    {
+      "id": "x186",
+      "expr": "((sum(5065, $a, 5737) - (2711 - $d)) / (($b + $b) * round($d, 0)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4934.67"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4612.8906"
+        },
+        "c": {
+          "type": "number",
+          "value": "5316.910"
+        },
+        "d": {
+          "type": "number",
+          "value": "-1296"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.0001555900561369063049983035382"
+      }
+    },
+    {
+      "id": "x187",
+      "expr": "(((6860.60 - $d) / ($c + 9785.3170)) / round(($a * 6518.9353), 3))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7739"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8545.89"
+        },
+        "c": {
+          "type": "number",
+          "value": "791"
+        },
+        "d": {
+          "type": "number",
+          "value": "1278"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.00000001046262198636991841735390769"
+      }
+    },
+    {
+      "id": "x188",
+      "expr": "round(round(5855, 3), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3490"
+        },
+        "b": {
+          "type": "number",
+          "value": "7757"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5197.3"
+        },
+        "d": {
+          "type": "number",
+          "value": "5457.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5855"
+      }
+    },
+    {
+      "id": "x189",
+      "expr": "((($d / $a) + (1304.8 / $d)) * ((6695.3 + 1458.6) + (5263.82 + 5788.403)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2953.995"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7853"
+        },
+        "c": {
+          "type": "number",
+          "value": "1544.4046"
+        },
+        "d": {
+          "type": "number",
+          "value": "2176.51"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "25665.027735454622683295641921745556"
+      }
+    },
+    {
+      "id": "x190",
+      "expr": "((((64 - $c) / ($a - $d)) + round((2902 * 8095), 2)) + ((($b / $d) + (7015.8130 / $d)) + (($b / 3482.003) - round($d, 2))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "693.978"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7477.8"
+        },
+        "c": {
+          "type": "number",
+          "value": "9044.9"
+        },
+        "d": {
+          "type": "number",
+          "value": "-749"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "23492431.245383236592150488225535863"
+      }
+    },
+    {
+      "id": "x191",
+      "expr": "(($b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7189.1"
+        },
+        "b": {
+          "type": "number",
+          "value": "583.0262"
+        },
+        "c": {
+          "type": "number",
+          "value": "3016"
+        },
+        "d": {
+          "type": "number",
+          "value": "4406.0"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "583.0262"
+      }
+    },
+    {
+      "id": "x192",
+      "expr": "((6439) - (6789.5978 / 6475.6176))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3100.3"
+        },
+        "b": {
+          "type": "number",
+          "value": "9848"
+        },
+        "c": {
+          "type": "number",
+          "value": "2456"
+        },
+        "d": {
+          "type": "number",
+          "value": "4583"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6437.951513474174262544471433891"
+      }
+    },
+    {
+      "id": "x193",
+      "expr": "((3102.23 - $c) - ($d + $a))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2145.3105"
+        },
+        "b": {
+          "type": "number",
+          "value": "2790"
+        },
+        "c": {
+          "type": "number",
+          "value": "2826"
+        },
+        "d": {
+          "type": "number",
+          "value": "6542.825"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-8411.9055"
+      }
+    },
+    {
+      "id": "x194",
+      "expr": "sum(((($c + $b) - (1232 * 7021)) * round(($d + 1095.2253), 2)), ((round($d, 1) / (5598.3 + 7402)) - ((4898.243 + 2656.3968) * (1722.5642 / 9073.2036))), round((($a / 5717) * (4513.0 * $b)), 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-6819"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2273.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "-844.8"
+        },
+        "d": {
+          "type": "number",
+          "value": "9313.9179"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-90057950818.90766426436296441076802734675298"
+      }
+    },
+    {
+      "id": "x195",
+      "expr": "round((sum($c, $d, 961.72) + (156 + 1162.73)), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5806.4913"
+        },
+        "b": {
+          "type": "number",
+          "value": "3526"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8082.6173"
+        },
+        "d": {
+          "type": "number",
+          "value": "-1411"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-7213"
+      }
+    },
+    {
+      "id": "x196",
+      "expr": "round(($a - 2410), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4676.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1287"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9841"
+        },
+        "d": {
+          "type": "number",
+          "value": "7800"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2266"
+      }
+    },
+    {
+      "id": "x197",
+      "expr": "((sum(834, $b, $b) - ($b - 3661)) + (round(681, 2) - ($d)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-887.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5265"
+        },
+        "c": {
+          "type": "number",
+          "value": "-4720.18"
+        },
+        "d": {
+          "type": "number",
+          "value": "1446.4156"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1535.4156"
+      }
+    },
+    {
+      "id": "x198",
+      "expr": "(sum(6404.47, $d, 8499.69) - ($d * $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8186"
+        },
+        "b": {
+          "type": "number",
+          "value": "427"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7926.7"
+        },
+        "d": {
+          "type": "number",
+          "value": "5807.5824"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2459125.9424"
+      }
+    },
+    {
+      "id": "x199",
+      "expr": "(sum(3981.90, 4356.8, $c) * (6929.43 / $b))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7382.37"
+        },
+        "b": {
+          "type": "number",
+          "value": "2897"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6424.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7638.8911"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4578.6382140144977562996202972632"
+      }
+    },
+    {
+      "id": "x200",
+      "expr": "(round(sum(7808.818, $d), 0) * (($b * $a) * ($c * $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7289"
+        },
+        "b": {
+          "type": "number",
+          "value": "4616.27"
+        },
+        "c": {
+          "type": "number",
+          "value": "1665"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5170.3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-246165404617462853.25"
+      }
+    },
+    {
+      "id": "x201",
+      "expr": "(round(sum(sum(554.9181, $b), (3091.4 + $d)), 1) - ((round($a, 1) / ($a - 6427)) / round((1103 * 2437.9), 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7579.14"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4896"
+        },
+        "c": {
+          "type": "number",
+          "value": "5114.887"
+        },
+        "d": {
+          "type": "number",
+          "value": "699.4390"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-550.2000002012369722247436509116114964"
+      }
+    },
+    {
+      "id": "x202",
+      "expr": "((7299 / $d) + sum(6981.9, 5411.75))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1383"
+        },
+        "b": {
+          "type": "number",
+          "value": "8195"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6921.965"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3107"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "12391.300788542001931123270035404"
+      }
+    },
+    {
+      "id": "x203",
+      "expr": "(($c / 2873.3327) * ($d - 2186))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2531"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5498.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "9494.984"
+        },
+        "d": {
+          "type": "number",
+          "value": "4416"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7369.07853378761185573811205438"
+      }
+    },
+    {
+      "id": "x204",
+      "expr": "round((8845.48 + $d), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3770.52"
+        },
+        "b": {
+          "type": "number",
+          "value": "6974.46"
+        },
+        "c": {
+          "type": "number",
+          "value": "5026.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "73.49"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "8919"
+      }
+    },
+    {
+      "id": "x205",
+      "expr": "round((sum(($d + $d), sum($b, 3833.92, 7758.8532)) / ((7490.1 * $c) - round(6292, 3))), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5590.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8784.4"
+        },
+        "c": {
+          "type": "number",
+          "value": "443"
+        },
+        "d": {
+          "type": "number",
+          "value": "449.83"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.001"
+      }
+    },
+    {
+      "id": "x206",
+      "expr": "(($a - 6732.46) * (4831 * 9158.7))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2554"
+        },
+        "b": {
+          "type": "number",
+          "value": "5172.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "8496"
+        },
+        "d": {
+          "type": "number",
+          "value": "9063"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-184878802799.262"
+      }
+    },
+    {
+      "id": "x207",
+      "expr": "((((5306.15 - 9308))) + ((round($a, 2) / ($a)) / (($c + 1398) * (8557.8915 - $a))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2728.088"
+        },
+        "b": {
+          "type": "number",
+          "value": "9108"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5049.8071"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4795"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-4001.85000004697194818088605554052978415"
+      }
+    },
+    {
+      "id": "x208",
+      "expr": "round(sum(6058, 1573), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6534"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3346"
+        },
+        "c": {
+          "type": "number",
+          "value": "9220.261"
+        },
+        "d": {
+          "type": "number",
+          "value": "2264"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7631"
+      }
+    },
+    {
+      "id": "x209",
+      "expr": "(round(1383.698, 0) * (5812 / $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4978"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5032"
+        },
+        "c": {
+          "type": "number",
+          "value": "9920.3664"
+        },
+        "d": {
+          "type": "number",
+          "value": "9761.94"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "823.9968694747150668821975960192"
+      }
+    },
+    {
+      "id": "x210",
+      "expr": "(round(round(7703.97, 3), 0) * sum(($c), ($a * $b), (5861 / $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7819.2"
+        },
+        "b": {
+          "type": "number",
+          "value": "8533"
+        },
+        "c": {
+          "type": "number",
+          "value": "9091"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4291"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-513950341623.603827961720382796172038508"
+      }
+    },
+    {
+      "id": "x211",
+      "expr": "round(((58 - 9901) - (1916.1 * 1532.14)), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2864"
+        },
+        "b": {
+          "type": "number",
+          "value": "7018.9"
+        },
+        "c": {
+          "type": "number",
+          "value": "5367"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3788.7"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2945576"
+      }
+    },
+    {
+      "id": "x212",
+      "expr": "(sum((($c - 2348.74)), round((9260.3238 - 6464.6733), 3)) * (sum(round($b, 2), (4470.2172)) + (($d + 1029.76) - (6669))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4442"
+        },
+        "b": {
+          "type": "number",
+          "value": "9923"
+        },
+        "c": {
+          "type": "number",
+          "value": "4867.14"
+        },
+        "d": {
+          "type": "number",
+          "value": "5624.4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "76407429.7380372"
+      }
+    },
+    {
+      "id": "x213",
+      "expr": "((round((9300.399 + $c), 3) + round(round(1315.7663, 0), 3)) - round(sum((6043 * 8162.4), ($a / 1772)), 1))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2513"
+        },
+        "b": {
+          "type": "number",
+          "value": "1502"
+        },
+        "c": {
+          "type": "number",
+          "value": "6963"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2257.7"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-49307802.401"
+      }
+    },
+    {
+      "id": "x214",
+      "expr": "(((round($d, 1) - (3412.6)) - (($d * 4856) - (7350.120 - 6877.3808))) / (sum((8214 * $c), (7454.2), (9079.16 * 7477.3)) + (($a - 9532.9047))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9693.39"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1406.1"
+        },
+        "c": {
+          "type": "number",
+          "value": "5791.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8089.12"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.3401628738112839232983787422"
+      }
+    },
+    {
+      "id": "x215",
+      "expr": "(($c / $a) - ($a / 1281.1))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3964"
+        },
+        "b": {
+          "type": "number",
+          "value": "3481"
+        },
+        "c": {
+          "type": "number",
+          "value": "5585.756"
+        },
+        "d": {
+          "type": "number",
+          "value": "3053"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.68509481839561281413291003"
+      }
+    },
+    {
+      "id": "x216",
+      "expr": "round((((9551 + $d) * ($a + 4428.6)) + round(round(1943.447, 3), 2)), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3595"
+        },
+        "b": {
+          "type": "number",
+          "value": "8725.439"
+        },
+        "c": {
+          "type": "number",
+          "value": "1468.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "2304"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9884271"
+      }
+    },
+    {
+      "id": "x217",
+      "expr": "((((4105 + 7807) - ($b / 423.27)) / ((3289.342 - 4644.32) + round($c, 2))) + (sum(round($d, 3), (5414 + $b)) * (($b / $a) * round($d, 2))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8933.4242"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1199"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6863.4"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7290"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3008663.833349395001835343385701689"
+      }
+    },
+    {
+      "id": "x218",
+      "expr": "((sum((2508 / 1212), (4375 + $a), (4993.0 + $a)) - (sum($d, 5798.88))) - ((sum(9432.034, 4111, $a) + (3693.1173 + 9171.812)) * ((7332.6545 * $d))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3461"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9077"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7518.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "5704.60"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1249414574103.765405379306930693069306931"
+      }
+    },
+    {
+      "id": "x219",
+      "expr": "(($b * $a) - ($b - 3111))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "313"
+        },
+        "b": {
+          "type": "number",
+          "value": "6340.9"
+        },
+        "c": {
+          "type": "number",
+          "value": "2645.4474"
+        },
+        "d": {
+          "type": "number",
+          "value": "5063.928"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1981471.8"
+      }
+    },
+    {
+      "id": "x220",
+      "expr": "((($d + 6285.7) - (471.57 + $c)) * round(($d), 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "231"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6514.099"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1128.4991"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4956"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-9845733.8196"
+      }
+    },
+    {
+      "id": "x221",
+      "expr": "round((round(($d * $c), 3) + sum(($d + $d), sum($d, 11, $a))), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9235.8"
+        },
+        "b": {
+          "type": "number",
+          "value": "9547"
+        },
+        "c": {
+          "type": "number",
+          "value": "2286"
+        },
+        "d": {
+          "type": "number",
+          "value": "9403"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "21532713.8"
+      }
+    },
+    {
+      "id": "x222",
+      "expr": "(((7405 + $b) * (2023 - 2929.8420)) / sum(($c + $d), ($c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6379"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6438.45"
+        },
+        "c": {
+          "type": "number",
+          "value": "2683.5113"
+        },
+        "d": {
+          "type": "number",
+          "value": "2464"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-111.9276727792868328588401724"
+      }
+    },
+    {
+      "id": "x223",
+      "expr": "sum(($a / 4126), round($b, 2), (3942 * 5620.572))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8488.498"
+        },
+        "b": {
+          "type": "number",
+          "value": "-612"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3079"
+        },
+        "d": {
+          "type": "number",
+          "value": "-899"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "22155684.881318952981095492001938924"
+      }
+    },
+    {
+      "id": "x224",
+      "expr": "round((($a - $c)), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9929.6"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8314.66"
+        },
+        "c": {
+          "type": "number",
+          "value": "-448"
+        },
+        "d": {
+          "type": "number",
+          "value": "8273"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "10377.6"
+      }
+    },
+    {
+      "id": "x225",
+      "expr": "(sum($d, $d) - ($d / $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8631.0011"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5017.68"
+        },
+        "c": {
+          "type": "number",
+          "value": "9491.136"
+        },
+        "d": {
+          "type": "number",
+          "value": "4568"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9135.5187088247392093001301424824"
+      }
+    },
+    {
+      "id": "x226",
+      "expr": "(round((3760 / 3525.213), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3178.847"
+        },
+        "b": {
+          "type": "number",
+          "value": "3077.468"
+        },
+        "c": {
+          "type": "number",
+          "value": "3572.7"
+        },
+        "d": {
+          "type": "number",
+          "value": "6496.922"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1"
+      }
+    },
+    {
+      "id": "x227",
+      "expr": "(((2001 + $d) / ($c / $b)) / round(round($d, 0), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9216"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8712.6"
+        },
+        "c": {
+          "type": "number",
+          "value": "5667.88"
+        },
+        "d": {
+          "type": "number",
+          "value": "8592"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1.895185971123448835253664844"
+      }
+    },
+    {
+      "id": "x228",
+      "expr": "(sum(($a + $a), round($b, 2), sum(4623.219, 241.028)) + sum((2187.844 + 9541), ($b + 7242.016), (1328.60 / 9914.7)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2090.8194"
+        },
+        "b": {
+          "type": "number",
+          "value": "177"
+        },
+        "c": {
+          "type": "number",
+          "value": "1294"
+        },
+        "d": {
+          "type": "number",
+          "value": "4899.44"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "28370.8798030459822284083229951486"
+      }
+    },
+    {
+      "id": "x229",
+      "expr": "((sum($a, 5626) * ($d / 4809.05)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5993"
+        },
+        "b": {
+          "type": "number",
+          "value": "2763.874"
+        },
+        "c": {
+          "type": "number",
+          "value": "8367"
+        },
+        "d": {
+          "type": "number",
+          "value": "3598.898"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "8695.188418086732306796560651717"
+      }
+    },
+    {
+      "id": "x230",
+      "expr": "sum(round(sum(($d - $a), ($d - $d), (2830 + $b)), 1), (sum(sum(9315, $a), sum($c, $a, $a), (6425.3418 + $c)) / (round(2750, 2))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5484.3"
+        },
+        "b": {
+          "type": "number",
+          "value": "7120"
+        },
+        "c": {
+          "type": "number",
+          "value": "9189.27"
+        },
+        "d": {
+          "type": "number",
+          "value": "7900"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "23340.723993381818181818181818182"
+      }
+    },
+    {
+      "id": "x231",
+      "expr": "sum((($b / $d) * ($b - 3735.8091)), ((9307 / 796.498) - (3955.46 / $b)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3615"
+        },
+        "b": {
+          "type": "number",
+          "value": "4058.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "9142"
+        },
+        "d": {
+          "type": "number",
+          "value": "362"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3628.503155779473732803251470039664"
+      }
+    },
+    {
+      "id": "x232",
+      "expr": "((($c / 2846.853) + round($a, 2)) + (sum($a, $c)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5824"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1330"
+        },
+        "c": {
+          "type": "number",
+          "value": "-4447.983"
+        },
+        "d": {
+          "type": "number",
+          "value": "6499"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7198.454578968777102295060545803"
+      }
+    },
+    {
+      "id": "x233",
+      "expr": "round(sum($c, $b, 2956.8978), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-1609"
+        },
+        "b": {
+          "type": "number",
+          "value": "-210.2471"
+        },
+        "c": {
+          "type": "number",
+          "value": "3896.89"
+        },
+        "d": {
+          "type": "number",
+          "value": "122"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6643.5"
+      }
+    },
+    {
+      "id": "x234",
+      "expr": "((round(round($a, 3), 3) * ((6039.1917 / 2079))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4860"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9287.4749"
+        },
+        "c": {
+          "type": "number",
+          "value": "1908.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4739.2"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "14117.59098701298701298701298918"
+      }
+    },
+    {
+      "id": "x235",
+      "expr": "round(((round(2208, 3) / (3216 + $c)) / (($b / 8811.7) - round($b, 2))), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9004.4704"
+        },
+        "b": {
+          "type": "number",
+          "value": "9655.308"
+        },
+        "c": {
+          "type": "number",
+          "value": "3929.9625"
+        },
+        "d": {
+          "type": "number",
+          "value": "4528.7504"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "x236",
+      "expr": "((round(round($b, 0), 3)) - sum(sum(($d * 8651), (5907.9435 * $a), round(7485.8, 1)), (round($a, 3) * (5581.60 * 4531.6984)), ((5691.9134 + $b) + ($a * $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9602"
+        },
+        "b": {
+          "type": "number",
+          "value": "9494.51"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2582.4"
+        },
+        "d": {
+          "type": "number",
+          "value": "7703.01"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-243088761309.44328"
+      }
+    },
+    {
+      "id": "x237",
+      "expr": "(($b + $b) / (9337 / 2583))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9119.26"
+        },
+        "b": {
+          "type": "number",
+          "value": "-9199"
+        },
+        "c": {
+          "type": "number",
+          "value": "3804.272"
+        },
+        "d": {
+          "type": "number",
+          "value": "3510"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-5089.646995823069508407411374"
+      }
+    },
+    {
+      "id": "x238",
+      "expr": "(((round(2990, 0) + sum(2298, 3728, $b)) - (sum($a, $b, 9407.468) - ($c - 6023.80))) / ((($d - $a) * ($a + $a)) + (($d + $a) / ($a / $c))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7620.71"
+        },
+        "b": {
+          "type": "number",
+          "value": "1796.7624"
+        },
+        "c": {
+          "type": "number",
+          "value": "2254"
+        },
+        "d": {
+          "type": "number",
+          "value": "7325.0"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.00001518672883356498526028326022"
+      }
+    },
+    {
+      "id": "x239",
+      "expr": "((round($a, 1) - (6021.75 + 3710.4421)) / round((5220.76 - $b), 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5224"
+        },
+        "b": {
+          "type": "number",
+          "value": "9465.01"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1623.393"
+        },
+        "d": {
+          "type": "number",
+          "value": "3723.8002"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.062188160452376745007951935"
+      }
+    },
+    {
+      "id": "x240",
+      "expr": "((1068.9315 - $d) + ($a * 2080.23))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1978"
+        },
+        "b": {
+          "type": "number",
+          "value": "489.0"
+        },
+        "c": {
+          "type": "number",
+          "value": "2994"
+        },
+        "d": {
+          "type": "number",
+          "value": "7122.9"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4108640.9715"
+      }
+    },
+    {
+      "id": "x241",
+      "expr": "((round(1819.2052, 0) * sum($c, $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8709"
+        },
+        "b": {
+          "type": "number",
+          "value": "1805.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "-806.916"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3238.040"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "14373890.796"
+      }
+    },
+    {
+      "id": "x242",
+      "expr": "round(round($b, 2), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9077.6482"
+        },
+        "b": {
+          "type": "number",
+          "value": "1120"
+        },
+        "c": {
+          "type": "number",
+          "value": "1676"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3066"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1120"
+      }
+    },
+    {
+      "id": "x243",
+      "expr": "((($b / 3907) * round($c, 0)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7345"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1633"
+        },
+        "c": {
+          "type": "number",
+          "value": "3306.47"
+        },
+        "d": {
+          "type": "number",
+          "value": "4158"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1381.8013821346301510110058869584"
+      }
+    },
+    {
+      "id": "x244",
+      "expr": "((($b - 1742.2044) - (7905.839 / $c)) * ((4318.52 + $b) + (1435.8 / 5458.99)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8330"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4158.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3469"
+        },
+        "d": {
+          "type": "number",
+          "value": "47"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-945417.4114656590881966979055985848374816169711830564361796254"
+      }
+    },
+    {
+      "id": "x245",
+      "expr": "(($d) / ($d + $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3374.2"
+        },
+        "b": {
+          "type": "number",
+          "value": "8679.9669"
+        },
+        "c": {
+          "type": "number",
+          "value": "3246.2031"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7108.06"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.5"
+      }
+    },
+    {
+      "id": "x246",
+      "expr": "((sum($a, $b, 9332.7) / ($d * $a)) * round(($b), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2604.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "6497.3192"
+        },
+        "c": {
+          "type": "number",
+          "value": "9373"
+        },
+        "d": {
+          "type": "number",
+          "value": "9784.454"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4.6995371566068942913696479872979"
+      }
+    },
+    {
+      "id": "x247",
+      "expr": "((sum($c, 101)) - (($a - $b) / ($b - $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7695"
+        },
+        "b": {
+          "type": "number",
+          "value": "2707.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6127"
+        },
+        "d": {
+          "type": "number",
+          "value": "3758.0"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-6025"
+      }
+    },
+    {
+      "id": "x248",
+      "expr": "((((9386.1 / 8639.864) / (6767 / $b)) * round(($b / $c), 2)) - ((($a * $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2390.06"
+        },
+        "b": {
+          "type": "number",
+          "value": "-1570.3"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7479"
+        },
+        "d": {
+          "type": "number",
+          "value": "7821.43"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3753111.165059989935728701965166654484"
+      }
+    },
+    {
+      "id": "x249",
+      "expr": "(sum((4373 * 2754.71), (5337 / $b)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2784.2544"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3197.28"
+        },
+        "c": {
+          "type": "number",
+          "value": "8782.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "7322.958"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "12046345.160768653355352049241855577"
+      }
+    },
+    {
+      "id": "x250",
+      "expr": "((($a * $d) + round(3421, 2)) * (($d * $c) - (7778.3 / 7086.99)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-196"
+        },
+        "b": {
+          "type": "number",
+          "value": "328.3"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6490.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "3708"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "17407556698214.458920359701368281879808996"
+      }
+    },
+    {
+      "id": "x251",
+      "expr": "round(((($d + 2460.21) * sum(8479, $d, $a)) + (($b * $c) * ($a))), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "762"
+        },
+        "b": {
+          "type": "number",
+          "value": "2728"
+        },
+        "c": {
+          "type": "number",
+          "value": "1401.036"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4041"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2904163862.5"
+      }
+    },
+    {
+      "id": "x252",
+      "expr": "(($c * $a) + round(8702, 3))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1000"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7431.7548"
+        },
+        "c": {
+          "type": "number",
+          "value": "9852"
+        },
+        "d": {
+          "type": "number",
+          "value": "-752.3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9860702"
+      }
+    },
+    {
+      "id": "x253",
+      "expr": "round((((6696.3469 / $c) - ($a / $d)) + ((4457.0 * $d) - round($a, 1))), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1011.99"
+        },
+        "b": {
+          "type": "number",
+          "value": "5491.0"
+        },
+        "c": {
+          "type": "number",
+          "value": "6712"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5723"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-25508422"
+      }
+    },
+    {
+      "id": "x254",
+      "expr": "(round($d, 0) + (9833 + 4369.33))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2652.621"
+        },
+        "b": {
+          "type": "number",
+          "value": "5532"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5467"
+        },
+        "d": {
+          "type": "number",
+          "value": "8343.190"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "22545.33"
+      }
+    },
+    {
+      "id": "x255",
+      "expr": "round(sum((($c + $c) * round($d, 2)), (sum($c, $b, $c) + ($b - $c)), ((6853.11 - 8856.9967) * (7919.2977 * $d))), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7348.6673"
+        },
+        "b": {
+          "type": "number",
+          "value": "-5532.72"
+        },
+        "c": {
+          "type": "number",
+          "value": "-156.41"
+        },
+        "d": {
+          "type": "number",
+          "value": "-198"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3142187032.72"
+      }
+    },
+    {
+      "id": "x256",
+      "expr": "((sum(3814.254, $b) * ($b * 8246.003)) / ((8794 * 5335) / sum($d, 3548.222)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4784"
+        },
+        "b": {
+          "type": "number",
+          "value": "6876.42"
+        },
+        "c": {
+          "type": "number",
+          "value": "5476.50"
+        },
+        "d": {
+          "type": "number",
+          "value": "2016"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "71894312.27237348904699730902"
+      }
+    },
+    {
+      "id": "x257",
+      "expr": "round((((5957.2 / $b) + ($b - $b)) - (sum(2336, 1943.6142, $b) + round(8563.237, 2))), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-1667"
+        },
+        "b": {
+          "type": "number",
+          "value": "6524.4051"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5689"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5876.4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-19366.3"
+      }
+    },
+    {
+      "id": "x258",
+      "expr": "round((((915.825 + $a) + (751.5 - $a)) + (($d - $b) - (8438.122 / $b))), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9557.33"
+        },
+        "b": {
+          "type": "number",
+          "value": "3556"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6387"
+        },
+        "d": {
+          "type": "number",
+          "value": "6470.2422"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "4579.2"
+      }
+    },
+    {
+      "id": "x259",
+      "expr": "((($c * 344.339) / round(6564.318, 0)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8699.1489"
+        },
+        "b": {
+          "type": "number",
+          "value": "9962.990"
+        },
+        "c": {
+          "type": "number",
+          "value": "4011"
+        },
+        "d": {
+          "type": "number",
+          "value": "6694"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "210.4119026508226691042047532"
+      }
+    },
+    {
+      "id": "x260",
+      "expr": "((($b - $d) / (2703.5351 * 801.76)) * (($c + 7282) + ($b - 1229.625)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "51"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3305"
+        },
+        "c": {
+          "type": "number",
+          "value": "4267.6"
+        },
+        "d": {
+          "type": "number",
+          "value": "5469.338"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-28.39645261695827296577862077009775"
+      }
+    },
+    {
+      "id": "x261",
+      "expr": "(round((($c / $b) - sum(7058, 8659.6, 8949.89)), 3) - ((round($a, 1) - (6223.03 / 4051)) - sum((9902 / 8446), (3889.4), ($a * 9210))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5238"
+        },
+        "b": {
+          "type": "number",
+          "value": "8571.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "1423.3694"
+        },
+        "d": {
+          "type": "number",
+          "value": "8729.547"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-48257517.215439387566986468349056281"
+      }
+    },
+    {
+      "id": "x262",
+      "expr": "round(((3300.6 - $b) - ($b - 9078)), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-304.20"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2142.8"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5961.487"
+        },
+        "d": {
+          "type": "number",
+          "value": "-2746.8"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "16664"
+      }
+    },
+    {
+      "id": "x263",
+      "expr": "((($c) - (1695)) + ((4098.530 - 8695.339) - round(1711, 0)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5587.960"
+        },
+        "b": {
+          "type": "number",
+          "value": "5546.4"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8040.1"
+        },
+        "d": {
+          "type": "number",
+          "value": "8441"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-16042.909"
+      }
+    },
+    {
+      "id": "x264",
+      "expr": "(((round(2671, 2) - (3791 - 657.9)) - (($a + $c) + round(4915.87, 1))) - (((2384.32 * 9449.8)) / (round(4008.6820, 1))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5813.557"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6251.06"
+        },
+        "c": {
+          "type": "number",
+          "value": "2998.8694"
+        },
+        "d": {
+          "type": "number",
+          "value": "8158.4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-19811.038353002220171127797041"
+      }
+    },
+    {
+      "id": "x265",
+      "expr": "(((round($a, 2) / (5713.7729 / 6563.8))) / (round(($b * $b), 2) - round((2655 * 9976), 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "290.1"
+        },
+        "b": {
+          "type": "number",
+          "value": "-479"
+        },
+        "c": {
+          "type": "number",
+          "value": "4325.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "6669"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.00001269222178162079452185981796"
+      }
+    },
+    {
+      "id": "x266",
+      "expr": "(round(round($c, 1), 3) + sum(round(9923.62, 0), (5574 * 252.01)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1984.06"
+        },
+        "b": {
+          "type": "number",
+          "value": "1946"
+        },
+        "c": {
+          "type": "number",
+          "value": "9192"
+        },
+        "d": {
+          "type": "number",
+          "value": "4993.2506"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1423819.74"
+      }
+    },
+    {
+      "id": "x267",
+      "expr": "round(((($c) * ($d + 5063.69)) / ((4827.5) - ($b - $a))), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-6848"
+        },
+        "b": {
+          "type": "number",
+          "value": "8014"
+        },
+        "c": {
+          "type": "number",
+          "value": "1125.45"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6640.6"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "176.86"
+      }
+    },
+    {
+      "id": "x268",
+      "expr": "((($b * $c) * (9512.690 - $b)) + round(($a), 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2904.204"
+        },
+        "b": {
+          "type": "number",
+          "value": "7544.6026"
+        },
+        "c": {
+          "type": "number",
+          "value": "9424.3"
+        },
+        "d": {
+          "type": "number",
+          "value": "995.7369"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "139936124884.188189932"
+      }
+    },
+    {
+      "id": "x269",
+      "expr": "((7264 - $b) + (8309 / $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8808.199"
+        },
+        "b": {
+          "type": "number",
+          "value": "2128"
+        },
+        "c": {
+          "type": "number",
+          "value": "555"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7957"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5134.955762221942943320346864396"
+      }
+    },
+    {
+      "id": "x270",
+      "expr": "sum(((8186.225 * 5272) / ($d / 7441.4228)), round((9133.581 * 3770), 3))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6380.56"
+        },
+        "b": {
+          "type": "number",
+          "value": "6489.31"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3238.3"
+        },
+        "d": {
+          "type": "number",
+          "value": "3480.85"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "126697063.22959548960742347415"
+      }
+    },
+    {
+      "id": "x271",
+      "expr": "((1231) * ($a + 387))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4302"
+        },
+        "b": {
+          "type": "number",
+          "value": "5512"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3264.9863"
+        },
+        "d": {
+          "type": "number",
+          "value": "2859"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5772159"
+      }
+    },
+    {
+      "id": "x272",
+      "expr": "sum(((sum(6414.9893, 2070) * round($b, 2)) * ((3914 * 3311) - (7200 + 8124.05))), (round((2983.8 / 9295.0789), 1) / round(($c / 2768.5194), 3)), ((sum(3261, $b, $a) * (8733 * 8555.5)) / ((8650.69) + (5332.673 / $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3691.55"
+        },
+        "b": {
+          "type": "number",
+          "value": "9498.264"
+        },
+        "c": {
+          "type": "number",
+          "value": "8018"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7714.60"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1043185557122632.069741186652932752438121547"
+      }
+    },
+    {
+      "id": "x273",
+      "expr": "round(($c - 8199.3), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4346.2259"
+        },
+        "b": {
+          "type": "number",
+          "value": "939.12"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9434.5645"
+        },
+        "d": {
+          "type": "number",
+          "value": "-8283"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-17633.865"
+      }
+    },
+    {
+      "id": "x274",
+      "expr": "(($d - 8208.1) / ($b / 6632.7))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2316.8"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3195"
+        },
+        "c": {
+          "type": "number",
+          "value": "8014.855"
+        },
+        "d": {
+          "type": "number",
+          "value": "8571"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-753.3667699530516431924882629"
+      }
+    },
+    {
+      "id": "x275",
+      "expr": "round(round($d, 1), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2305"
+        },
+        "b": {
+          "type": "number",
+          "value": "4070"
+        },
+        "c": {
+          "type": "number",
+          "value": "3395.07"
+        },
+        "d": {
+          "type": "number",
+          "value": "6281.0"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6281"
+      }
+    },
+    {
+      "id": "x276",
+      "expr": "((4836 * $d) / (30.1183 - $d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5179"
+        },
+        "b": {
+          "type": "number",
+          "value": "4169.29"
+        },
+        "c": {
+          "type": "number",
+          "value": "-347"
+        },
+        "d": {
+          "type": "number",
+          "value": "7171"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-4856.396934849095735614833109"
+      }
+    },
+    {
+      "id": "x277",
+      "expr": "((((1242.685 - $b) * round($b, 3)) - ((9112) - (6118.845 * $d))) + ((round($d, 1) * ($d + 4699.24)) - (($c / 8715.849))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6903.95"
+        },
+        "b": {
+          "type": "number",
+          "value": "1924"
+        },
+        "c": {
+          "type": "number",
+          "value": "4055.92"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7319.05"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-26929443.6515999618912626870887735664"
+      }
+    },
+    {
+      "id": "x278",
+      "expr": "round((1882 * 5269.548), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1122"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4539"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6299.93"
+        },
+        "d": {
+          "type": "number",
+          "value": "-713"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9917289.336"
+      }
+    },
+    {
+      "id": "x279",
+      "expr": "(($c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8603.4"
+        },
+        "b": {
+          "type": "number",
+          "value": "980"
+        },
+        "c": {
+          "type": "number",
+          "value": "9198.5083"
+        },
+        "d": {
+          "type": "number",
+          "value": "1026.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "9198.5083"
+      }
+    },
+    {
+      "id": "x280",
+      "expr": "(round(4160.7, 0) * (5939.434 / $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5290.2"
+        },
+        "b": {
+          "type": "number",
+          "value": "9301"
+        },
+        "c": {
+          "type": "number",
+          "value": "1794.05"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6151.9"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "13775.527367687634123909590031729"
+      }
+    },
+    {
+      "id": "x281",
+      "expr": "((((8663 - 2539.804) - round($a, 1)) + sum((903 + $b), (9905.841 * $d))) / round(((6727.1970 * $a) / sum($d, 792.932)), 1))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-9979"
+        },
+        "b": {
+          "type": "number",
+          "value": "8098"
+        },
+        "c": {
+          "type": "number",
+          "value": "8508.1011"
+        },
+        "d": {
+          "type": "number",
+          "value": "9362.0"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-14032.55175596768825825189847"
+      }
+    },
+    {
+      "id": "x282",
+      "expr": "(round($c, 3) + (4389.4 / 480))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7442"
+        },
+        "b": {
+          "type": "number",
+          "value": "3957.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "8806"
+        },
+        "d": {
+          "type": "number",
+          "value": "2021.16"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "8815.144583333333333333333333333"
+      }
+    },
+    {
+      "id": "x283",
+      "expr": "round(((sum($d, 8899.4, $b) + (9201 * 7526.41))), 3)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9852.14"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4601.5464"
+        },
+        "c": {
+          "type": "number",
+          "value": "5164"
+        },
+        "d": {
+          "type": "number",
+          "value": "9197.510"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "69263993.774"
+      }
+    },
+    {
+      "id": "x284",
+      "expr": "(round(round($a, 2), 0) - (round(3187.5, 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3261.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "-8174.323"
+        },
+        "c": {
+          "type": "number",
+          "value": "4974.90"
+        },
+        "d": {
+          "type": "number",
+          "value": "8264.39"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "74.5"
+      }
+    },
+    {
+      "id": "x285",
+      "expr": "(($d / 8640) - (8361.7781 - 9560))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6816.569"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4010.133"
+        },
+        "c": {
+          "type": "number",
+          "value": "3416.5414"
+        },
+        "d": {
+          "type": "number",
+          "value": "7947"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1199.1416916666666666666666666667"
+      }
+    },
+    {
+      "id": "x286",
+      "expr": "((($a / 9048.247) * ($b - $c)) + (($b / 7844.346) - ($b / 7134)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1139.0319"
+        },
+        "b": {
+          "type": "number",
+          "value": "615.9"
+        },
+        "c": {
+          "type": "number",
+          "value": "7814"
+        },
+        "d": {
+          "type": "number",
+          "value": "-5751"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-906.13532739662331594104215066368"
+      }
+    },
+    {
+      "id": "x287",
+      "expr": "(round($a, 1) * ($b + 9979))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2356.4112"
+        },
+        "b": {
+          "type": "number",
+          "value": "2310"
+        },
+        "c": {
+          "type": "number",
+          "value": "-8055.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3047.2604"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "28957799.6"
+      }
+    },
+    {
+      "id": "x288",
+      "expr": "((3366 - 7792))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4569.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "581.7"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6986"
+        },
+        "d": {
+          "type": "number",
+          "value": "5938.7435"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-4426"
+      }
+    },
+    {
+      "id": "x289",
+      "expr": "(round($b, 1) - ($d))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7760.2"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3354"
+        },
+        "c": {
+          "type": "number",
+          "value": "1047"
+        },
+        "d": {
+          "type": "number",
+          "value": "8772.034"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-12126.034"
+      }
+    },
+    {
+      "id": "x290",
+      "expr": "round(round(5433.69, 0), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-8748.5"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6937.778"
+        },
+        "c": {
+          "type": "number",
+          "value": "7356.0016"
+        },
+        "d": {
+          "type": "number",
+          "value": "9589.497"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "5434"
+      }
+    },
+    {
+      "id": "x291",
+      "expr": "(sum($b, 9078, 4598.4) * ($a / 6593))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8333.0"
+        },
+        "b": {
+          "type": "number",
+          "value": "9291.5"
+        },
+        "c": {
+          "type": "number",
+          "value": "7261.62"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4367.29"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "29029.5026088275443652358562114361"
+      }
+    },
+    {
+      "id": "x292",
+      "expr": "(((($d + 2231) + (7453.2)) / ((5) / sum(5548.2, 9440, $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4302"
+        },
+        "b": {
+          "type": "number",
+          "value": "8219.57"
+        },
+        "c": {
+          "type": "number",
+          "value": "778.403"
+        },
+        "d": {
+          "type": "number",
+          "value": "9248.4748"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "87877032.44863919999999999998"
+      }
+    },
+    {
+      "id": "x293",
+      "expr": "sum(($d * $a), ($a), ($b * $a))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3965.410"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2027.079"
+        },
+        "c": {
+          "type": "number",
+          "value": "-1284.26"
+        },
+        "d": {
+          "type": "number",
+          "value": "262"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-6995296.50739"
+      }
+    },
+    {
+      "id": "x294",
+      "expr": "(((($c / $d) + (3684)) / (($a - $c) / sum($d, 2139.1, $c))) * ((($a / $c) + (6494 + 6797)) + (sum($b, $b) * (4553.4364 - 2717))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "5507.7273"
+        },
+        "b": {
+          "type": "number",
+          "value": "3858.3"
+        },
+        "c": {
+          "type": "number",
+          "value": "-2751.80"
+        },
+        "d": {
+          "type": "number",
+          "value": "1650"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "6559656658.4645331659133626118232165954887202529298781796624972"
+      }
+    },
+    {
+      "id": "x295",
+      "expr": "(((round(5067, 3) + (7724.49 * $c)) * ((514.878 * 9536.8373) - (2901.00 / $a))) - (((4069.8 / $c) / round($c, 2)) + (($d * 5196) / (7556.2))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-5967.00"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6457.2"
+        },
+        "c": {
+          "type": "number",
+          "value": "6175"
+        },
+        "d": {
+          "type": "number",
+          "value": "-4882.550"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "234240324787452.917144459799976702676266068347"
+      }
+    },
+    {
+      "id": "x296",
+      "expr": "(((($a * $c) * ($d * 7238)) * (($a) * round($b, 1))) + (((8915.4290 / 2682) + (602.1 + $b)) * ((1699 - $b) - (289.21 + $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2408"
+        },
+        "b": {
+          "type": "number",
+          "value": "-7550.629"
+        },
+        "c": {
+          "type": "number",
+          "value": "-4872"
+        },
+        "d": {
+          "type": "number",
+          "value": "-1877"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-2897907773974084705455.086811242356450410141692192152"
+      }
+    },
+    {
+      "id": "x297",
+      "expr": "(((8715.3468 / 9292) + ($d + 5031.2)) / ((8306.134 / 2000.1) - sum($b, 1010.697, 6235.991)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "9860"
+        },
+        "b": {
+          "type": "number",
+          "value": "-6745"
+        },
+        "c": {
+          "type": "number",
+          "value": "-7753.7"
+        },
+        "d": {
+          "type": "number",
+          "value": "517"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-11.15325830799450136225750759"
+      }
+    },
+    {
+      "id": "x298",
+      "expr": "(round((($b + 2245.7)), 3) / round((sum($c, 5048.909, $b) * (4349 - $d)), 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2026.3"
+        },
+        "b": {
+          "type": "number",
+          "value": "8691"
+        },
+        "c": {
+          "type": "number",
+          "value": "8397.9"
+        },
+        "d": {
+          "type": "number",
+          "value": "9362.82"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-0.00009853327656767186295960289938"
+      }
+    },
+    {
+      "id": "x299",
+      "expr": "sum((3817.9 + $c), (5329 - 9171))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4487"
+        },
+        "b": {
+          "type": "number",
+          "value": "7758"
+        },
+        "c": {
+          "type": "number",
+          "value": "7491.3841"
+        },
+        "d": {
+          "type": "number",
+          "value": "7341.608"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "7467.2841"
+      }
+    },
+    {
+      "id": "x300",
+      "expr": "((6672.7191 + $d) - ($c + 322.21))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8955.64"
+        },
+        "b": {
+          "type": "number",
+          "value": "9087"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9078.54"
+        },
+        "d": {
+          "type": "number",
+          "value": "3580.6"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "19009.6491"
+      }
+    },
+    {
+      "id": "x301",
+      "expr": "round((sum($c, 305.156, $a) - (3618.9 + 1306)), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "871"
+        },
+        "b": {
+          "type": "number",
+          "value": "5190.97"
+        },
+        "c": {
+          "type": "number",
+          "value": "4429.6807"
+        },
+        "d": {
+          "type": "number",
+          "value": "5993.2"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "680.94"
+      }
+    },
+    {
+      "id": "x302",
+      "expr": "(((3749 + 149) / ($a * 4669)) / (($c / $d) - round($d, 3)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1888.90"
+        },
+        "b": {
+          "type": "number",
+          "value": "6266.24"
+        },
+        "c": {
+          "type": "number",
+          "value": "-6102"
+        },
+        "d": {
+          "type": "number",
+          "value": "-6349.80"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.00000006959583131814918245359423128"
+      }
+    },
+    {
+      "id": "x303",
+      "expr": "((((2083.37 * $d) - ($d - 2471.5433)) * round((9551 * 1855), 2)) + (sum((6744.0 * $c), (5284.1295 / $b), ($b)) * (($d + 4593.084) * ($a * $d))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2572.3980"
+        },
+        "b": {
+          "type": "number",
+          "value": "7034"
+        },
+        "c": {
+          "type": "number",
+          "value": "-3745.668"
+        },
+        "d": {
+          "type": "number",
+          "value": "3607.391"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1921614127129472621.30621384374853212897655345412004309"
+      }
+    },
+    {
+      "id": "x304",
+      "expr": "((((1085.6 * 30) * round(7193.6773, 2)) / (($c * 9157.2214) / round(7985.8, 0))) + (((6959) + ($b + 7065.4811)) - sum((4885 - $a), (4083.820 / 766.20), (3780.95 * $b))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7982.881"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3712"
+        },
+        "c": {
+          "type": "number",
+          "value": "3284.4534"
+        },
+        "d": {
+          "type": "number",
+          "value": "1420"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "14110499.210444931782210898785193989"
+      }
+    },
+    {
+      "id": "x305",
+      "expr": "((($c - 5821.284) + (1526 * $b)) * (round($a, 3) / (8236 * $a)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4459.7"
+        },
+        "b": {
+          "type": "number",
+          "value": "1178"
+        },
+        "c": {
+          "type": "number",
+          "value": "581.775"
+        },
+        "d": {
+          "type": "number",
+          "value": "7954"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "217.6285200339970859640602233927081792"
+      }
+    },
+    {
+      "id": "x306",
+      "expr": "(((($c + 3688.884)) / round((2159 - 1924), 2)) - ((($b) * round(8572, 2)) - (($d / $d) + ($b / 2824.9336))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "4632"
+        },
+        "b": {
+          "type": "number",
+          "value": "138"
+        },
+        "c": {
+          "type": "number",
+          "value": "3208"
+        },
+        "d": {
+          "type": "number",
+          "value": "4867.62"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-1182905.60270674107864852755657916412"
+      }
+    },
+    {
+      "id": "x307",
+      "expr": "(((($d)) + ((4122.2 * $d) * round($c, 0))) * (sum((9928 - $a), (2767 + 2420)) - ((1110.6532 - 3730) / (8529 * $c))))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "6766.0629"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2097"
+        },
+        "c": {
+          "type": "number",
+          "value": "398.633"
+        },
+        "d": {
+          "type": "number",
+          "value": "2829.8310"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "38859208257269.785276847961645928125227041790439"
+      }
+    },
+    {
+      "id": "x308",
+      "expr": "(($b / 2928) + (8874 * 9020.398))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "8607.7219"
+        },
+        "b": {
+          "type": "number",
+          "value": "-690.9"
+        },
+        "c": {
+          "type": "number",
+          "value": "-5492"
+        },
+        "d": {
+          "type": "number",
+          "value": "3769"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "80047011.6160368852459016393442622951"
+      }
+    },
+    {
+      "id": "x309",
+      "expr": "(($b * 3824.1663) * ($d / $c))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3571"
+        },
+        "b": {
+          "type": "number",
+          "value": "7977.4651"
+        },
+        "c": {
+          "type": "number",
+          "value": "2790"
+        },
+        "d": {
+          "type": "number",
+          "value": "-7447.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-81430043.21051563251720430107373799231280342"
+      }
+    },
+    {
+      "id": "x310",
+      "expr": "round(((($b - 695.361)) * (($d / $a))), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-167.58"
+        },
+        "b": {
+          "type": "number",
+          "value": "-636"
+        },
+        "c": {
+          "type": "number",
+          "value": "2483"
+        },
+        "d": {
+          "type": "number",
+          "value": "9441"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "75005.2"
+      }
+    },
+    {
+      "id": "x311",
+      "expr": "(((4637 - $a) + sum($a, $d)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-6314.1608"
+        },
+        "b": {
+          "type": "number",
+          "value": "4306.07"
+        },
+        "c": {
+          "type": "number",
+          "value": "-4058.09"
+        },
+        "d": {
+          "type": "number",
+          "value": "6203"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "10840"
+      }
+    },
+    {
+      "id": "x312",
+      "expr": "((($a) / ($a / $b)) - round(($d), 2))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-57"
+        },
+        "b": {
+          "type": "number",
+          "value": "-4981"
+        },
+        "c": {
+          "type": "number",
+          "value": "6602.4072"
+        },
+        "d": {
+          "type": "number",
+          "value": "8844"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-13824.999999999999999999999999"
+      }
+    },
+    {
+      "id": "x313",
+      "expr": "round(round((3262 * 7711), 3), 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1254.8"
+        },
+        "b": {
+          "type": "number",
+          "value": "9383"
+        },
+        "c": {
+          "type": "number",
+          "value": "2370.58"
+        },
+        "d": {
+          "type": "number",
+          "value": "3578.1087"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "25153282"
+      }
+    },
+    {
+      "id": "x314",
+      "expr": "round((401.4 * 2426), 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-3547"
+        },
+        "b": {
+          "type": "number",
+          "value": "9710"
+        },
+        "c": {
+          "type": "number",
+          "value": "3822.3441"
+        },
+        "d": {
+          "type": "number",
+          "value": "5379"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "973796"
+      }
+    },
+    {
+      "id": "x315",
+      "expr": "((((3101) + ($c + $a)) + ((2879.47 + 9649) - (852.23 - $d))) * (round(($c / $c), 2) - round((31.78 - 1209), 1)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7908.1"
+        },
+        "b": {
+          "type": "number",
+          "value": "8199"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9504.0"
+        },
+        "d": {
+          "type": "number",
+          "value": "4220"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "20502258.788"
+      }
+    },
+    {
+      "id": "x316",
+      "expr": "((($c - $c) + round($a, 0)) - sum((6404.7596 * $c), (1277.322 + 4185), (1529.1062 - 4353.5018)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-314.8148"
+        },
+        "b": {
+          "type": "number",
+          "value": "6624"
+        },
+        "c": {
+          "type": "number",
+          "value": "-9463.46"
+        },
+        "d": {
+          "type": "number",
+          "value": "5529.2465"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "60608233.357816"
+      }
+    },
+    {
+      "id": "x317",
+      "expr": "round(((round(7375, 3)) + ((2549.2692) * round(222.439, 3))), 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7551"
+        },
+        "b": {
+          "type": "number",
+          "value": "3391"
+        },
+        "c": {
+          "type": "number",
+          "value": "9498.0231"
+        },
+        "d": {
+          "type": "number",
+          "value": "-3237.68"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "574431.89"
+      }
+    },
+    {
+      "id": "x318",
+      "expr": "((9616 / 2937) * (5813.534 + 572))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-7320.45"
+        },
+        "b": {
+          "type": "number",
+          "value": "1200.9184"
+        },
+        "c": {
+          "type": "number",
+          "value": "1317"
+        },
+        "d": {
+          "type": "number",
+          "value": "6849"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "20906.807948246510044262853249756208"
+      }
+    },
+    {
+      "id": "x319",
+      "expr": "sum((($a + $d) / (9681.816 - $a)), (($b / 7477.075) * (2379.6 + $b)))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "7362.3"
+        },
+        "b": {
+          "type": "number",
+          "value": "-2037.96"
+        },
+        "c": {
+          "type": "number",
+          "value": "6669.5"
+        },
+        "d": {
+          "type": "number",
+          "value": "7739.033"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-86.607230451481601042553622910296"
+      }
+    },
+    {
+      "id": "x320",
+      "expr": "(((3136 - $c) - (2916 + $d)) / round(($a / $d), 0))",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-4070.54"
+        },
+        "b": {
+          "type": "number",
+          "value": "-3451"
+        },
+        "c": {
+          "type": "number",
+          "value": "7252"
+        },
+        "d": {
+          "type": "number",
+          "value": "4741.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "11773.5"
+      }
+    }
+  ]
+}

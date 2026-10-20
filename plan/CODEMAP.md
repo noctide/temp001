@@ -154,7 +154,7 @@
 
 ## forms
 
-登记：params 0 · features 0 · pages 0 · objects 0
+登记：params 2 · features 0 · pages 0 · objects 0
 
 （api 层还没有对外函数）
 

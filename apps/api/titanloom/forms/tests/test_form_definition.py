@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import UTC, datetime
 from types import MappingProxyType
 
@@ -12,11 +13,21 @@ import pytest
 
 from titanloom.forms.domain.field import FieldDefinition, FieldKind
 from titanloom.forms.domain.form import FormDefinition, publish
-from titanloom.forms.domain.publish_check import CheckProblem, PublishCheckFailed, publish_check
+from titanloom.forms.domain.publish_check import (
+    CheckKind,
+    CheckProblem,
+    PublishCheckFailed,
+    publish_check,
+)
+from titanloom.forms.tests.helpers import cyclic_form
 
 
 def _field(code: str, label: str, kind: FieldKind = FieldKind.TEXT) -> FieldDefinition:
     return FieldDefinition(code=code, label_zh=label, label_en=label, kind=kind)
+
+
+def _set_show_condition(form: FormDefinition, section_index: int, cond: str | None) -> None:
+    form.sections[section_index] = replace(form.sections[section_index], show_condition=cond)
 
 
 def test_field_rename_keeps_code_and_references() -> None:
@@ -32,7 +43,7 @@ def test_field_rename_keeps_code_and_references() -> None:
             settings={"formula": "daysBetween($end_date, $start_date) + 1"},
         )
     )
-    form.sections[0].show_condition = "$end_date > $start_date"
+    _set_show_condition(form, 0, "$end_date > $start_date")
 
     form.rename_field("end_date", "完成日期")
 
@@ -67,7 +78,7 @@ def test_publish_creates_immutable_release() -> None:
             settings={"formula": "$a * 2"},
         )
     )
-    form.sections[0].show_condition = "$b > 0"
+    _set_show_condition(form, 0, "$b > 0")
 
     released = publish(form, datetime(2026, 10, 18, 9, 0, tzinfo=UTC))
 
@@ -85,17 +96,17 @@ def test_publish_creates_immutable_release() -> None:
             label_zh="字段B",
             label_en="Field B",
             kind=FieldKind.NUMBER,
-            settings={"formula": "$b * 3"},
+            settings={"formula": "$c * 2"},
         )
     )
-    form.add_field(_field("c", "字段C", FieldKind.DATE))
+    form.add_field(_field("c", "字段C", FieldKind.NUMBER))
     form.remove_field("a")
 
     released2 = publish(form, datetime(2026, 10, 18, 10, 0, tzinfo=UTC))
     assert released2.version == 2
     assert released2.fields["b"].label_zh == "字段B"
     mapping = released2.fields["b"].settings or {}
-    assert mapping.get("formula") == "$b * 3"
+    assert mapping.get("formula") == "$c * 2"
     assert set(released2.fields) == {"b", "c"}
 
     # 旧版本快照完全不变：运行中的记录继续按原版本走
@@ -111,12 +122,12 @@ def test_publish_check_rejects_undefined_field_reference() -> None:
     """分区显示条件 / 字段公式 引用未定义字段，发布前检查必须拒绝（子方案 26.3.4）。"""
     form = FormDefinition(owner="刘畅")
     form.add_field(_field("a", "字段A", FieldKind.NUMBER))
-    form.sections[0].show_condition = "$nope > 0"
+    _set_show_condition(form, 0, "$nope > 0")
 
     problems = _capture_publish_check_failure(form)
     assert any(p.section_index == 0 and p.field_code is None and p.ref == "nope" for p in problems)
 
-    form.sections[0].show_condition = None
+    _set_show_condition(form, 0, None)
     form.add_field(
         FieldDefinition(
             code="b",
@@ -130,12 +141,19 @@ def test_publish_check_rejects_undefined_field_reference() -> None:
     assert any(p.section_index is None and p.field_code == "b" and p.ref == "missing" for p in problems)
 
 
+def test_publish_check_rejects_cycle() -> None:
+    """FW11：字段公式间循环依赖，发布前检查必须拒绝。"""
+    form = cyclic_form()
+    problems = _capture_publish_check_failure(form)
+    assert any(p.kind == CheckKind.CYCLE for p in problems)
+
+
 def test_publish_check_accepts_defined_fields() -> None:
     """引用均已定义的字段，发布前检查通过。"""
     form = FormDefinition(owner="刘畅")
     form.add_field(_field("a", "字段A", FieldKind.NUMBER))
     form.add_field(_field("b", "字段B", FieldKind.NUMBER))
-    form.sections[0].show_condition = "$b > 0"
+    _set_show_condition(form, 0, "$b > 0")
     form.add_field(
         FieldDefinition(
             code="c",

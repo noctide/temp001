@@ -1,12 +1,13 @@
 """表单草稿与发布版本（阶段 1）：草稿可编辑，发布形成不可变版本（FW06）。
 
 Section 只留标题、字段列表、显示条件；计算字段的表达式放进该字段的
-settings（公式不是分区属性）。
+settings（公式不是分区属性）。发布版本不可变，旧版本不受草稿后续改动影响。
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, replace
 from dataclasses import field as _field
 from datetime import datetime
 from types import MappingProxyType
@@ -15,15 +16,13 @@ from titanloom.forms.domain.field import FieldDefinition
 from titanloom.forms.domain.publish_check import publish_check
 
 
-@dataclass
+@dataclass(frozen=True)
 class Section:
-    """表单的分区：标题、字段列表、显示条件。"""
+    """表单的分区（发布快照不可变）：标题、字段列表、显示条件。"""
 
     title: str = ""
+    fields: tuple[str, ...] = ()
     show_condition: str | None = None
-
-    def __post_init__(self) -> None:
-        self.fields: list[str] = []
 
 
 @dataclass(frozen=True)
@@ -33,8 +32,8 @@ class FormRelease:
     form_id: str
     version: int
     published_at: datetime
-    fields: dict[str, FieldDefinition]
-    sections: list[Section]
+    fields: Mapping[str, FieldDefinition]  # MappingProxyType，共享不可变对象
+    sections: tuple[Section, ...]
 
 
 @dataclass
@@ -62,19 +61,20 @@ class FormDefinition:
 
     def add_field(self, definition: FieldDefinition) -> None:
         self._fields[definition.code] = definition
-        if definition.code not in self.sections[0].fields:
-            self.sections[0].fields.append(definition.code)
+        code = definition.code
+        if code not in self.sections[0].fields:
+            self.sections[0] = replace(self.sections[0], fields=(*self.sections[0].fields, code))
 
     def remove_field(self, code: str) -> None:
         if code not in self._fields:
             raise KeyError(code)
         del self._fields[code]
-        for section in self.sections:
-            if code in section.fields:
-                section.fields.remove(code)
+        self.sections = [
+            replace(s, fields=tuple(c for c in s.fields if c != code)) if code in s.fields else s for s in self.sections
+        ]
 
     def rename_field(self, code: str, new_zh: str, new_en: str | None = None) -> None:
-        """改名只改显示名，返回新 FieldDefinition，code 不变（FW18）。"""
+        """改名只改显示名，code 不变；按 code 引用的公式/条件不受影响（FW18）。"""
         existing = self.field(code)  # KeyError(code) 若不存在
         self._fields[code] = existing.with_label(label_zh=new_zh, label_en=new_en)
 
@@ -97,21 +97,14 @@ def _collect_expressions(
 
 def publish(draft: FormDefinition, published_at: datetime) -> FormRelease:
     """从草稿发布一个不可变版本；版本号递增，旧版本不受后续草稿改动影响（FW06）。"""
-    publish_check(set(draft.fields), _collect_expressions(draft))
+    publish_check({code: definition.kind for code, definition in draft.fields.items()}, _collect_expressions(draft))
     version = draft.releases[-1].version + 1 if draft.releases else 1
     release = FormRelease(
         form_id=draft.form_id or "",
         version=version,
         published_at=published_at,
-        fields=dict(draft.fields),
-        sections=[_snapshot_section(s) for s in draft.sections],
+        fields=MappingProxyType(dict(draft.fields)),
+        sections=tuple(draft.sections),
     )
     draft.releases.append(release)
     return release
-
-
-def _snapshot_section(section: Section) -> Section:
-    """复制一个分区快照，避免共享可变的字段列表。"""
-    snapshot = Section(title=section.title, show_condition=section.show_condition)
-    snapshot.fields = list(section.fields)
-    return snapshot
