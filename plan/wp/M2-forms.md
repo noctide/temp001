@@ -2,12 +2,12 @@
 id: M2-forms
 project: forms
 title: 表单开发项目 · M2（表单平台阶段一）
-status: 返工
+status: 执行中
 agent: null
 depends:
 - M1 底座接口（阶段 3 起）
 size: 整个项目，分 7 个阶段
-stage: 1
+stage: 2
 started: 2026-10-18 15:03
 ---
 ## 目标
@@ -112,3 +112,9 @@ started: 2026-10-18 15:03
 架构另用 2000 组随机嵌套算式（含 round、sum、括号、超长数）再对拍：**18 组不一致，全部出在后端 `sum()`**——`functions.py` 的 `sum_fn` 里 `total += …` 仍在默认 28 位上下文里累加，被截断（如 `sum($a / $b, $c)`，100、3、12345.678 → 后端 12379.01133333333333333333333，应为 12379.01133333333333333333333333）。前端是对的。
 
 只改这一处：`sum_fn` 和 + − × 用同一个精确运算（复用 evaluator 里的那个，不要再写一份）。契约已补 c31（就是上面这个例子）。另外请把你的对拍生成器加上嵌套与 `sum` / `round`，你那 300 组只有平铺的四则运算，所以没抓到。
+
+### 阶段 2 · 2026-10-20 · 通过（提交 d6408cc，已合入）
+
+`sum()` 改为精确累加；tl check 12 项、pytest、vitest 359 个全过。架构独立对拍：3 个种子 × 2000 组随机嵌套算式（四则、round、sum、if、超长数），**前后端 0 不一致**。
+
+阶段 3 起要用底座（access / execution / facilities）：access.api 已发布（0fb2942），execution、facilities 还在做——**先停在这里**，等通知再开阶段 3。阶段 3 要建表：用 kernel 的数据库与迁移脚手架（b806593），表结构只写在 store/models.py，迁移用 `tl.py db revision forms` 生成。
