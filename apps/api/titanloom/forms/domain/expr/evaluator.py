@@ -1,6 +1,7 @@
-"""表达式求值器：带预算（深度 32、字段引用 20）与类型检查。
+"""表达式求值器：带预算（嵌套深度，业务参数 forms.expr.depthLimit）与类型检查。
 
-对外只暴露 evaluate；expression_depth / count_refs 供 publish_check 预算预检用。
+对外暴露 evaluate 与预算常量；expression_depth 供 publish_check 预算预检用。
+单次计算时限 forms.expr.computeMs 由应用层计时（领域层不直接读时钟）。
 """
 
 from __future__ import annotations
@@ -15,9 +16,12 @@ from titanloom.forms.domain.expr.errors import ExprError
 from titanloom.forms.domain.expr.functions import FUNCTIONS
 from titanloom.forms.domain.expr.parser import parse
 from titanloom.forms.domain.expr.types import Value, ValueKind
+from titanloom.kernel.params import ParamStore
+from titanloom.kernel.reg.manifest import P
 
-DEFAULT_DEPTH_LIMIT = 32
-DEFAULT_REF_LIMIT = 20
+_PARAMS = ParamStore()
+DEFAULT_DEPTH_LIMIT = int(_PARAMS.get(P.forms.expr.depthLimit))
+COMPUTE_BUDGET_MS = int(_PARAMS.get(P.forms.expr.computeMs))
 
 _ARITHMETIC_OPS = frozenset({"+", "-", "*", "/"})
 _COMPARISON_OPS = frozenset({"=", "!=", "<", "<=", ">", ">="})
@@ -27,8 +31,6 @@ _LOGICAL_OPS = frozenset({"and", "or"})
 @dataclass
 class _Budget:
     depth_limit: int
-    ref_limit: int
-    refs: int = 0
 
 
 def evaluate(
@@ -36,7 +38,6 @@ def evaluate(
     fields: dict[str, Value],
     *,
     depth_limit: int = DEFAULT_DEPTH_LIMIT,
-    ref_limit: int = DEFAULT_REF_LIMIT,
 ) -> Value:
     """求值表达式。fields: 字段编码 -> Value（携带类型）。"""
     try:
@@ -45,7 +46,7 @@ def evaluate(
         raise
     except Exception as exc:  # 词法/语法层面的意外异常统一为 SYNTAX
         raise ExprError("SYNTAX", str(exc)) from exc
-    budget = _Budget(depth_limit, ref_limit)
+    budget = _Budget(depth_limit)
     return _eval(tree, fields, budget, depth=0)
 
 
@@ -56,9 +57,6 @@ def _eval(node: ast_.Expr, fields: dict[str, Value], budget: _Budget, depth: int
         case ast_.Literal():
             return Value(node.kind, node.value)
         case ast_.FieldRef(code=code):
-            budget.refs += 1
-            if budget.refs > budget.ref_limit:
-                raise ExprError("BUDGET_REFS", f"字段引用超过 {budget.ref_limit} 个")
             if code not in fields:
                 raise ExprError("UNKNOWN_FIELD", f"未定义的字段：{code}")
             return fields[code]
@@ -191,22 +189,5 @@ def expression_depth(tree: ast_.Expr) -> int:
             return 1 + max(expression_depth(left), expression_depth(right))
         case ast_.Call(args=args):
             return 1 + max((expression_depth(a) for a in args), default=0)
-        case _:
-            assert_never(tree)  # pragma: no cover
-
-
-def count_refs(tree: ast_.Expr) -> int:
-    """表达式中字段引用的个数（用于预算预检）。"""
-    match tree:
-        case ast_.FieldRef():
-            return 1
-        case ast_.Literal():
-            return 0
-        case ast_.Unary(operand=operand):
-            return count_refs(operand)
-        case ast_.Binary(left=left, right=right):
-            return count_refs(left) + count_refs(right)
-        case ast_.Call(args=args):
-            return sum(count_refs(a) for a in args)
         case _:
             assert_never(tree)  # pragma: no cover

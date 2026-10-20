@@ -1,8 +1,12 @@
-"""内置函数实现（functions.json 的 6 个函数：daysBetween/workdays/hoursBetween/sum/if/round）。"""
+"""内置函数实现（functions.json 的 6 个函数：daysBetween/workdays/hoursBetween/sum/if/round）。
+
+SIGNATURES 供发布前静态检查（函数名、参数个数、类型）使用，与实现放在一起避免两套声明。
+"""
 
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import date, time, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from typing import cast
@@ -114,4 +118,23 @@ FUNCTIONS: dict[str, Callable[[list[Value]], Value]] = {
     "sum": sum_fn,
     "if": if_fn,
     "round": round_fn,
+}
+
+
+@dataclass(frozen=True)
+class Signature:
+    """函数签名：固定参数；varargs 为可变参数类型；returns 为 None 时按实参推断（if）。"""
+
+    args: tuple[ValueKind | None, ...]  # None = any
+    varargs: ValueKind | None = None
+    returns: ValueKind | None = None
+
+
+SIGNATURES: dict[str, Signature] = {
+    "daysBetween": Signature((ValueKind.DATE, ValueKind.DATE), returns=ValueKind.NUMBER),
+    "workdays": Signature((ValueKind.DATE, ValueKind.DATE), returns=ValueKind.NUMBER),
+    "hoursBetween": Signature((ValueKind.TIME, ValueKind.TIME), returns=ValueKind.NUMBER),
+    "sum": Signature((), varargs=ValueKind.NUMBER, returns=ValueKind.NUMBER),
+    "if": Signature((ValueKind.BOOL, None, None)),
+    "round": Signature((ValueKind.NUMBER, ValueKind.NUMBER), returns=ValueKind.NUMBER),
 }

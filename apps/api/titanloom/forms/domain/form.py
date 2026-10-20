@@ -97,7 +97,7 @@ def _collect_expressions(
 
 def publish(draft: FormDefinition, published_at: datetime) -> FormRelease:
     """从草稿发布一个不可变版本；版本号递增，旧版本不受后续草稿改动影响（FW06）。"""
-    publish_check(set(draft.fields), _collect_expressions(draft))
+    publish_check({code: definition.kind for code, definition in draft.fields.items()}, _collect_expressions(draft))
     version = draft.releases[-1].version + 1 if draft.releases else 1
     release = FormRelease(
         form_id=draft.form_id or "",

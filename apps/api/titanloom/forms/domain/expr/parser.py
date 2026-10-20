@@ -147,16 +147,20 @@ def parse(text: str) -> ast_.Expr:
 
 
 def referenced_fields(text: str) -> list[str]:
-    """解析表达式，返回其中引用的字段编码（不含 $，可能重复）。解析失败返回空。"""
-    try:
-        tree = parse(text)
-    except ExprError:
-        return []
+    """解析表达式，返回引用的字段编码（不含 $，去重保序）；解析失败抛 ExprError，不吞。"""
+    return field_refs(parse(text))
+
+
+def field_refs(tree: ast_.Expr) -> list[str]:
+    """收集语法树里的字段编码（去重、保持出现顺序）。"""
     refs: list[str] = []
+    seen: set[str] = set()
 
     def collect(node: ast_.Expr) -> None:
         if isinstance(node, ast_.FieldRef):
-            refs.append(node.code)
+            if node.code not in seen:
+                seen.add(node.code)
+                refs.append(node.code)
         elif isinstance(node, ast_.Binary):
             collect(node.left)
             collect(node.right)

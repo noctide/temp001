@@ -1,6 +1,8 @@
 /* 表达式求值（前端）：与后端 `apps/api/titanloom/forms/domain/expr` 位对齐。
  * 只实现 `packages/contracts/expressions/functions.json` 的 6 个函数；
- * 数值用十进制字符串，不经 float；对外按十进制字符串编码。 */
+ * 数值用 BigInt 缩放整数（值 = digits × 10^-scale），不经 float；对外按十进制字符串编码。
+ * 运算规则照 functions.json 的 arithmetic：+ − × 精确；÷ 保留 28 位有效数字、HALF_EVEN；
+ * 结果去掉小数末尾多余的 0，整数不去 0（10 仍是 10）。 */
 
 // ---------------------------------------------------------------------------
 // 十进制（Dec）：{ neg, digits, scale }，值 = sign * digits * 10^-scale
@@ -8,22 +10,25 @@
 
 export interface Dec {
   neg: boolean;
-  digits: string; // "0" 或无前导零的整数数字串
+  digits: bigint; // >= 0
   scale: number;  // >= 0，小数位数
 }
 
+const TEN = 10n;
+// functions.json · arithmetic.divisionSignificantDigits
+const DIV_SIG = 28;
+
+function pow10(n: number): bigint {
+  return TEN ** BigInt(n);
+}
+
 function norm(d: Dec): Dec {
-  let digits = d.digits.replace(/^0+/, "") || "0";
-  let scale = d.scale;
-  let neg = d.neg;
-  let trail = 0;
-  while (digits.length > 1 && digits.endsWith("0")) {
-    digits = digits.slice(0, -1);
-    trail++;
+  let { neg, digits, scale } = d;
+  if (digits === 0n) return { neg: false, digits: 0n, scale: 0 };
+  while (scale > 0 && digits % TEN === 0n) {
+    digits /= TEN;
+    scale--;
   }
-  scale -= trail;
-  if (digits === "0") { neg = false; scale = 0; }
-  if (scale < 0) scale = 0;
   return { neg, digits, scale };
 }
 
@@ -32,48 +37,45 @@ export function decFromString(s: string): Dec {
   let neg = false;
   if (s.startsWith("-")) { neg = true; s = s.slice(1); }
   else if (s.startsWith("+")) { s = s.slice(1); }
-  let digits = s;
+  const dot = s.indexOf(".");
+  let digits: bigint;
   let scale = 0;
-  const dot = digits.indexOf(".");
   if (dot >= 0) {
-    scale = digits.length - dot - 1;
-    digits = digits.slice(0, dot) + digits.slice(dot + 1);
+    scale = s.length - dot - 1;
+    digits = BigInt(s.slice(0, dot) + s.slice(dot + 1));
+  } else {
+    digits = BigInt(s);
   }
   return norm({ neg, digits, scale });
 }
 
 export function decToString(d: Dec): string {
   d = norm(d);
-  if (d.digits === "0") return "0";
+  if (d.digits === 0n) return "0";
   const { neg, digits, scale } = d;
-  let s: string;
+  const s = digits.toString();
+  let body: string;
   if (scale === 0) {
-    s = digits;
-  } else if (scale >= digits.length) {
-    s = "0." + "0".repeat(scale - digits.length) + digits;
+    body = s;
+  } else if (scale >= s.length) {
+    body = "0." + "0".repeat(scale - s.length) + s;
   } else {
-    s = digits.slice(0, digits.length - scale) + "." + digits.slice(digits.length - scale);
+    body = s.slice(0, s.length - scale) + "." + s.slice(s.length - scale);
   }
-  return (neg && s !== "0" ? "-" : "") + s;
+  return (neg ? "-" : "") + body;
 }
 
-function cmpAbsDigits(xDigits: string, xScale: number, yDigits: string, yScale: number): number {
-  let dx = xDigits, dy = yDigits;
-  if (xScale < yScale) { dx += "0".repeat(yScale - xScale); }
-  else if (yScale < xScale) { dy += "0".repeat(xScale - yScale); }
-  const len = Math.max(dx.length, dy.length);
-  dx = dx.padStart(len, "0");
-  dy = dy.padStart(len, "0");
-  if (dx < dy) return -1;
-  if (dx > dy) return 1;
-  return 0;
+function alignedDigits(a: Dec, b: Dec): [bigint, bigint] {
+  const scale = Math.max(a.scale, b.scale);
+  return [a.digits * pow10(scale - a.scale), b.digits * pow10(scale - b.scale)];
 }
 
 export function decCmp(a: Dec, b: Dec): number {
   a = norm(a); b = norm(b);
   if (a.neg && !b.neg) return -1;
   if (!a.neg && b.neg) return 1;
-  const c = cmpAbsDigits(a.digits, a.scale, b.digits, b.scale);
+  const [x, y] = alignedDigits(a, b);
+  const c = x === y ? 0 : x < y ? -1 : 1;
   return a.neg ? -c : c;
 }
 export function decEq(a: Dec, b: Dec): boolean { return decCmp(a, b) === 0; }
@@ -82,130 +84,54 @@ export function decLe(a: Dec, b: Dec): boolean { return decCmp(a, b) <= 0; }
 export function decGt(a: Dec, b: Dec): boolean { return decCmp(a, b) > 0; }
 export function decGe(a: Dec, b: Dec): boolean { return decCmp(a, b) >= 0; }
 
-function addDigits(x: string, y: string): string {
-  let i = x.length - 1, j = y.length - 1, carry = 0, out = "";
-  while (i >= 0 || j >= 0 || carry) {
-    const n = (i >= 0 ? Number(x[i]) : 0) + (j >= 0 ? Number(y[j]) : 0) + carry;
-    out = String(n % 10) + out;
-    carry = Math.floor(n / 10);
-  }
-  return out;
-}
-function subDigits(x: string, y: string): string {
-  // x >= y（整数字符串，已补齐长度）
-  let i = x.length - 1, j = y.length - 1, borrow = 0, out = "";
-  while (i >= 0) {
-    let n = Number(x[i]) - borrow - (j >= 0 ? Number(y[j]) : 0);
-    if (n < 0) { n += 10; borrow = 1; } else borrow = 0;
-    out = String(n) + out;
-  }
-  return out.replace(/^0+/, "") || "0";
-}
-
 export function decAdd(a: Dec, b: Dec): Dec {
   a = norm(a); b = norm(b);
-  let ad = a.digits, bd = b.digits, as = a.scale, bs = b.scale;
-  if (as < bs) { ad += "0".repeat(bs - as); as = bs; }
-  else if (bs < as) { bd += "0".repeat(as - bs); bs = as; }
-  const len = Math.max(ad.length, bd.length);
-  ad = ad.padStart(len, "0"); bd = bd.padStart(len, "0");
-  let digits: string; let neg: boolean;
-  if (a.neg === b.neg) {
-    digits = addDigits(ad, bd);
-    neg = a.neg;
-  } else {
-    const c = cmpAbsDigits(ad, as, bd, bs);
-    if (c === 0) return { neg: false, digits: "0", scale: 0 };
-    if (c > 0) { digits = subDigits(ad, bd); neg = a.neg; }
-    else { digits = subDigits(bd, ad); neg = b.neg; }
-  }
-  return norm({ neg, digits, scale: as });
+  const scale = Math.max(a.scale, b.scale);
+  const [x, y] = alignedDigits(a, b);
+  if (a.neg === b.neg) return norm({ neg: a.neg, digits: x + y, scale });
+  if (x === y) return { neg: false, digits: 0n, scale: 0 };
+  if (x > y) return norm({ neg: a.neg, digits: x - y, scale });
+  return norm({ neg: b.neg, digits: y - x, scale });
 }
 export function decSub(a: Dec, b: Dec): Dec { return decAdd(a, { neg: !b.neg, digits: b.digits, scale: b.scale }); }
 
 export function decMul(a: Dec, b: Dec): Dec {
   a = norm(a); b = norm(b);
-  if (a.digits === "0" || b.digits === "0") return { neg: false, digits: "0", scale: 0 };
-  const n1 = a.digits, n2 = b.digits;
-  const res = new Array(n1.length + n2.length).fill(0);
-  for (let i = n1.length - 1; i >= 0; i--) {
-    for (let j = n2.length - 1; j >= 0; j--) {
-      const pos2 = i + j + 1;
-      const sum = Number(n1[i]) * Number(n2[j]) + res[pos2];
-      res[pos2] = sum % 10;
-      res[i + j] += Math.floor(sum / 10);
-    }
-  }
-  let digits = res.join("").replace(/^0+/, "") || "0";
-  return norm({ neg: a.neg !== b.neg, digits, scale: a.scale + b.scale });
-}
-
-function cmpStr(x: string, y: string): number {
-  x = x.replace(/^0+/, "") || "0";
-  y = y.replace(/^0+/, "") || "0";
-  if (x.length !== y.length) return x.length < y.length ? -1 : 1;
-  if (x < y) return -1; if (x > y) return 1; return 0;
-}
-function mulDigit(y: string, m: number): string {
-  let carry = 0, out = "";
-  for (let i = y.length - 1; i >= 0; i--) {
-    const n = Number(y[i]) * m + carry;
-    out = String(n % 10) + out;
-    carry = Math.floor(n / 10);
-  }
-  if (carry) out = String(carry) + out;
-  return out;
-}
-function subStr(x: string, y: string): string { // x >= y
-  let i = x.length - 1, j = y.length - 1, borrow = 0, out = "";
-  while (i >= 0) {
-    let n = Number(x[i]) - borrow - (j >= 0 ? Number(y[j]) : 0);
-    if (n < 0) { n += 10; borrow = 1; } else borrow = 0;
-    out = String(n) + out;
-  }
-  return out.replace(/^0+/, "") || "0";
+  if (a.digits === 0n || b.digits === 0n) return { neg: false, digits: 0n, scale: 0 };
+  return norm({ neg: a.neg !== b.neg, digits: a.digits * b.digits, scale: a.scale + b.scale });
 }
 
 export function decDiv(a: Dec, b: Dec): Dec {
   a = norm(a); b = norm(b);
-  if (b.digits === "0") throw new Error("divide by zero");
-  if (a.digits === "0") return { neg: false, digits: "0", scale: 0 };
+  if (b.digits === 0n) throw new Error("divide by zero");
+  if (a.digits === 0n) return { neg: false, digits: 0n, scale: 0 };
   const neg = a.neg !== b.neg;
-  const MAX_FRAC = 12;
-  const dividend = a.digits, divisor = b.digits;
-  let intPart = "";
-  let rem = "";
-  let i = 0;
-  while (i < dividend.length) {
-    rem = (rem + dividend[i]!).replace(/^0+/, "") || "0";
-    if (cmpStr(rem, divisor) < 0) { intPart += "0"; }
-    else {
-      let q = 0;
-      for (let cand = 9; cand >= 1; cand--) {
-        if (cmpStr(mulDigit(divisor, cand), rem) <= 0) { q = cand; break; }
-      }
-      intPart += String(q);
-      rem = subStr(rem, mulDigit(divisor, q));
-    }
-    i++;
+  // value = (a.digits / b.digits) × 10^(b.scale − a.scale)
+  const est = a.digits.toString().length - b.digits.toString().length + 1;
+  const scale = Math.max(0, DIV_SIG + 2 - est); // 先多算两位保护位
+  const scaled = a.digits * pow10(scale);
+  let digits = scaled / b.digits;
+  let resultScale = scale;
+  const remainder = scaled % b.digits;
+  const len = digits.toString().length;
+  if (len > DIV_SIG) {
+    const drop = len - DIV_SIG;
+    const divisor = pow10(drop);
+    const kept = digits / divisor;
+    const dropped = digits % divisor;
+    const half = divisor / 2n;
+    let roundUp: boolean;
+    if (dropped > half) roundUp = true;
+    else if (dropped < half) roundUp = false;
+    else roundUp = remainder !== 0n || kept % 2n === 1n; // HALF_EVEN
+    digits = kept + (roundUp ? 1n : 0n);
+    resultScale = scale - drop;
   }
-  intPart = intPart.replace(/^0+/, "") || "0";
-  let frac = "";
-  for (let k = 0; k < MAX_FRAC; k++) {
-    rem = (rem + "0").replace(/^0+/, "") || "0";
-    if (cmpStr(rem, divisor) < 0) { frac += "0"; }
-    else {
-      let q = 0;
-      for (let cand = 9; cand >= 1; cand--) {
-        if (cmpStr(mulDigit(divisor, cand), rem) <= 0) { q = cand; break; }
-      }
-      frac += String(q);
-      rem = subStr(rem, mulDigit(divisor, q));
-    }
+  if (resultScale < 0) {
+    digits *= pow10(-resultScale);
+    resultScale = 0;
   }
-  const allDigits = (intPart + frac).replace(/^0+/, "") || "0";
-  const scale = frac.length + a.scale - b.scale;
-  return norm({ neg, digits: allDigits, scale });
+  return norm({ neg, digits, scale: resultScale });
 }
 
 // ---------------------------------------------------------------------------
@@ -514,23 +440,18 @@ const FUNCTIONS: Record<string, (args: Val[]) => Val> = {
   round: (args) => roundFn(args),
 };
 
-// x 量化到 10^-n，半数进位：result = round(x * 10^n) / 10^n
+// x 量化到 10^-n，半数进位（HALF_UP，负数向远离 0 的方向）
 function decRound(x: Dec, n: number): Dec {
-  const shift = decFromString(String(Math.pow(10, n))); // 10^n
-  const scaled = decMul(x, shift); // x * 10^n
-  const s = decToString(scaled);
-  const neg = s.startsWith("-");
-  const t = neg ? s.slice(1) : s;
-  let intPart = t;
-  let fracPart = "";
-  const dot = t.indexOf(".");
-  if (dot >= 0) { intPart = t.slice(0, dot); fracPart = t.slice(dot + 1); }
-  const roundUp = fracPart.length > 0 && fracPart[0]! >= "5";
-  let int = parseInt(intPart, 10) || 0;
-  if (roundUp) int += 1;
-  if (neg) int = -int;
-  const resultDec = decFromString(String(int));
-  return decDiv(resultDec, shift);
+  x = norm(x);
+  if (n >= x.scale) return x;
+  const drop = x.scale - n;
+  const divisor = pow10(drop);
+  const kept = x.digits / divisor;
+  const dropped = x.digits % divisor;
+  const roundUp = dropped * 2n >= divisor;
+  const digits = kept + (roundUp ? 1n : 0n);
+  if (n >= 0) return norm({ neg: x.neg, digits, scale: n });
+  return norm({ neg: x.neg, digits: digits * pow10(-n), scale: 0 });
 }
 
 function resolveFunction(name: string): (args: Val[]) => Val {
@@ -543,14 +464,14 @@ function resolveFunction(name: string): (args: Val[]) => Val {
 // 求值器
 // ---------------------------------------------------------------------------
 
+// 与业务参数 forms.expr.depthLimit 的出厂默认值一致；阶段 3 接 API 后由后端下发。
 const DEFAULT_DEPTH_LIMIT = 32;
-const DEFAULT_REF_LIMIT = 20;
 
-interface Budget { depthLimit: number; refLimit: number; refs: number }
+interface Budget { depthLimit: number }
 
 export function evaluate(expr: string, fields: Record<string, Val>): Val {
   const tree = parse(expr);
-  const budget: Budget = { depthLimit: DEFAULT_DEPTH_LIMIT, refLimit: DEFAULT_REF_LIMIT, refs: 0 };
+  const budget: Budget = { depthLimit: DEFAULT_DEPTH_LIMIT };
   return evalNode(tree, fields, budget, 0);
 }
 
@@ -558,8 +479,6 @@ function evalNode(node: ExprNode, fields: Record<string, Val>, budget: Budget, d
   if (depth > budget.depthLimit) throw new ExprError("BUDGET_DEPTH", `表达式嵌套深度超过 ${budget.depthLimit}`);
   if (node.kind === "Literal") return numVal(node.dec);
   if (node.kind === "FieldRef") {
-    budget.refs++;
-    if (budget.refs > budget.refLimit) throw new ExprError("BUDGET_REFS", `字段引用超过 ${budget.refLimit} 个`);
     if (!(node.code in fields)) throw new ExprError("UNKNOWN_FIELD", `未定义的字段：${node.code}`);
     return fields[node.code]!;
   }

@@ -7,7 +7,7 @@ class ExprError(Exception):
     """表达式解析/求值错误。
 
     code: UNKNOWN_FIELD | UNKNOWN_FUNCTION | TYPE_MISMATCH | SYNTAX |
-          DIVIDE_BY_ZERO | CYCLE | BUDGET_DEPTH | BUDGET_REFS
+          DIVIDE_BY_ZERO | CYCLE | BUDGET_DEPTH
     """
 
     def __init__(self, code: str, message: str = "") -> None:
