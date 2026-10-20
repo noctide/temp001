@@ -56,7 +56,11 @@ def whoami() -> Whoami:
 
 
 def check(capability: str, target: Target | None = None, *, subject: str | None = None) -> Decision:
-    """能不能。subject 默认当前主体；查别人需要诊断资格。"""
+    """能不能。subject 默认当前主体。
+
+    subject= 是进程内的模块调用（如 facilities 筛通知收件人），调用方可信，这里不校验诊断资格；
+    “诊断资格”只在 HTTP `/explain` 和以后的 `explain()` 上校验。
+    """
     return _provider.provider().check(capability, target, subject=subject)
 
 

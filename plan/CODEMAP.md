@@ -53,12 +53,15 @@
   - `def get_logger` — （没写说明）
   - `def setup` — （没写说明）
 - `titanloom.kernel.migrate`
+  - `class RuntimeRoleMissing` — 运行账号在库里不存在：建库脚本没跑过（或账号名对不上），先重跑 ops/db/create.ps1。
+  - `def runtime_role` — 运行账号名：取 `TITANLOOM_DB_URL` 里的用户名，没设就用默认的 titanloom_app。
   - `def migrations_dir` — （没写说明）
   - `def version_table` — （没写说明）
   - `def module_metadata` — （没写说明）
   - `def config_for` — （没写说明）
   - `def upgrade` — （没写说明）
   - `def new_revision` — 从 store/models.py 与当前数据库的差别生成一份迁移脚本；生成后要人看一遍再提交。
+  - `def ensure_schema` — 建模块 schema（已有则跳过），并让运行账号能用：USAGE、现有表的读写、以及之后新建表 / 序列的默认权限。
   - `def run_env` — env.py 调用：在线执行迁移。
 - `titanloom.kernel.paging`
   - `class Page` — （没写说明）
@@ -81,7 +84,7 @@
 登记：params 0 · features 0 · pages 0 · objects 0
 
 - `access.api.__init__.whoami` — 当前主体、所在部门（含兼岗）、是否管家代办。主体取自 kernel.context。
-- `access.api.__init__.check` — 能不能。subject 默认当前主体；查别人需要诊断资格。
+- `access.api.__init__.check` — 能不能。subject 默认当前主体。
 - `access.api.__init__.access_filter` — 能看哪些。翻译成查询条件用 access.api.sql.to_sqlalchemy。
 - `access.api.__init__.members` — 部门 / 项目成员，可按日期。
 - `access.api.__init__.memberships` — 某人所在的部门与项目，可按日期。

@@ -67,6 +67,7 @@ from titanloom.kernel.errors import AppError
 from titanloom.kernel.idem import request_digest
 from titanloom.kernel.ids import short_code, uuid7, uuid7_ms
 from titanloom.kernel.reg.errors import ErrorCode
+from titanloom.kernel.testing import track_rollback
 from titanloom.kernel.testing import tx_session as tx_session
 
 COMMAND_TTL = timedelta(minutes=15)
@@ -165,6 +166,7 @@ class _State:
     invocations: dict[str, Invocation] = field(default_factory=lambda: {})
     jobs: dict[uuid.UUID, _Job] = field(default_factory=lambda: {})
     events: list[t.Event] = field(default_factory=lambda: [])
+    uncommitted: set[str] = field(default_factory=lambda: set())  # 事务还没提交的事件，不投递
     cursors: dict[str, int] = field(default_factory=lambda: {})
     rules: dict[str, ScheduleRuleSpec] = field(default_factory=lambda: {})
     occurrences: dict[tuple[str, datetime], Occurrence] = field(default_factory=lambda: {})
@@ -227,25 +229,10 @@ class InMemoryExecution:
     # ---- 事务：第一次碰到会话就记一份快照，会话回滚就还原 ----
 
     def _touch(self) -> None:
-        if not db.in_transaction():
-            return
-        session = db.current_session()
-        marker = ("execution_stub", id(self))
-        if marker in session.info:
-            return
-        session.info[marker] = copy.deepcopy(self._s)
-        session.connection()  # 让会话真的开始，回滚才会触发钩子
+        track_rollback(self, lambda: copy.deepcopy(self._s), self._restore)
 
-        def on_rollback(_: Session) -> None:
-            snap = session.info.pop(marker, None)
-            if snap is not None:
-                self._s = snap
-
-        def on_commit(_: Session) -> None:
-            session.info.pop(marker, None)
-
-        event.listen(session, "after_rollback", on_rollback)
-        event.listen(session, "after_commit", on_commit)
+    def _restore(self, snapshot: _State) -> None:
+        self._s = snapshot
 
     @staticmethod
     def _require_tx(what: str) -> None:
@@ -335,6 +322,8 @@ class InMemoryExecution:
         self._check_access(capability_id, access_target)
         if expected_version == "latest":
             raise AppError(ErrorCode.INPUT_VALIDATION_FAILED, details={"field": "expectedVersion"})
+        if expected_version is not None and capability_id not in self._validators:
+            raise NotRegistered(f"能力 {capability_id!r} 带了 expected_version，却没有登记 version_validator")
         req = request_digest(
             {
                 "capabilityId": capability_id,
@@ -703,7 +692,28 @@ class InMemoryExecution:
             copy.deepcopy(event.minimal_change),
         )
         self._s.events.append(ev)
+        self._s.uncommitted.add(ev.event_id)
+        self._release_on_commit(ev.event_id)
         return ev.event_id
+
+    def _release_on_commit(self, event_id: str) -> None:
+        """事件随所在会话提交才可投递（真实的发件箱只投递已提交的）；回滚的事件由快照还原撤销。"""
+        info = db.current_session().info
+        marker = ("execution_stub_events", id(self))
+        if marker not in info:
+            info[marker] = []
+
+            def on_commit(session: Session) -> None:
+                ids: list[str] = session.info[marker]
+                self._s.uncommitted.difference_update(ids)
+                ids.clear()
+
+            def on_rollback(session: Session) -> None:
+                session.info[marker].clear()
+
+            event.listen(db.current_session(), "after_commit", on_commit)
+            event.listen(db.current_session(), "after_rollback", on_rollback)
+        info[marker].append(event_id)
 
     def subscribe(self, subscriber: str, event_type: str, handler: Callable[[t.Event], None]) -> None:
         self._subs.setdefault(subscriber, []).append((event_type, handler))
@@ -720,8 +730,8 @@ class InMemoryExecution:
             while True:
                 cursor = self._s.cursors.get(sub, self._cursor_start[sub])
                 nxt = next((e for e in self._s.events if e.sequence > cursor), None)
-                if nxt is None:
-                    break
+                if nxt is None or nxt.event_id in self._s.uncommitted:
+                    break  # 没有了，或下一个还没提交：按顺序等它
                 self._deliver(sub, nxt)
                 self._s.cursors[sub] = nxt.sequence
                 n += 1

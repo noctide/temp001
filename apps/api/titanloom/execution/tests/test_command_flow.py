@@ -210,6 +210,18 @@ def test_version_conflict_on_submit(ready: InMemoryExecution) -> None:
     assert code_of(e) is ErrorCode.RESOURCE_VERSION_CONFLICT
 
 
+def test_expected_version_without_validator_is_not_silently_ignored(ready: InMemoryExecution) -> None:
+    """R3-1：给了 expected_version 但能力没登记校验器，不能让提交悄悄跳过版本检查。"""
+    with as_principal(ME), pytest.raises(NotRegistered, match="version_validator"):
+        execution.prepare(
+            LEAVE,
+            params={},
+            idempotency_key=ready.new_key(),
+            target=TargetRef("leave", "L1"),
+            expected_version="v1",
+        )
+
+
 def test_expected_version_latest_is_rejected(ready: InMemoryExecution) -> None:
     with as_principal(ME), pytest.raises(AppError) as e:
         execution.prepare(LEAVE, params={}, idempotency_key=ready.new_key(), expected_version="latest")

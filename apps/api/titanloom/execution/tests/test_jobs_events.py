@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import pytest
 from sqlalchemy.orm import Session
@@ -214,12 +216,13 @@ def test_emit_rejects_foreign_event_type(ready: InMemoryExecution) -> None:
 # ---- 事件 ----
 
 
-def test_events_delivered_in_order_with_ids(ready: InMemoryExecution) -> None:
+def test_events_delivered_in_order_with_ids(ready: InMemoryExecution, tx_session: Session) -> None:
     got: list[Event] = []
     execution.subscribe("forms", "attendance.*", got.append)
     with as_principal(ME):
         first = execution.emit_in_tx(draft(1))
         execution.emit_in_tx(draft(2))
+        tx_session.commit()
     ready.drain()
     assert [e.sequence for e in got] == [1, 2] and got[0].event_id == first
     assert got[0].to_contract()["changeSeq"] == 1
@@ -227,20 +230,22 @@ def test_events_delivered_in_order_with_ids(ready: InMemoryExecution) -> None:
     assert len(got) == 2  # 游标前进，不重复
 
 
-def test_subscriber_filters_by_type_and_starts_from_now(ready: InMemoryExecution) -> None:
+def test_subscriber_filters_by_type_and_starts_from_now(ready: InMemoryExecution, tx_session: Session) -> None:
     with as_principal(ME):
         execution.emit_in_tx(draft(1))
+        tx_session.commit()
     got: list[Event] = []
     execution.subscribe("forms", "attendance.schedule.published", got.append)
     other: list[Event] = []
     execution.subscribe("audit", "forms.*", other.append)
     with as_principal(ME):
         execution.emit_in_tx(draft(2))
+        tx_session.commit()
     ready.drain()
     assert [e.subject.id for e in got] == ["S2"] and other == []
 
 
-def test_redelivery_is_visible_and_idempotent_handler_survives(ready: InMemoryExecution) -> None:
+def test_redelivery_is_visible_and_idempotent_handler_survives(ready: InMemoryExecution, tx_session: Session) -> None:
     raw: list[str] = []
     handled: set[str] = set()
 
@@ -251,9 +256,60 @@ def test_redelivery_is_visible_and_idempotent_handler_survives(ready: InMemoryEx
     execution.subscribe("forms", "attendance.*", handler)
     with as_principal(ME):
         eid = execution.emit_in_tx(draft())
+        tx_session.commit()
     ready.drain()
     ready.redeliver(eid)
     assert raw == [eid, eid] and handled == {eid}
+
+
+def test_uncommitted_events_are_not_delivered(ready: InMemoryExecution, tx_session: Session) -> None:
+    """R3-2 复现：事务没提交就 drain，订阅者不能收到；回滚后永远收不到；提交后才投递。"""
+    got: list[Event] = []
+    execution.subscribe("forms", "attendance.*", got.append)
+    with as_principal(ME):
+        execution.emit_in_tx(draft(1))
+        assert ready.drain() == 0 and got == []  # 未提交
+        tx_session.rollback()
+        ready.drain()
+        assert got == []  # 回滚了，事件没了，也没人处理过
+        execution.emit_in_tx(draft(2))
+        tx_session.commit()
+    ready.drain()
+    assert [e.subject.id for e in got] == ["S2"]
+
+
+def test_uncommitted_event_holds_back_later_ones_to_keep_order(ready: InMemoryExecution, tx_session: Session) -> None:
+    got: list[Event] = []
+    execution.subscribe("forms", "attendance.*", got.append)
+    with as_principal(ME):
+        execution.emit_in_tx(draft(1))
+        tx_session.commit()
+        execution.emit_in_tx(draft(2))  # 第二个事务还没提交
+        ready.drain()
+        assert [e.sequence for e in got] == [1]
+        tx_session.commit()
+    ready.drain()
+    assert [e.sequence for e in got] == [1, 2]
+
+
+def test_stub_snapshot_uses_kernel_track_rollback(
+    ready: InMemoryExecution, tx_session: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """R3-3：快照与回滚还原只有 kernel.testing.track_rollback 一份实现，桩不再自己写一套。"""
+    from titanloom.execution.api import testing as stub_module
+
+    calls: list[object] = []
+    real = stub_module.track_rollback
+
+    def spy(owner: object, snapshot: Callable[[], Any], restore: Callable[[Any], None]) -> None:
+        calls.append(owner)
+        real(owner, snapshot, restore)
+
+    monkeypatch.setattr(stub_module, "track_rollback", spy)
+    with as_principal(ME):
+        execution.enqueue_in_tx("attendance.x", owner_module="attendance", input_refs={})
+        tx_session.rollback()
+    assert calls and calls[0] is ready and ready.jobs == ()
 
 
 def test_event_gets_request_id_from_context(ready: InMemoryExecution) -> None:

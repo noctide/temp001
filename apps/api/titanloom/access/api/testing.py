@@ -330,7 +330,7 @@ class InMemoryAccess:
 
     @staticmethod
     def _mask(allows: Sequence[Grant]) -> tuple[str, ...]:
-        """各条允许共同要求遮挡的列：只要有一条没要求遮挡，这列就看得到。"""
+        """逐行判定时，各条命中的允许共同要求遮挡的列：只要有一条没要求遮挡，这列就看得到。"""
         common: set[str] = set(allows[0].mask) if allows else set()
         for g in allows[1:]:
             common &= set(g.mask)
@@ -350,14 +350,14 @@ class InMemoryAccess:
         for g in (*allows, *denies):
             if g.condition.kind != "all" and (fields is None or g.condition.field not in fields):
                 raise NotRegistered(f"{resource_type!r} 没有登记权限字段 {g.condition.field!r}")
-        masks = self._mask(allows)
         deny_preds = _dedupe(self._predicate(g.condition, account) for g in denies)
         if any(g.condition.kind == "all" for g in allows):
-            return AccessFilter(rev, all=True, not_=deny_preds, mask_columns=masks)
-        allow_preds = _dedupe(self._predicate(g.condition, account) for g in allows)
-        if not allow_preds:
+            return AccessFilter(rev, all=True, not_=deny_preds, mask_columns=_mask_union(allows))
+        used = [g for g in allows if self._predicate(g.condition, account) is not None]
+        if not used:
             return AccessFilter(rev, none=True)
-        return AccessFilter(rev, any=allow_preds, not_=deny_preds, mask_columns=masks)
+        allow_preds = _dedupe(self._predicate(g.condition, account) for g in used)
+        return AccessFilter(rev, any=allow_preds, not_=deny_preds, mask_columns=_mask_union(used))
 
     # ---- 身份、成员 ----
     def whoami(self) -> Whoami:
@@ -452,6 +452,11 @@ def _put[T](store: dict[str, T], key: str, value: T) -> None:
     if key in store and store[key] != value:
         raise RegistrationConflict(f"{key!r} 已登记且内容不同")
     store[key] = value
+
+
+def _mask_union(allows: Sequence[Grant]) -> tuple[str, ...]:
+    """列表（filter）不逐行判定，遮挡列取会用到的各条允许之并：宁可多遮，不能把别的部门的列露出来。"""
+    return tuple(sorted({c for g in allows for c in g.mask}))
 
 
 def _dedupe(preds: Sequence[Predicate | None] | Generator[Predicate | None]) -> tuple[Predicate, ...]:

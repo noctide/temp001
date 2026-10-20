@@ -23,13 +23,20 @@ def _one(p: Predicate, columns: Mapping[str, ColumnElement[object]]) -> ColumnEl
     return col == p.values[0] if p.op == "eq" else col.in_(p.values)
 
 
+def _deny(p: Predicate, columns: Mapping[str, ColumnElement[object]]) -> ColumnElement[bool]:
+    """“不命中这条拒绝条件”。字段为空的行本来就不命中（与 Predicate.matches 一致），
+    而 SQL 里 NOT (col = x) 遇到 NULL 得 NULL 会把它滤掉，所以要把空值单独放行。"""
+    hit = _one(p, columns)  # 字段没映射在这里报错
+    return or_(columns[p.field].is_(None), not_(hit))
+
+
 def to_sqlalchemy(flt: AccessFilter, columns: Mapping[str, ColumnElement[object]]) -> ColumnElement[bool]:
     """返回可直接 `.where(...)` 的条件。columns：权限字段名 → 列。"""
     if flt.none:
         return false()
     if flt.all:
-        return and_(true(), *[not_(_one(p, columns)) for p in flt.not_]) if flt.not_ else true()
+        return and_(true(), *[_deny(p, columns) for p in flt.not_]) if flt.not_ else true()
     allow = or_(*[_one(p, columns) for p in flt.any])
     if not flt.not_:
         return allow
-    return and_(allow, *[not_(_one(p, columns)) for p in flt.not_])
+    return and_(allow, *[_deny(p, columns) for p in flt.not_])

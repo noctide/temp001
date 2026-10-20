@@ -72,6 +72,15 @@ def test_deny_wins_and_no_allow_denies(registered: InMemoryAccess) -> None:
         assert api.check(READ, Target(dept_id="wh")).allowed
 
 
+def test_check_for_other_subject_needs_no_diagnostic_right(registered: InMemoryAccess) -> None:
+    """R2-3：subject= 是进程内可信调用（facilities 筛收件人用），当前主体没有任何授权也不报错、不要求诊断资格。"""
+    registered.grant("acc-A0004", READ)
+    with as_principal("acc-A0077"):  # A0077 没有任何授权
+        assert api.check(READ, subject="acc-A0004").allowed
+        assert not api.check(READ).allowed
+    assert "诊断资格" in (api.check.__doc__ or "")  # 口径写在 docstring 里
+
+
 def test_steps_after_failure_not_checked(registered: InMemoryAccess) -> None:
     d = registered.check(READ, subject="acc-nobody")
     assert d.failed_step == "identity"
@@ -183,11 +192,32 @@ def test_filter_expands_dept_tree_and_secondary_dept(registered: InMemoryAccess)
     assert flt.any == (Predicate("deptId", "in", ("it", "qa")),)
 
 
-def test_filter_mask_columns_only_when_every_allow_masks(registered: InMemoryAccess) -> None:
+def test_filter_mask_columns_is_union_of_used_allows(registered: InMemoryAccess) -> None:
+    """R2-2：filter 不能逐行判定，遮挡列取各允许条件之并，宁可多遮，不能露出别的部门的列。"""
     registered.grant("acc-A0004", READ, Cond.own_dept("deptId"), mask=["idNumber"])
     assert registered.filter(READ, "record", subject="acc-A0004").mask_columns == ("idNumber",)
     registered.grant("acc-A0004", READ, Cond.self_("ownerId"))
-    assert registered.filter(READ, "record", subject="acc-A0004").mask_columns == ()
+    assert registered.filter(READ, "record", subject="acc-A0004").mask_columns == ("idNumber",)
+
+
+def test_filter_masks_what_check_masks_for_other_depts(registered: InMemoryAccess) -> None:
+    """R2-2 复现：“全部（遮 idNumber）”+“本部门（不遮）”，对质检部的记录 check 要遮，filter 之前却是 ()。"""
+    registered.grant("acc-A0004", READ, Cond.all(), mask=["idNumber"])
+    registered.grant("acc-A0004", READ, Cond.own_dept("deptId"))
+    assert registered.check(READ, Target(dept_id="qa"), subject="acc-A0004").constraints == {
+        "maskColumns": ["idNumber"]
+    }
+    assert "idNumber" in registered.filter(READ, "record", subject="acc-A0004").mask_columns
+
+
+def test_filter_mask_ignores_allows_that_match_nothing(registered: InMemoryAccess) -> None:
+    registered.grant("acc-A0004", READ, Cond.own_dept("deptId"))
+    registered.grant("acc-A0004", READ, Cond.dept("deptId", "qa"), mask=["idNumber"])
+    assert registered.filter(READ, "record", subject="acc-A0004").mask_columns == ("idNumber",)
+    registered.add_service("svc-x", "服务")  # 没有 person，“本人”条件匹配不上任何行，不该让它的遮挡列算进来
+    registered.grant("svc-x", READ, Cond.own_dept("deptId"))
+    registered.grant("svc-x", READ, Cond.self_("ownerId"), mask=["idNumber"])
+    assert registered.filter(READ, "record", subject="svc-x").mask_columns == ()
 
 
 def test_filter_all_minus_deny(registered: InMemoryAccess) -> None:
@@ -224,11 +254,15 @@ def test_filter_agrees_with_check(registered: InMemoryAccess) -> None:
                 "all": Cond.all(),
             }[kind]
             effect = "deny" if rng.random() < 0.3 else "allow"
-            registered.grant(who, READ, cond, effect=effect)
+            mask = ["idNumber"] if effect == "allow" and rng.random() < 0.5 else []
+            registered.grant(who, READ, cond, effect=effect, mask=mask)
         flt = registered.filter(READ, "record", subject=who)
         for row in rows:
             t = Target(owner_person_id=str(row["ownerId"]), dept_id=str(row["deptId"]), project_id=row["projectId"])  # pyright: ignore[reportArgumentType]
-            assert flt.matches(row) == registered.check(READ, t, subject=who).allowed, (who, row)
+            decision = registered.check(READ, t, subject=who)
+            assert flt.matches(row) == decision.allowed, (who, row)
+            if decision.allowed:  # 列表页遮挡的列 ⊇ 逐行 check 要遮的列（R2-2）
+                assert set(decision.constraints.get("maskColumns", ())) <= set(flt.mask_columns), (who, row)
 
 
 # ---- members ----

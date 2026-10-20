@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine, insert, select
 
@@ -10,11 +12,12 @@ from titanloom.access.api.types import Decision
 meta = MetaData()
 rec = Table("rec", meta, Column("id", Integer, primary_key=True), Column("owner", String), Column("dept", String))
 COLS = {"ownerId": rec.c.owner, "deptId": rec.c.dept}
-ROWS = [
+ROWS: list[dict[str, Any]] = [
     {"id": 1, "owner": "A", "dept": "asm1"},
     {"id": 2, "owner": "B", "dept": "asm1"},
     {"id": 3, "owner": "A", "dept": "qa"},
     {"id": 4, "owner": "C", "dept": "wh"},
+    {"id": 5, "owner": None, "dept": None},  # 字段为空的行：check 视为“不命中拒绝条件”，SQL 翻译必须一致（R2-1）
 ]
 
 
@@ -30,13 +33,14 @@ def ids(flt: AccessFilter) -> set[int]:
 
 
 def test_all_none() -> None:
-    assert ids(AccessFilter(1, all=True)) == {1, 2, 3, 4}
+    assert ids(AccessFilter(1, all=True)) == {1, 2, 3, 4, 5}
     assert ids(AccessFilter(1, none=True)) == set()
 
 
 def test_all_minus_deny() -> None:
     flt = AccessFilter(1, all=True, not_=(Predicate("deptId", "eq", ("qa",)), Predicate("ownerId", "eq", ("C",))))
     assert ids(flt) == {r["id"] for r in ROWS if r["dept"] != "qa" and r["owner"] != "C"}
+    assert 5 in ids(flt)  # NOT (dept = 'qa') 遇到 NULL 得 NULL，不能把空字段的行滤掉
     assert flt.to_contract()["all"] is True and len(flt.to_contract()["not"]) == 2
 
 
@@ -47,6 +51,15 @@ def test_union_minus_deny() -> None:
         not_=(Predicate("deptId", "eq", ("qa",)), Predicate("ownerId", "eq", ("C",))),
     )
     assert ids(flt) == {1, 2}
+
+
+def test_null_field_is_not_hit_by_deny_in_or_eq() -> None:
+    """R2-1：拒绝条件是 in / eq 都一样，空字段的行不命中拒绝，仍能看到。"""
+    assert 5 in ids(AccessFilter(1, all=True, not_=(Predicate("deptId", "in", ("qa", "wh")),)))
+    flt = AccessFilter(
+        1, any=(Predicate("deptId", "in", ("qa", "wh", "asm1")),), not_=(Predicate("ownerId", "eq", ("C",)),)
+    )
+    assert ids(flt) == {1, 2, 3}  # 允许一侧空字段不命中；拒绝一侧空 owner 不误伤
 
 
 def test_secondary_dept_expanded_values() -> None:
