@@ -118,3 +118,7 @@ started: 2026-10-18 15:03
 `sum()` 改为精确累加；tl check 12 项、pytest、vitest 359 个全过。架构独立对拍：3 个种子 × 2000 组随机嵌套算式（四则、round、sum、if、超长数），**前后端 0 不一致**。
 
 阶段 3 起要用底座（access / execution / facilities）：access.api 已发布（0fb2942），execution、facilities 还在做——**先停在这里**，等通知再开阶段 3。阶段 3 要建表：用 kernel 的数据库与迁移脚手架（b806593），表结构只写在 store/models.py，迁移用 `tl.py db revision forms` 生成。
+
+### 底座接口已发布 · 2026-10-20 · 提交 eaaa8fc
+
+`access.api`（b806593 前后、0fb2942）、`execution.api`（05b164d）、`facilities.api`（eaaa8fc）的接口与内存测试桩都已在 `local/integration` 上。先 `git merge local/integration`，测试用各模块 `api.testing` 的 fixture（`access_stub`、`execution_stub`、`facilities_stub`、`tx_session`），细节见 `plan/HANDOFF.md` §3 第 2–4 步。表单阶段 3 用到的：`audit_in_tx`、`todo_*_in_tx`、`notify_in_tx`、`register_texts / text`、`add_ref / remove_ref / assets_of / download_grant`（挂靠对象的可见性用 `ref_authorizer` 登记）。文件上传与检查、文件解析器还没有，阶段 5 之前补。

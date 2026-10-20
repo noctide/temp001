@@ -77,3 +77,7 @@ started: 2026-10-18 15:03
 带到阶段 2 一起改：
 1. `store/models.py` 里模块级变量 `type = …` 遮住了 Python 内置 `type`；变量名改为 `type_def`、`type_def_version`（表名仍是 `type`）。
 2. `kind`、`scope_kind`、`status` 用 StrEnum（`ConfigKind`、`ScopeKind`、`VersionStatus`），不用裸字符串；表上的 CHECK 从枚举值生成，不再手写一遍。
+
+### 底座接口已发布 · 2026-10-20 · 提交 eaaa8fc
+
+`access.api`（b806593 前后、0fb2942）、`execution.api`（05b164d）、`facilities.api`（eaaa8fc）的接口与内存测试桩都已在 `local/integration` 上。先 `git merge local/integration`，测试用各模块 `api.testing` 的 fixture（`access_stub`、`execution_stub`、`facilities_stub`、`tx_session`），细节见 `plan/HANDOFF.md` §3 第 2–4 步。考勤阶段 2 用到的：`whoami / check / access_filter / members`，`register_binding / prepare / submit / enqueue_in_tx / emit_in_tx / schedule`，`audit_in_tx / todo_*_in_tx / notify_in_tx / text / add_ref`。真实实现还没有，桩之外不要自己造替代品。
