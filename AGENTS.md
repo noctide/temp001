@@ -20,6 +20,7 @@ opencode、Codex、DeepSeek Harness、Claude 等所有执行 Agent 都按这一�
 - **只用生成的常量**：能力编号、错误码、事件、状态、业务参数键、功能、文案键都从生成的常量里取（后端 `titanloom.kernel.reg`、前端 `src/shared/base/reg`；`tl.py gen` 生成），不手写字符串；要新登记 → 改本模块 `manifest.yaml` 或 `i18n/<命名空间>.yaml`，写清用途，架构审核。
 - **公共工具在 kernel**：错误体、编号（UUIDv7 + 短编号）、时间（只用带时区，存 UTC）、分页（排序键 + id 游标）、幂等、金额与工时（`Decimal`，不用 float）、结构化日志、业务参数读取、测试工具。没有你要的 → 变更请求，不要在模块里自己写一份。
 - 可调的数值（上限、阈值、时长、开关）登记为业务参数，不写死。界面上不写中文字句，只用文案键。
+- **前端页面照高保真做**（`D:\05_project\02_Titanloom\fidelity\Prototype\` 下同名页面；规则见 `ops/tools/fidelity/pages.yaml` 开头）：颜色、字号、圆角、间距只用设计变量 `var(--m-*)` 和公共组件，不直接写颜色值、不自己发明样式，公共组件要改提变更请求；开发模式认原型同样的 URL 参数（`role=member`、`empty=1` ……）切换示例身份和数据；清单里的关键位置加 `data-fid="<名字>"`。交前端页面前跑 `uv run python ops/tools/tl.py fidelity <页名>`，全过才交，回复里贴它的输出。
 - 先写测试（验收用例、权限的拒绝用例、状态不变量），再实现。示例与测试里的人名、部门只用合成数据人设表（`ops/synthetic-data`）。
 
 ## 提交
@@ -36,4 +37,6 @@ uv sync                                   # 装后端依赖（第一次）
 uv run python ops/tools/tl.py check       # 全套检查
 uv run pytest apps/api/titanloom/<模块>    # 只跑本模块测试
 pnpm install && pnpm --dir apps/web dev   # 前端
+pnpm --dir apps/web exec playwright install chromium   # 高保真比对用的浏览器（第一次）
+uv run python ops/tools/tl.py fidelity <页名>          # 高保真比对，报告 .fidelity/report.html
 ```

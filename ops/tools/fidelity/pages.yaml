@@ -1,0 +1,46 @@
+# 高保真比对清单（架构维护；执行 Agent 不改，要改提给架构）
+# 每页：原型文件、正式页路由、要比的状态（URL 参数）、关键位置。
+# `tl.py fidelity` 跑全部或指定页；`tl.py check` 只跑 enabled: true 的页（正式页做出来以后由架构打开）。
+#
+# 正式页的约定（写进 AGENTS.md / 高保真规范）：
+# - 开发模式下认同样的 URL 参数切换示例身份和数据（role=member、empty=1、tab=records ……），数据用原型里的同一份示例数据。
+# - probes 里每个名字，正式页对应元素要带 data-fid="<名字>"（或在下面写 app: 选择器）。
+# - 动态区域（时钟、随机图）用 mask 盖住，两边一起盖。
+
+defaults:
+  viewport: { width: 1440, height: 900 }
+  now: "2026-10-03T10:00:00+08:00"   # 两边都把时间定在这一刻（和原型示例数据的"今天"一致）
+  timezone: Asia/Shanghai
+  max_diff: 0.005                     # 整页像素差异上限 0.5%
+  pixel_threshold: 0.1                # 单个像素算"不同"的色差阈值（0–1，pixelmatch）
+  box_tolerance: 2                    # 位置 / 大小允许差几像素
+  proto_query: shot=1                 # 原型隐藏「原型状态」按钮
+
+# 原型目录：环境变量 TL_PROTOTYPE 优先；否则按顺序找（相对仓库根目录）
+prototype_roots:
+  - ../../02_Titanloom/fidelity/Prototype     # Windows：D:\05_project\02_Titanloom-dev\hq → D:\05_project\02_Titanloom\fidelity\Prototype
+  - ../../fidelity/Prototype                  # 架构 VM：$HOME/mnt/02_Titanloom-dev/hq → $HOME/mnt/fidelity/Prototype
+
+pages:
+  - name: 表单列表
+    project: forms
+    enabled: false          # 表单第 7 阶段做出正式页后打开
+    proto: Forms.html
+    app: /forms
+    states:
+      - { name: 部门负责人, query: "" }
+      - { name: 普通成员, query: role=member }
+      - { name: 空, query: empty=1 }
+      - { name: 我负责的, query: scope=mine }
+      - { name: 新建, query: new=1 }
+    probes:
+      页头标题: ".fm-head h1"
+      新建按钮: ".fm-newbtn"
+      搜索框: ".fm-head input"
+      导航当前项: ".m-rail a.on"
+      顶栏: ".m-top"
+      导入提示: ".m-page .m-note"
+      第一组: ".fm-group"
+      第一行: ".fm-row"
+    mask: []
+    ignore_text: []

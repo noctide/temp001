@@ -530,6 +530,28 @@ def c_gen() -> Result:
     return r
 
 
+# ---------------------------------------------------------------- 高保真
+def c_hifi() -> Result:
+    r = Result("高保真（不写死颜色 + 截图比对）")
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import hifi
+
+    hits = hifi.color_literals()
+    for h in hits[:30]:
+        r.fail(f"直接写了颜色，改用设计变量 var(--m-*)：{h}")
+    code, out = hifi.run(only_enabled=True)
+    if code == 3:
+        r.lines.append("还没有页面进入截图比对（正式页做出来后由架构在 ops/tools/fidelity/pages.yaml 打开 enabled）")
+    elif code == 2:
+        r.warn(f"截图比对没跑：{out.splitlines()[-1] if out else ''}")
+    elif code:
+        r.fail("截图比对不通过（报告 .fidelity/report.html）：")
+        r.lines += tail(out, 20)
+    else:
+        r.lines += tail(out, 20)
+    return r
+
+
 ALL = {
     "gen": c_gen,
     "ruff": c_ruff,
@@ -543,5 +565,6 @@ ALL = {
     "registry": c_registry,
     "literals": c_literals,
     "dups": c_dups,
+    "hifi": c_hifi,
 }
 FAST = ("gen", "ruff", "bounds", "scope", "i18n", "registry", "literals", "dups")

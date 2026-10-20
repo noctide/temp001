@@ -55,3 +55,6 @@ tmp/
 
 # --- tl check 的最近结果（状态页读，不入库）---
 plan/.last-check.json
+
+# --- 高保真比对报告（tl.py fidelity）---
+.fidelity/
