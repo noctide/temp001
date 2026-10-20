@@ -90,5 +90,10 @@
     "SYNTAX",
     "DIVIDE_BY_ZERO",
     "CYCLE"
-  ]
+  ],
+  "arithmetic": {
+    "_note": "2026-10-20 架构定：数值一律十进制精确运算；+ - * 结果精确不截断；/ 结果保留 28 位有效数字，末位按银行家舍入（ROUND_HALF_EVEN，即 Python decimal 默认上下文）；除数为 0 报 DIVIDE_BY_ZERO。结果去掉末尾多余的 0（2.50 → 2.5，整数不去 0：10 仍是 10）。",
+    "divisionSignificantDigits": 28,
+    "divisionRounding": "HALF_EVEN"
+  }
 }
