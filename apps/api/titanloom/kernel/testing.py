@@ -20,9 +20,10 @@ import uuid
 from collections.abc import Callable, Generator
 
 import pytest
-from sqlalchemy import Engine, MetaData, text
+from sqlalchemy import Engine, MetaData, create_engine, event, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
 
 from titanloom.kernel import db as kdb
 
@@ -76,3 +77,40 @@ def schema_session_fixture(*metadatas: MetaData) -> Callable[..., Generator[Sess
             engine.dispose()
 
     return _db
+
+
+def track_rollback[T](owner: object, snapshot: Callable[[], T], restore: Callable[[T], None]) -> None:
+    """内存测试桩的事务支持：在 kernel.db 事务里第一次改动前调用，会话回滚时用 restore 还原到那时的快照。
+
+    不在事务里什么也不做；同一个桩在同一会话里只记一次快照；会话提交后快照丢弃。
+    """
+    if not kdb.in_transaction():
+        return
+    session = kdb.current_session()
+    marker = ("stub_snapshot", id(owner))
+    if marker in session.info:
+        return
+    session.info[marker] = snapshot()
+    session.connection()  # 让会话真的开始，回滚才会触发钩子
+
+    def on_rollback(_: Session) -> None:
+        snap = session.info.pop(marker, None)
+        if snap is not None:
+            restore(snap)
+
+    def on_commit(_: Session) -> None:
+        session.info.pop(marker, None)
+
+    event.listen(session, "after_rollback", on_rollback)
+    event.listen(session, "after_commit", on_commit)
+
+
+@pytest.fixture
+def tx_session() -> Generator[Session]:
+    """一个内存 SQLite 会话并设为当前事务：测试里 session.commit() / rollback() 模拟请求成功 / 失败。"""
+    engine: Engine = create_engine("sqlite://", poolclass=StaticPool)
+    session = Session(engine, expire_on_commit=False)
+    with kdb.bind_session(session):
+        yield session
+    session.close()
+    engine.dispose()

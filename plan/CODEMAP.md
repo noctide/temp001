@@ -71,6 +71,8 @@
 - `titanloom.kernel.testing`
   - `def connect_test_db` — 连测试库；没设或连不上就跳过当前测试。
   - `def schema_session_fixture` — 生成一个 pytest fixture：临时 schema 里建好这些 metadata 的表，交出一个当前事务的会话。
+  - `def track_rollback` — 内存测试桩的事务支持：在 kernel.db 事务里第一次改动前调用，会话回滚时用 restore 还原到那时的快照。
+  - `def tx_session` — 一个内存 SQLite 会话并设为当前事务：测试里 session.commit() / rollback() 模拟请求成功 / 失败。
 
 生成的常量：`titanloom.kernel.reg`（ErrorCode、K 文案键、P 业务参数、F 功能）；前端 `shared/base/reg`。
 
@@ -172,7 +174,6 @@
 - `execution.api.testing.key_at` — 造一个时间戳在 when 的 UUIDv7 防重复编号（不碰 kernel.ids 的全局单调状态）。
 - `execution.api.testing.InMemoryExecution` — execution.api 的测试桩。time 取 clock，主体与代办取 access.api。
 - `execution.api.testing.execution_stub` — 装入测试桩（时钟与 access_stub 共用）；测试结束恢复原来的实现，状态不外漏。
-- `execution.api.testing.tx_session` — 一个内存 SQLite 会话并设为当前事务：测试里 session.commit() / rollback() 模拟请求成功 / 失败。
 - `execution.api.types.command_id` — 对外命令编号：cmd_ + uuid7 的全部 32 位十六进制；内部仍是同一个 uuid。
 - `execution.api.types.command_uuid` — （没写说明）
 - `execution.api.types.TargetRef` — 命令作用的对象。id 必须是具体的，不能是 latest（规范 6.3）。
@@ -200,7 +201,52 @@
 
 登记：params 0 · features 0 · pages 0 · objects 0
 
-（api 层还没有对外函数）
+- `facilities.api.__init__.audit_in_tx` — 在业务改动的同一事务里写一条审计，返回 event_id。只追加、不可改；前后值只存摘要（用 `digest()` 算）。
+- `facilities.api.__init__.audit_for` — 按对象查审计，新的在前。需要 `facilities.audit.read`；查看本身也会记一条审计。
+- `facilities.api.__init__.register_todo_type` — 登记待办类型。同样内容重复登记没有影响；内容不同报错。
+- `facilities.api.__init__.todo_open_in_tx` — 新建待办。同一 (类型, 来源引用) 已有未关闭的，原样返回（幂等）。多个办理人 = 一条多人待办。
+- `facilities.api.__init__.todo_reassign_in_tx` — 改办理人。办理人没变则无影响；已关闭的待办 CONFLICT 类错误（RESOURCE_VERSION_CONFLICT）。
+- `facilities.api.__init__.todo_close_in_tx` — 办完。多人待办先到先得：之后再关的返回已有结果，不覆盖 done_by。done_by 必须是办理人。
+- `facilities.api.__init__.todo_withdraw_in_tx` — 来源对象不需要办了（撤回、取消）。已办完的保持办完。
+- `facilities.api.__init__.get_todo` — 给所属模块读自己的待办状态；没有则 RESOURCE_NOT_FOUND。
+- `facilities.api.__init__.my_todos` — 我的待办（我是办理人的），新的在前。收件箱自己不改状态：办理走待办类型登记的能力。
+- `facilities.api.__init__.notify_in_tx` — 在事务里发应用内通知。看不到对象的收件人被去掉；按收件人语言渲染并记语言包版本；
+- `facilities.api.__init__.my_notifications` — 我的通知，新的在前。
+- `facilities.api.__init__.mark_read` — 标已读，只对自己的生效；返回实际改变的条数。
+- `facilities.api.__init__.unread_count` — （没写说明）
+- `facilities.api.__init__.register_texts` — 登记本模块的文案键（键以模块名开头，两种语言都要有）。同样内容重复登记没有影响。
+- `facilities.api.__init__.text` — 后端取字。lang 不给就用请求上下文的语言，再没有用默认语言。键没登记 / 缺参数是程序错误。
+- `facilities.api.__init__.pack_version` — 当前语言包版本（前端按版本下载、通知记录渲染时用的版本）。
+- `facilities.api.__init__.ref_authorizer` — 登记“当前主体能不能看到这个挂靠对象”。文件的下载权限跟随挂靠对象（公共设施 3）。
+- `facilities.api.__init__.add_ref` — 业务对象引用一个文件版本（在事务里）。已隔离 / 撤回 / 清除的不能引；重复引用返回原引用。
+- `facilities.api.__init__.remove_ref` — 取消引用（在事务里）。没有引用的文件版本过宽限期后清理。引用本来就不存在则无影响。
+- `facilities.api.__init__.assets_of` — 某个对象引用着的文件版本及状态。调用者已经确认过当前主体能看这个对象。
+- `facilities.api.__init__.download_grant` — 凭引用换下载许可：引用必须存在，挂靠对象对当前主体可见，文件版本必须可用（隔离区不可下）。
+- `facilities.api._provider.FacilitiesApi` — （没写说明）
+- `facilities.api._provider.set_provider` — 装入实现，返回原来的（用完要装回去）。
+- `facilities.api._provider.use_provider` — （没写说明）
+- `facilities.api._provider.provider` — （没写说明）
+- `facilities.api.testing.RegistrationConflict` — 同一个编号重复登记且内容不同。
+- `facilities.api.testing.NotRegistered` — 用了没登记的待办类型、文案键或挂靠模块。
+- `facilities.api.testing.NotInTransaction` — 名字带 in_tx 的调用必须在 kernel.db 事务里。
+- `facilities.api.testing.TextParamMissing` — 文案里的占位符没给参数。
+- `facilities.api.testing.InMemoryFacilities` — facilities.api 的测试桩。时间取 clock，主体与权限取 access.api。
+- `facilities.api.testing.facilities_stub` — 装入测试桩（时钟与 access_stub 共用）；测试结束恢复原来的实现，状态不外漏。
+- `facilities.api.types.digest` — 审计里只存前后值的摘要（sha256:<hex>），不存原值。
+- `facilities.api.types.ObjectRef` — 一个业务对象：审计的对象、通知的主题、文件引用的挂靠对象。id 必须是具体的。
+- `facilities.api.types.AuditDraft` — 调用方交的内容；谁、何时、哪个代办、策略版本由实现从请求上下文与时钟补。
+- `facilities.api.types.AuditEvent` — （没写说明）
+- `facilities.api.types.TodoKey` — 一条待办的身份：待办类型 + 来源对象引用（幂等靠它）。source_ref 形如 attendance:leave:LV-0001。
+- `facilities.api.types.TodoTypeDecl` — 登记待办类型。办理（完成 / 驳回等）由 handle_capability 这个能力完成，收件箱自己不改状态。
+- `facilities.api.types.TodoDraft` — （没写说明）
+- `facilities.api.types.TodoView` — 契约 todo-item。多人待办只有一条：先办的人记在 done_by，其余人看到“已由他人办理”（done_by 不是自己）。
+- `facilities.api.types.NotifyDraft` — 应用内通知。收件人是账户；设了 view_capability 的，看不到对象的收件人会被去掉（不报错、不回告）。
+- `facilities.api.types.NotificationView` — （没写说明）
+- `facilities.api.types.TextEntry` — 一个文案键的两种语言版本；用 {name} 占位。
+- `facilities.api.types.AssetRef` — 契约 asset-ref：业务对象只引用 asset_id + version。
+- `facilities.api.types.AssetVersionView` — （没写说明）
+- `facilities.api.types.DownloadGrant` — 一次性短时下载许可；没有匿名长链接（公共设施 3）。
+- `facilities.api.types.is_text_key` — （没写说明）
 
 ## forms
 

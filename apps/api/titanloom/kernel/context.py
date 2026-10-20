@@ -14,6 +14,7 @@ class RequestContext:
     principal_id: str | None = None
     job_id: str | None = None
     plugin_id: str | None = None
+    lang: str | None = None  # 请求的界面语言（zh-CN / en-US）；没有就用默认语言
 
 
 _ctx: ContextVar[RequestContext | None] = ContextVar("titanloom_request_ctx", default=None)

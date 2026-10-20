@@ -31,9 +31,8 @@ from datetime import UTC, datetime, timedelta
 from typing import Any, cast
 
 import pytest
-from sqlalchemy import Engine, create_engine, event
+from sqlalchemy import event
 from sqlalchemy.orm import Session
-from sqlalchemy.pool import StaticPool
 
 from titanloom.access import api as access_api
 from titanloom.access.api import Target
@@ -68,6 +67,7 @@ from titanloom.kernel.errors import AppError
 from titanloom.kernel.idem import request_digest
 from titanloom.kernel.ids import short_code, uuid7, uuid7_ms
 from titanloom.kernel.reg.errors import ErrorCode
+from titanloom.kernel.testing import tx_session as tx_session
 
 COMMAND_TTL = timedelta(minutes=15)
 KEY_PAST = timedelta(hours=24)
@@ -810,14 +810,3 @@ def execution_stub(access_stub: InMemoryAccess) -> Generator[InMemoryExecution]:
         yield stub
     finally:
         _provider.set_provider(previous)
-
-
-@pytest.fixture
-def tx_session() -> Generator[Session]:
-    """一个内存 SQLite 会话并设为当前事务：测试里 session.commit() / rollback() 模拟请求成功 / 失败。"""
-    engine: Engine = create_engine("sqlite://", poolclass=StaticPool)
-    session = Session(engine, expire_on_commit=False)
-    with db.bind_session(session):
-        yield session
-    session.close()
-    engine.dispose()
