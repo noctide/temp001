@@ -69,6 +69,7 @@ f = {"policyRev": 32, "any": [{"field": "orgUnitId", "op": "in", "values": ["dep
      "not": [{"field": "orgUnitId", "op": "eq", "values": ["dept-qc"]}], "maskColumns": ["hourlyWage"]}
 check("筛选条件示例（刘畅 · 团队出勤）有效", ok("access-filter", f))
 check("不限", ok("access-filter", {"policyRev": 32, "all": True}))
+check("不限可以带拒绝条件（全部减去拒绝）", ok("access-filter", {"policyRev": 32, "all": True, "not": f["not"], "maskColumns": ["hourlyWage"]}))
 check("一条都不能看", ok("access-filter", {"policyRev": 32, "none": True}))
 check("不限与一条都不能看不能同时出现", not ok("access-filter", {"policyRev": 32, "all": True, "none": True}))
 x = copy.deepcopy(f); x["sql"] = "org_unit_id in (...)"

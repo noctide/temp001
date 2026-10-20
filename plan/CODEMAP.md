@@ -105,7 +105,7 @@
 - `access.api.types.StepResult` — （没写说明）
 - `access.api.types.Decision` — 能不能（契约 access-decision）。拒绝时 failed_step 与 reason_key 必有。
 - `access.api.types.Predicate` — field 必须是调用模块登记的权限字段（身份与权限 6、12）。eq 只有一个值。
-- `access.api.types.AccessFilter` — 能看哪些（契约 access-filter）：all / none / 允许条件之并减去拒绝条件之并，附须遮挡的列。
+- `access.api.types.AccessFilter` — 能看哪些（契约 access-filter）：all / none / 允许条件之并，再减去拒绝条件之并（all 也可带 not），附须遮挡的列。
 - `access.api.types.ScopeRef` — （没写说明）
 - `access.api.types.Member` — 部门 / 项目成员；一律带部门（重名靠部门区分，身份与权限 3）。
 - `access.api.types.Membership` — （没写说明）

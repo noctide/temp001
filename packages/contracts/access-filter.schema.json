@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://titanloom.local/contracts/access-filter/0.1",
   "title": "AccessFilter（能看哪些）",
-  "description": "来源：后端详细设计·身份与权限 F、K2。返回结构化谓词，由调用模块 store 层翻译为参数化查询；不返回 SQL 字符串。all=不限；none=一条都不能看；否则 any 为允许条件之并，not 为显式拒绝之并，maskColumns 为须遮挡的列。",
+  "description": "来源：后端详细设计·身份与权限 F、K2。返回结构化谓词，由调用模块 store 层翻译为参数化查询；不返回 SQL 字符串。all=不限（可带 not，表示“全部减去显式拒绝之并”）；none=一条都不能看；否则 any 为允许条件之并，not 为显式拒绝之并，maskColumns 为须遮挡的列。",
   "type": "object",
   "required": [
     "policyRev"

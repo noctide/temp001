@@ -190,11 +190,12 @@ def test_filter_mask_columns_only_when_every_allow_masks(registered: InMemoryAcc
     assert registered.filter(READ, "record", subject="acc-A0004").mask_columns == ()
 
 
-def test_filter_all_minus_deny_is_a_known_gap(registered: InMemoryAccess) -> None:
+def test_filter_all_minus_deny(registered: InMemoryAccess) -> None:
     registered.grant("acc-A0004", READ)
     registered.grant("acc-A0004", READ, Cond.own_dept("deptId"), effect="deny")
-    with pytest.raises(NotImplementedError):
-        registered.filter(READ, "record", subject="acc-A0004")
+    flt = registered.filter(READ, "record", subject="acc-A0004")
+    assert flt.all and len(flt.not_) == 1
+    assert flt.to_contract()["not"] and "any" not in flt.to_contract()
 
 
 def test_filter_agrees_with_check(registered: InMemoryAccess) -> None:
@@ -222,12 +223,9 @@ def test_filter_agrees_with_check(registered: InMemoryAccess) -> None:
                 "project": Cond.project("projectId", rng.choice(["pr1", "pr2"])),
                 "all": Cond.all(),
             }[kind]
-            effect = "deny" if rng.random() < 0.3 and kind != "all" else "allow"
+            effect = "deny" if rng.random() < 0.3 else "allow"
             registered.grant(who, READ, cond, effect=effect)
-        try:
-            flt = registered.filter(READ, "record", subject=who)
-        except NotImplementedError:
-            continue
+        flt = registered.filter(READ, "record", subject=who)
         for row in rows:
             t = Target(owner_person_id=str(row["ownerId"]), dept_id=str(row["deptId"]), project_id=row["projectId"])  # pyright: ignore[reportArgumentType]
             assert flt.matches(row) == registered.check(READ, t, subject=who).allowed, (who, row)

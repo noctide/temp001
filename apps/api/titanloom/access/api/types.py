@@ -163,7 +163,7 @@ class Predicate:
 
 @dataclass(frozen=True, slots=True)
 class AccessFilter:
-    """能看哪些（契约 access-filter）：all / none / 允许条件之并减去拒绝条件之并，附须遮挡的列。
+    """能看哪些（契约 access-filter）：all / none / 允许条件之并，再减去拒绝条件之并（all 也可带 not），附须遮挡的列。
 
     “本人部门（含下级）”这类条件在 filter 这一步就展开成部门编号列表，调用方不用再去查组织树。
     """
@@ -178,8 +178,6 @@ class AccessFilter:
     def __post_init__(self) -> None:
         if (self.all, self.none, bool(self.any)).count(True) != 1:
             raise ValueError("all、none、any 必须且只能有一个")
-        if self.all and self.not_:
-            raise ValueError("契约里 all 不能再带 not（“全部减去拒绝”须由调用方登记权限字段后改写成 any）")
         if self.none and (self.not_ or self.mask_columns):
             raise ValueError("none 不能带 not 和 mask_columns")
 
@@ -188,13 +186,15 @@ class AccessFilter:
         if self.none:
             return False
         if self.all:
-            return True
+            return not any(p.matches(row) for p in self.not_)
         return any(p.matches(row) for p in self.any) and not any(p.matches(row) for p in self.not_)
 
     def to_contract(self) -> dict[str, Any]:
         out: dict[str, Any] = {"policyRev": self.policy_rev}
         if self.all:
             out["all"] = True
+            if self.not_:
+                out["not"] = [p.to_contract() for p in self.not_]
         elif self.none:
             out["none"] = True
         else:

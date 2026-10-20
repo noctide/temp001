@@ -353,9 +353,7 @@ class InMemoryAccess:
         masks = self._mask(allows)
         deny_preds = _dedupe(self._predicate(g.condition, account) for g in denies)
         if any(g.condition.kind == "all" for g in allows):
-            if deny_preds:
-                raise NotImplementedError("契约 access-filter 暂不能表达“全部减去拒绝条件”（见 HANDOFF 待决）")
-            return AccessFilter(rev, all=True, mask_columns=masks)
+            return AccessFilter(rev, all=True, not_=deny_preds, mask_columns=masks)
         allow_preds = _dedupe(self._predicate(g.condition, account) for g in allows)
         if not allow_preds:
             return AccessFilter(rev, none=True)

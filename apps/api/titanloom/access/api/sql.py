@@ -28,7 +28,7 @@ def to_sqlalchemy(flt: AccessFilter, columns: Mapping[str, ColumnElement[object]
     if flt.none:
         return false()
     if flt.all:
-        return true()
+        return and_(true(), *[not_(_one(p, columns)) for p in flt.not_]) if flt.not_ else true()
     allow = or_(*[_one(p, columns) for p in flt.any])
     if not flt.not_:
         return allow

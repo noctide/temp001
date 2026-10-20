@@ -34,6 +34,12 @@ def test_all_none() -> None:
     assert ids(AccessFilter(1, none=True)) == set()
 
 
+def test_all_minus_deny() -> None:
+    flt = AccessFilter(1, all=True, not_=(Predicate("deptId", "eq", ("qa",)), Predicate("ownerId", "eq", ("C",))))
+    assert ids(flt) == {r["id"] for r in ROWS if r["dept"] != "qa" and r["owner"] != "C"}
+    assert flt.to_contract()["all"] is True and len(flt.to_contract()["not"]) == 2
+
+
 def test_union_minus_deny() -> None:
     flt = AccessFilter(
         1,
