@@ -54,7 +54,7 @@ attendance:
 dataproc:
   module: dataproc
   paths: [apps/api/titanloom/dataproc/, apps/web/src/domains/dataproc/, i18n/dataproc.yaml]
-  read: [数据处理, 平台能力契约#8, 平台能力契约#9, 插件与扩展体系#2, 插件与扩展体系#8, ADR-016]
+  read: [后端详细设计-数据处理, 数据处理, 平台能力契约#8, 平台能力契约#9, 插件与扩展体系#2, 插件与扩展体系#8, ADR-016]
 visualization:
   module: visualization
   paths: [apps/api/titanloom/visualization/, apps/web/src/domains/visualization/, apps/player/, i18n/visualization.yaml]

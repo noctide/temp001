@@ -80,6 +80,7 @@ schema `attendance`，只有考勤模块的数据库账号能写。
 
 -   `attendance.api`：`today_summary(范围)`（首页、工作台卡片）、`my_summary(人)`（工作台"我的考勤"）、`schedule_of(人, 日期段)`（表单"工作日数"等）。写入一律经登记能力（如 `attendance.declaration.submit`），表单流程、自动化、管家不另开后门。
 -   事件（契约 event-types.json）：`attendance.schedule.published`、`attendance.declaration.submitted|confirmed|rejected|withdrawn|corrected`、`attendance.result.versioned`、`attendance.alert.opened|cleared`、`attendance.batch.generated|revoked`、`attendance.period.closed`。带变更序号，更正带"更正自"，消费方按事件编号幂等。
+-   增量出口（M3 数据处理需要，后续阶段补）：`export_changes(after_seq, limit)` 按变更序号返回正式结果的变化（含更正），只给数据处理的服务身份（后端详细设计·数据处理 11）。
 -   状态机（契约 state-machines.json）：填报、异常处理、提报批次生成、期间。
 
 ## 9. 建设顺序（考勤开发项目的阶段，每阶段架构审核一次）

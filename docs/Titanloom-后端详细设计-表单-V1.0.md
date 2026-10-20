@@ -71,6 +71,7 @@ schema `forms`；关系核心 + JSON 内容 + 按需生成列索引；不为每�
 
 -   `forms.api`：`submit_record(表单, 内容)`（管家替你填草稿、自动化写入走同一命令）、`get_record(编号)`（按调用者权限）、`list_forms(我能填的)`（首页快捷导航、工作台）、待办办理能力。
 -   事件（契约 event-types.json）：`forms.form.published|disabled`、`forms.record.submitted|corrected|voided|withdrawn`、`forms.workflow.node_entered|node_completed`、`forms.import.completed`。
+-   增量出口（M3 数据处理需要，后续阶段补）：`export_changes(after_seq, limit)` 按变更序号返回记录的变化（含更正、作废），只给数据处理的服务身份（后端详细设计·数据处理 11）。
 -   状态机（契约 state-machines.json）：办理任务。
 
 ## 8. 建设顺序（表单开发项目的阶段，每阶段架构审核一次）

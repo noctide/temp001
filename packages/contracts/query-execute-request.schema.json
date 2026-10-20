@@ -1,15 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://titanloom.local/contracts/query-execute-request/0.2",
+  "$id": "https://titanloom.local/contracts/query-execute-request/0.3",
   "title": "QueryExecuteRequest (M0 draft)",
-  "description": "来源：能力契约 9.1、9.2（titanloom.data.query.execute）。固定 queryVersion 与参数；不允许提交任意底层连接或 SQL；snapshot 模式必须带 snapshotId，不支持时返回错误而不是悄悄降为 live。 筛选按 FieldRef 经 filters 传入，只能使用 Query 已声明的可筛选字段（数据处理 12.6）。",
+  "description": "来源：能力契约 9.1、9.2（titanloom.data.query.execute）。固定 queryVersion 与参数；不允许提交任意底层连接或 SQL；snapshot 模式必须带 snapshotId，不支持时返回错误而不是悄悄降为 live。 筛选按 FieldRef 经 filters 传入，只能使用 Query 已声明的可筛选字段（数据处理 12.6）。 shape=page（默认）为游标分页、每页 ≤ 1000；shape=aggregate 为一次返回的图表结果，上限为业务参数 viz.chart.maxRows，超限返回 QUERY_BUDGET_EXCEEDED、不截断，不带 page（后端详细设计·数据处理 6）。",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "contractVersion",
     "queryVersion",
     "parameters",
-    "page",
     "consistency"
   ],
   "properties": {
@@ -312,6 +311,13 @@
           }
         ]
       }
+    },
+    "shape": {
+      "enum": [
+        "page",
+        "aggregate"
+      ],
+      "default": "page"
     }
   },
   "allOf": [
@@ -338,6 +344,30 @@
             ]
           }
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "shape": {
+            "const": "aggregate"
+          }
+        },
+        "required": [
+          "shape"
+        ]
+      },
+      "then": {
+        "not": {
+          "required": [
+            "page"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "page"
+        ]
       }
     }
   ]

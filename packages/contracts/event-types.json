@@ -105,6 +105,36 @@
       "type": "forms.import.completed",
       "desc": "导入批次处理完成",
       "source": "后端详细设计·表单 7"
+    },
+    {
+      "type": "data.dataset.generation_changed",
+      "desc": "数据集数据代次变化（发布 / 回退 / 增量 / 更正；载荷见 dataset-generation-changed）",
+      "source": "后端详细设计·数据处理 11"
+    },
+    {
+      "type": "data.dataset.stale",
+      "desc": "数据集因上游失败在用旧数据，或已恢复（带原因与失败运行编号）",
+      "source": "后端详细设计·数据处理 11"
+    },
+    {
+      "type": "data.run.finished",
+      "desc": "流水线运行结束（带 runState、qualityResult、publishResult 三个维度）",
+      "source": "后端详细设计·数据处理 11"
+    },
+    {
+      "type": "data.reference.published",
+      "desc": "基表发布新版本（带生效方式 future / backfill / revision 与起始日期）",
+      "source": "后端详细设计·数据处理 11"
+    },
+    {
+      "type": "data.quarantine.opened",
+      "desc": "隔离区出现待修补的行（按运行汇总，不带数据行）",
+      "source": "后端详细设计·数据处理 11"
+    },
+    {
+      "type": "data.quarantine.resolved",
+      "desc": "隔离行已修补并回流",
+      "source": "后端详细设计·数据处理 11"
     }
   ]
 }

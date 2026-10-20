@@ -70,8 +70,10 @@
 - 必查：时长计算是纯函数（不读库、不读时钟），有基于性质的随机测试；时长用整数秒、区间半开；额度账每人每月一行加锁，两条并发填报不能合计超额；提交即占额度，退回 / 撤回释放；跨月按业务日；配置的适用范围 = 类别 + scope_kind + scope_ref + 优先级；表名不带 `attendance_` 前缀。
 - 带到阶段 2 的项：`type` 变量遮住了内置名，改成 `type_def`；kind / scope_kind / status 改用 StrEnum，CHECK 从枚举生成。
 
-### 数据处理（M3-dataproc，未派）
-- 现状：业务方案、页面草图、高保真页面都有，**后端设计页还没做**（`sketch-backend-dataproc.html`）。派出前照考勤、表单的格式补一张卡。
+### 数据处理（M3-dataproc，待派）
+- 设计：`docs/Titanloom-后端详细设计-数据处理-V1.0.md`；验收：M3 出口 + 数据处理子方案 18.1（场景 14、16 待 G-ISO）；ADR-034；说明书 `plan/wp/M3-dataproc.md`。
+- 必查：数据集行表 `_v_from / _v_to` 只写差异，无变化不出版本；发布（差异、指针、代次、分区代次、血缘、outbox、审计）同一事务；回退是新版本、代次只增；JobRun 成功而质量阻断不发布（pipeline-run 契约）；基表生效方式必选无默认、用法绑定决定每天取哪版；关账月份回补先自动快照；SQL 与 Polars 实现同一份用例对拍；查询只收声明过的 FieldRef 筛选、行权限走 access.filter → to_sqlalchemy、aggregate 超限报错不截断；表名不拼用户输入。
+- 派工前提：底座三块已发布；文件解析器没交付前允许 CSV 桩；考勤 / 表单的 export_changes 用桩。
 
 ## 5. 踩过的坑（审核时留意）
 - Agent 写"两端全过"，其实前端没跑：前端测试一定自己跑。
