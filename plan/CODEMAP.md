@@ -78,7 +78,37 @@
 
 登记：params 0 · features 0 · pages 0 · objects 0
 
-（api 层还没有对外函数）
+- `access.api.__init__.whoami` — 当前主体、所在部门（含兼岗）、是否管家代办。主体取自 kernel.context。
+- `access.api.__init__.check` — 能不能。subject 默认当前主体；查别人需要诊断资格。
+- `access.api.__init__.access_filter` — 能看哪些。翻译成查询条件用 access.api.sql.to_sqlalchemy。
+- `access.api.__init__.members` — 部门 / 项目成员，可按日期。
+- `access.api.__init__.memberships` — 某人所在的部门与项目，可按日期。
+- `access.api.__init__.register` — 模块登记能力、功能、权限字段、可遮挡列。同样内容重复登记没有影响；同一个编号内容不同则报错。
+- `access.api._provider.AccessApi` — （没写说明）
+- `access.api._provider.set_provider` — 装入实现，返回原来的（用完要装回去）。
+- `access.api._provider.use_provider` — （没写说明）
+- `access.api._provider.provider` — （没写说明）
+- `access.api.sql.FilterFieldNotMapped` — 筛选条件用到的权限字段，调用方没有给出对应的列。程序错误，不能当作“不限”放行。
+- `access.api.sql.to_sqlalchemy` — 返回可直接 `.where(...)` 的条件。columns：权限字段名 → 列。
+- `access.api.testing.RegistrationConflict` — 同一个编号重复登记且内容不同。
+- `access.api.testing.NotRegistered` — 用了没登记的能力、资源类型或权限字段。
+- `access.api.testing.Cond` — 数据条件（身份与权限 6，只有登记的几种）。field 是调用模块登记的权限字段，all 不需要。
+- `access.api.testing.Grant` — （没写说明）
+- `access.api.testing.InMemoryAccess` — （没写说明）
+- `access.api.testing.as_principal` — 测试里以某个账户的身份办事（设置 kernel 的请求上下文，结束后恢复）。
+- `access.api.testing.access_stub` — 装入合成小组织的测试桩；测试结束恢复原来的实现，状态不外漏。
+- `access.api.types.DeptRef` — （没写说明）
+- `access.api.types.Whoami` — 当前主体。departments 含兼岗；acting_for 有值表示管家代办（值 = 被代办本人的账户）。
+- `access.api.types.Target` — 判定的对象及其真实归属。没有对象（只问“有没有这项能力”）时传 None。
+- `access.api.types.StepResult` — （没写说明）
+- `access.api.types.Decision` — 能不能（契约 access-decision）。拒绝时 failed_step 与 reason_key 必有。
+- `access.api.types.Predicate` — field 必须是调用模块登记的权限字段（身份与权限 6、12）。eq 只有一个值。
+- `access.api.types.AccessFilter` — 能看哪些（契约 access-filter）：all / none / 允许条件之并减去拒绝条件之并，附须遮挡的列。
+- `access.api.types.ScopeRef` — （没写说明）
+- `access.api.types.Member` — 部门 / 项目成员；一律带部门（重名靠部门区分，身份与权限 3）。
+- `access.api.types.Membership` — （没写说明）
+- `access.api.types.CapabilityDecl` — 模块登记的能力。新能力默认谁都没有（身份与权限 7）。feature_id 非空 = 属于功能开放的“新建 / 发起”类。
+- `access.api.types.FeatureDecl` — （没写说明）
 
 ## admin
 

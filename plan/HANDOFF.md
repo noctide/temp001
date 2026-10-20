@@ -33,7 +33,7 @@
    - Alembic：每个模块独立迁移目录 `apps/api/titanloom/<模块>/migrations/` 和独立 version 表 `<模块>_alembic`（总图 12）；`tl.py db upgrade [模块]`、`tl.py db revision <模块> -m …`（从模块 `store/models.py` 的 metadata 自动生成）。
    - 测试工具：`kernel/testing.py` 提供临时 schema / 事务回滚的 pytest fixture；没有数据库时这类测试跳过。
    - Windows 建库脚本 `ops/db/create.ps1`（建库、每模块一个 schema 和账号；密码维护者本地输入，不进仓库）。
-2. **`access.api`**（`docs/Titanloom-后端详细设计-身份与权限-V1.0.md` 10 节）
+2. **`access.api`**（`docs/Titanloom-后端详细设计-身份与权限-V1.0.md` 10 节）—— ✅ 接口 + 测试桩已做（2026-10-20，维护者已确认签名）：模块级函数 `whoami / check / access_filter / members / memberships / register`，实现经 `_provider.set_provider()` 装入（只两处：`create_app()` 启动装真实实现；测试用 `access.api.testing.access_stub` fixture，结束后恢复）；主体取自 `kernel.context`；`Decision.require()` 抛 AppError（功能开放 → FEATURE_NOT_OPEN；身份关按原因 → AUTHENTICATION_REQUIRED / TOKEN_EXPIRED / ACCOUNT_LOCKED / DELEGATION_REVOKED；其余 ACCESS_DENIED；details 只有 failedStep 与 reasonKey）；`access.api.sql.to_sqlalchemy(filter, 字段→列)` 缺字段直接报错。**待办**：① `create_app()` 还没有，装入真实实现的那一处等应用入口做出来再接；② `explain / who_can / find_people / write_grant` 没做（考勤阶段 2 用不到），做的时候一次把 Protocol、桩、真实实现的签名定好；③ 契约缺口：access-filter 的 `all` 不能再带 `not`，"全部减去拒绝条件"目前桩直接 `NotImplementedError`，要么契约允许 all+not，要么真实实现把它改写成 any（需维护者决定）；④ 第二人批准（SECOND_APPROVAL_REQUIRED）等流程出来再接。原要求如下：
    - 先做：`whoami`、`check`、`filter`、`members`、`register`（考勤阶段 2 要用的就这五个）。
    - 接口用 Protocol + 数据类定义在 `access/api/`；同时给 `access/api/testing.py` 一个**测试桩**（内存里的人、部门、授权，按合成人设表），其他模块的测试只用它。
    - 契约：`packages/contracts` 里 access-decision、access-filter。

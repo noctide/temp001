@@ -15,7 +15,8 @@ from titanloom.kernel.errors import AppError, error_response
 from titanloom.kernel.reg.errors import ERRORS, ErrorCode
 
 
-def test_uuid7_version_order_and_time() -> None:
+def test_uuid7_version_order_and_time(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(ids, "_last_ms", 0)  # 别的测试用真实时间生成过 id，会把单调下限抬到现在
     a = ids.uuid7(1_700_000_000_000)
     b = ids.uuid7(1_700_000_000_000)
     c = ids.uuid7(1_700_000_000_001)

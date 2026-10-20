@@ -421,6 +421,164 @@
         "type": "number",
         "value": "-10"
       }
+    },
+    {
+      "id": "c22",
+      "expr": "$a / $b",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3"
+        },
+        "b": {
+          "type": "number",
+          "value": "2.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.2"
+      }
+    },
+    {
+      "id": "c23",
+      "expr": "$a / $b",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2.5"
+        },
+        "b": {
+          "type": "number",
+          "value": "1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "2.5"
+      }
+    },
+    {
+      "id": "c24",
+      "expr": "$a * $b / $c",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1000.05"
+        },
+        "b": {
+          "type": "number",
+          "value": "-0.75"
+        },
+        "c": {
+          "type": "number",
+          "value": "10"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-75.00375"
+      }
+    },
+    {
+      "id": "c25",
+      "expr": "$a / $b + $c",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "100"
+        },
+        "b": {
+          "type": "number",
+          "value": "3"
+        },
+        "c": {
+          "type": "number",
+          "value": "12345.678"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "12379.01133333333333333333333333"
+      }
+    },
+    {
+      "id": "c26",
+      "expr": "round($a / $b, 1)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "3"
+        },
+        "b": {
+          "type": "number",
+          "value": "0.1"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "30"
+      }
+    },
+    {
+      "id": "c27",
+      "expr": "round($a, 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "2.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3"
+      }
+    },
+    {
+      "id": "c28",
+      "expr": "round($a, 0)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "-2.5"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-3"
+      }
+    },
+    {
+      "id": "c29",
+      "expr": "round($a, 2)",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "1.005"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1.01"
+      }
+    },
+    {
+      "id": "c30",
+      "expr": "$a * $b",
+      "fields": {
+        "a": {
+          "type": "number",
+          "value": "123456789012345678901234567.89"
+        },
+        "b": {
+          "type": "number",
+          "value": "10"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "1234567890123456789012345678.9"
+      }
     }
   ]
 }
