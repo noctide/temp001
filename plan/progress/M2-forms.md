@@ -26,7 +26,13 @@
      的算式并由后端算出期望，写入 `apps/web/src/domains/forms/expr.crosscheck.json`；
      `tests/test_expr_crosscheck.py` 校验文件与后端实现一致，前端 `expr.crosscheck.test.ts` 读同一文件比对。
      生成器统计：320 例（`+` 234、`-` 232、`×` 236、`÷` 215、`round` 235、引用字段 295）。
-- 后端测试：145 passed, 2 skipped；契约测试 13 个文件全部通过。
+- 阶段 2 差一处（2026-10-20 审核 1 条，已合并 `local/integration` 拿到 c31）：
+  1. `sum_fn` 不再在默认上下文里 `total +=`，改为调用 `domain/expr/arithmetic.py` 的
+     `arithmetic("+", …)`；evaluator 的 `+ − × ÷` 也走这一个模块（从 evaluator 抽出共用，没有第二份实现）。
+  2. 对拍生成器加 `sum`、嵌套括号（二元节点都带括号，另有显式分组）与 `round`；重新生成 320 例：
+     `+` 185、`-` 188、`×` 192、`÷` 203、`sum` 145、`round` 198，全部含嵌套括号；
+     其中 115 例结果超过 28 位有效数字（60 例含 `sum`），默认上下文截断会被抓到。
+- 后端测试：146 passed, 2 skipped；契约测试 13 个文件全部通过。
 - 前端在 Windows 上实际运行 `pnpm --dir apps/web test`（vitest 2.1.8 / node v26.4.0）：
 
 ```
@@ -35,19 +41,19 @@
 
  RUN  v2.1.8 D:/05_project/02_Titanloom-dev/wt/M2-forms/apps/web
 
- ✓ src/domains/forms/expr.test.ts (37 tests) 24ms
- ✓ src/domains/forms/expr.crosscheck.test.ts (321 tests) 105ms
+ ✓ src/domains/forms/expr.test.ts (38 tests) 26ms
+ ✓ src/domains/forms/expr.crosscheck.test.ts (321 tests) 98ms
 
  Test Files  2 passed (2)
-      Tests  358 passed (358)
-   Duration  1.93s
+      Tests  359 passed (359)
+   Duration  2.53s
 ```
 
 - `uv run python ops/tools/tl.py check`：12 项全过（✗ 0、! 0），含 tsc、pyright strict、ruff、pytest、契约测试、范围检查。
 
 ## 下一步
 
-- 本次提交阶段 2 再返工（仅本地，`git commit -s`，末尾 `Agent: OpenCode`），等架构审核。
+- 本次提交阶段 2 差一处返工（仅本地，`git commit -s`，末尾 `Agent: OpenCode`），等架构审核。
 - 阶段 3（记录/修订/最小流程等）依赖 M1 底座接口，底座发布前不开工。
 
 ## 环境限制（已解决）

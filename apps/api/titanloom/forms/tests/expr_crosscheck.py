@@ -1,4 +1,4 @@
-"""前后端对拍用例生成器：固定种子生成只含 + − × ÷ round 的算式，后端算出期望值。
+"""前后端对拍用例生成器：固定种子生成只含 + − × ÷ round sum 的嵌套算式，后端算出期望值。
 
 生成物 `apps/web/src/domains/forms/expr.crosscheck.json` 由前端测试读取比对。
 改了求值器后重新生成：
@@ -94,6 +94,11 @@ def _expr(rng: _Rng, depth: int) -> str:
         if rng.chance(1, 2):
             return "$" + rng.pick(FIELD_CODES)
         return _number_text(rng, allow_negative=False)
+    if rng.chance(1, 10):
+        return f"({_expr(rng, depth - 1)})"  # 嵌套括号
+    if rng.chance(1, 8):
+        count = rng.between(2, 3)
+        return "sum(" + ", ".join(_expr(rng, depth - 1) for _ in range(count)) + ")"
     if rng.chance(1, 6):
         return f"round({_expr(rng, depth - 1)}, {rng.between(0, 3)})"
     op = rng.pick(("+", "-", "*", "/"))

@@ -11,6 +11,7 @@ from datetime import date, time, timedelta
 from decimal import ROUND_HALF_UP, Decimal, localcontext
 from typing import cast
 
+from titanloom.forms.domain.expr.arithmetic import arithmetic
 from titanloom.forms.domain.expr.errors import ExprError
 from titanloom.forms.domain.expr.types import Value, ValueKind
 
@@ -89,7 +90,7 @@ def hoursBetween(args: list[Value]) -> Value:
 def sum_fn(args: list[Value]) -> Value:
     total = Decimal(0)
     for index, arg in enumerate(args, start=1):
-        total += _as_number(arg, f"sum 第 {index} 个参数")
+        total = arithmetic("+", total, _as_number(arg, f"sum 第 {index} 个参数"))
     return Value(ValueKind.NUMBER, total)
 
 
