@@ -242,10 +242,11 @@ def changed_files() -> list[str]:
 
 
 def wp_extra_paths(wp: str) -> list[str]:
-    f = ROOT / "plan" / "wp" / f"{wp}.md"
-    if not f.exists():
+    # 额外放行只认集成分支上的说明书（架构写的），工作分支自己加的 allow 不算
+    text = git("show", f"{INTEGRATION}:plan/wp/{wp}.md")
+    if not text:
         return []
-    m = re.search(r"<!--\s*allow:\s*(.+?)\s*-->", f.read_text(encoding="utf-8"), re.S)
+    m = re.search(r"<!--\s*allow:\s*(.+?)\s*-->", text, re.S)
     return [x.strip() for x in m.group(1).split(",")] if m else []
 
 
@@ -272,7 +273,9 @@ def c_scope() -> Result:
         r.lines.append("架构分支——不限范围")
         return r
     prefixes = list(P[proj].get("paths", [])) + wp_extra_paths(wp) + [f"plan/progress/{wp}.md"]
-    out = [f for f in changed_files() if not allowed(f, prefixes)]
+    # 生成物（kernel/reg、前端 shared/base/reg、CODEMAP）由"生成物与正本一致"一项把关：模块登记参数 / 文案后 tl.py gen 改到它们是正常的
+    generated = ("apps/api/titanloom/kernel/reg/", "apps/web/src/shared/base/reg/", "plan/CODEMAP.md")
+    out = [f for f in changed_files() if not allowed(f, prefixes) and not f.startswith(generated)]
     if out:
         r.fail(f"项目 {proj} 不该改这些文件（要改请提变更请求）：")
         r.lines += [f"  {f}" for f in out[:30]]

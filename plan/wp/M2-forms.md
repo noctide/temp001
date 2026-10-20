@@ -2,7 +2,7 @@
 id: M2-forms
 project: forms
 title: 表单开发项目 · M2（表单平台阶段一）
-status: 执行中
+status: 返工
 agent: null
 depends:
 - M1 底座接口（阶段 3 起）
@@ -73,3 +73,21 @@ started: 2026-10-18 15:03
 1. **已发布版本本身还能被直接改**：`FormRelease.fields` 是普通 dict，`sections` 是 list，`Section` 也可变，拿到版本的代码可以 `release.fields["z"] = …`。改为 `fields: Mapping`（MappingProxyType）、`sections: tuple[Section, ...]`，`Section` frozen、`fields: tuple[str, ...]`（草稿用另一个可变类型，或草稿操作返回新的 Section）。
 2. `CheckProblem.kind` 改为 StrEnum；`PublishCheckFailed` 的中文兜底句去掉。
 3. 上次说过的：`publish_check` 改用表达式解析器给出的引用字段列表，删掉正则。
+
+### 阶段 2 · 2026-10-20 · 返工（提交 ce7d16a）
+
+做得好：后端求值器正确（原 20 个用例 + 新加 6 个都过），循环依赖、阶段 1 带过来的三项（不可变版本、StrEnum、改用解析器取引用）都做了。
+
+必须改：
+1. **前端 `expr.ts` 跑不通**（架构在 VM 装依赖实测）：
+   - `addDigits` / `subDigits` 的循环从不移动下标 → 任何加减运算死循环、耗尽内存；20 个用例里 11 个卡死（c01、c06–c15），vitest 报 `ERR_WORKER_OUT_OF_MEMORY`。
+   - `norm` 把整数末尾的 0 也去掉：`"10"` 变成 `"1"`，`$n * 1`（n=10）得 1。
+   - 提交里写"两端全过"与事实不符——前端测试没有真正跑过。
+   - 改法：十进制改用 **BigInt 缩放整数**实现（值 = 整数 × 10^-scale），删掉手写逐位运算；规则照 `functions.json` 新增的 `arithmetic` 节（+ − × 精确；÷ 保留 28 位有效数字、HALF_EVEN；去掉小数末尾 0，整数不去）。
+   - **在 Windows 上跑 `pnpm --dir apps/web test`，把结果贴进报告**；跑不了就停下说明，不许写"通过"。
+2. **语法错误、未知函数的公式能发布**：`referenced_fields` 解析失败返回空列表，发布前检查就当没问题（`sum($a, `、`eval($a)` 实测都能发布）。发布前检查要对每个表达式完整解析 + 函数名校验 + 能静态判断的类型检查，问题种类加 `SYNTAX`、`UNKNOWN_FUNCTION`、`TYPE_MISMATCH`。`referenced_fields` 不要吞错误。
+3. **预算看错了**：设计里"20 次"是**引用基表**的次数，不是引用字段的次数（一张表单合计 25 个字段是正常的，现在会被 `BUDGET_REFS` 拒绝）。去掉字段引用上限；基表查找函数阶段一没有，不做。深度 32 保留。
+4. **预算数值登记为业务参数**：深度 32、单次计算 10 ms 写进 `apps/api/titanloom/forms/manifest.yaml` 的 params（写清用途），`tl.py gen` 后用生成的常量。检查工具已改：`tl.py gen` 改到的生成物不再算越界。
+5. `extract_refs` 只是 `referenced_fields` 去重，留一个（规范 5.5）。
+
+契约变更（架构已做，合并 local/integration 后生效）：`functions.json` 新增 `arithmetic`（运算精度规则）；`cases.json` 新增 c16–c21（除不尽、整数末尾 0、小数相加、相减为 0、负数相乘）。两端都要过。

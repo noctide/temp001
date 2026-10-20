@@ -6,6 +6,9 @@
     uv run python ops/tools/tl.py gen                 从正本生成常量（kernel/reg、前端 shared/base/reg）与 plan/CODEMAP.md
     uv run python ops/tools/tl.py status              生成 plan/STATUS.md
     uv run python ops/tools/tl.py wp start|launch|merge <编号> [--agent 名字]   工作包（见 wp.py）
+    uv run python ops/tools/tl.py db upgrade [模块]            跑迁移到最新（不写模块名 = 所有有表的模块）
+    uv run python ops/tools/tl.py db modules                   列出有表的模块（建库脚本用）
+    uv run python ops/tools/tl.py db revision <模块> -m 说明   从 store/models.py 与库的差别生成迁移脚本（生成后要人看一遍）
 
 所有规则从 projects.yaml 读，不另写一份。
 """
@@ -172,6 +175,40 @@ def check(fast: bool, only: list[str]) -> int:
     return 1 if fails else 0
 
 
+def db_modules(only: str | None) -> list[str]:
+    """有 store/models.py 的模块（迁移的正本）。"""
+    mods = sorted({v["module"] for v in load_projects().values() if v.get("module")})
+    if only:
+        if only not in mods:
+            raise SystemExit(f"没有这个模块：{only}")
+        return [only]
+    return [m for m in mods if (API / m / "store" / "models.py").exists()]
+
+
+def db_cmd(action: str, module: str | None, message: str | None) -> int:
+    if action == "modules":
+        print("\n".join(db_modules(None)))
+        return 0
+    sys.path.insert(0, str(ROOT / "apps" / "api"))
+    from titanloom.kernel import db, migrate
+
+    try:
+        db.database_url(owner=True)
+    except db.DatabaseNotConfigured as e:
+        print(f"{e}（形如 postgresql+psycopg://用户:密码@localhost:5432/titanloom）", file=sys.stderr)
+        return 2
+    if action == "revision":
+        if not module or not message:
+            print("用法：tl.py db revision <模块> -m 说明", file=sys.stderr)
+            return 2
+        migrate.new_revision(db_modules(module)[0], message)
+        return 0
+    for m in db_modules(module):
+        print("迁移", m)
+        migrate.upgrade(m)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     for stream in (sys.stdout, sys.stderr):  # Windows 控制台不是 UTF-8 时也能打出中文和 ✓
         if hasattr(stream, "reconfigure"):
@@ -189,6 +226,10 @@ def main(argv: list[str] | None = None) -> int:
     pw.add_argument("id")
     pw.add_argument("--agent", default=None, help="交给哪个 Agent（start 时记下）")
     pw.add_argument("--keep", action="store_true", help="merge 时只合入这一阶段，worktree 继续")
+    pdb = sub.add_parser("db", help="数据库迁移：upgrade 跑到最新 · revision 生成脚本")
+    pdb.add_argument("action", choices=["upgrade", "revision", "modules"])
+    pdb.add_argument("module", nargs="?", default=None)
+    pdb.add_argument("-m", "--message", default=None)
     args = ap.parse_args(argv)
     if args.cmd == "gen":
         changed = gen.write_all()
@@ -204,6 +245,8 @@ def main(argv: list[str] | None = None) -> int:
             "launch": lambda: wp.launch(args.id),
             "merge": lambda: wp.merge(args.id, args.keep),
         }[args.action]()
+    if args.cmd == "db":
+        return db_cmd(args.action, args.module, args.message)
     if args.cmd == "scaffold":
         return scaffold()
     if args.cmd == "check":

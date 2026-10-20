@@ -317,6 +317,110 @@
         }
       },
       "expectError": "DIVIDE_BY_ZERO"
+    },
+    {
+      "id": "c16",
+      "expr": "$n / $m",
+      "fields": {
+        "n": {
+          "type": "number",
+          "value": "10"
+        },
+        "m": {
+          "type": "number",
+          "value": "3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "3.333333333333333333333333333"
+      }
+    },
+    {
+      "id": "c17",
+      "expr": "$n / $m",
+      "fields": {
+        "n": {
+          "type": "number",
+          "value": "2"
+        },
+        "m": {
+          "type": "number",
+          "value": "3"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0.6666666666666666666666666667"
+      }
+    },
+    {
+      "id": "c18",
+      "expr": "$n * 1",
+      "fields": {
+        "n": {
+          "type": "number",
+          "value": "10"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "10"
+      }
+    },
+    {
+      "id": "c19",
+      "expr": "$n + $m",
+      "fields": {
+        "n": {
+          "type": "number",
+          "value": "100"
+        },
+        "m": {
+          "type": "number",
+          "value": "0.50"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "100.5"
+      }
+    },
+    {
+      "id": "c20",
+      "expr": "$n - $m",
+      "fields": {
+        "n": {
+          "type": "number",
+          "value": "1000"
+        },
+        "m": {
+          "type": "number",
+          "value": "1000"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "0"
+      }
+    },
+    {
+      "id": "c21",
+      "expr": "$n * $m",
+      "fields": {
+        "n": {
+          "type": "number",
+          "value": "-2.5"
+        },
+        "m": {
+          "type": "number",
+          "value": "4"
+        }
+      },
+      "expect": {
+        "type": "number",
+        "value": "-10"
+      }
     }
   ]
 }
