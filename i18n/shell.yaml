@@ -88,3 +88,219 @@ keys:
     defaults:
       zh-CN: 切换语言
       en-US: Change language
+  dock.fab.label:
+    description: 悬浮球的无障碍名称，带待办条数
+    params:
+      count: number
+    defaults:
+      zh-CN: 快捷圈：问管家、指一下、待办 {{count}} 项、客服、反馈（Ctrl / ⌘ + J）；按住可以拖动
+      en-US: "Quick ring: ask the assistant, point at something, {{count}} to-dos, help, feedback (Ctrl / ⌘ + J); press and hold to move"
+  dock.fab.tip:
+    description: 鼠标停在悬浮球上的提示
+    defaults:
+      zh-CN: 点开快捷圈 · Ctrl / ⌘ + J · 按住拖动换位置
+      en-US: Open the quick ring · Ctrl / ⌘ + J · press and hold to move
+  dock.ring.label:
+    description: 电脑上快捷圈的无障碍名称
+    defaults:
+      zh-CN: 快捷圈（方向键选，回车执行，Esc 收起）
+      en-US: Quick ring (arrow keys to choose, Enter to run, Esc to close)
+  dock.ring.labelShort:
+    description: 手机上快捷圈（底部列表）的无障碍名称
+    defaults:
+      zh-CN: 快捷圈
+      en-US: Quick ring
+  dock.ring.itemLabel:
+    description: 快捷圈每一格的无障碍名称
+    params:
+      name: string
+      desc: string
+    defaults:
+      zh-CN: "{{name}}：{{desc}}"
+      en-US: "{{name}}: {{desc}}"
+  dock.ring.askPage:
+    description: 快捷圈「管家」二级的第一项：带着当前页面问管家
+    defaults:
+      zh-CN: 问这一页
+      en-US: Ask about this page
+  dock.ring.adjust:
+    description: 快捷圈旁边打开设置的小按钮
+    defaults:
+      zh-CN: 调整
+      en-US: Adjust
+  dock.ring.adjustTip:
+    description: 「调整」按钮的提示
+    defaults:
+      zh-CN: 勾选圈里放哪些、排顺序
+      en-US: Choose what goes in the ring and its order
+  dock.ring.adjustMore:
+    description: 手机快捷圈列表最后一行
+    defaults:
+      zh-CN: 调整快捷圈…
+      en-US: Adjust quick ring…
+  dock.ring.hintKeys:
+    description: 用键盘打开快捷圈时，圈旁的操作提示
+    params:
+      name: string
+    defaults:
+      zh-CN: 回车 = {{name}} · 方向键 · Esc
+      en-US: Enter = {{name}} · arrow keys · Esc
+  dock.ring.hintDrag:
+    description: 用鼠标打开快捷圈时，圈旁的提示
+    defaults:
+      zh-CN: 按住球可以拖动
+      en-US: Press and hold the ball to move it
+  dock.ring.ask.name:
+    description: 快捷圈格子名（两个字）· 问智能管家
+    defaults:
+      zh-CN: 管家
+      en-US: Ask
+  dock.ring.ask.desc:
+    description: 快捷圈格子说明 · 管家
+    defaults:
+      zh-CN: 带上当前页面问；停一下看这一页能让管家做的事
+      en-US: Ask with this page attached; hover to see what the assistant can do here
+  dock.ring.todo.name:
+    description: 快捷圈格子名 · 待办，带条数
+    params:
+      count: number
+    defaults:
+      zh-CN: 待办 {{count}}
+      en-US: To-do {{count}}
+  dock.ring.todo.nameShort:
+    description: 快捷圈设置里的格子名 · 待办
+    defaults:
+      zh-CN: 待办
+      en-US: To-do
+  dock.ring.todo.desc:
+    description: 快捷圈格子说明 · 待办
+    defaults:
+      zh-CN: 等你处理的事
+      en-US: Things waiting for you
+  dock.ring.help.name:
+    description: 快捷圈格子名 · 客服
+    defaults:
+      zh-CN: 客服
+      en-US: Help
+  dock.ring.help.desc:
+    description: 快捷圈格子说明 · 客服
+    defaults:
+      zh-CN: 平台怎么用、制度问题
+      en-US: How to use the platform, policy questions
+  dock.ring.fb.name:
+    description: 快捷圈格子名 · 反馈
+    defaults:
+      zh-CN: 反馈
+      en-US: Feedback
+  dock.ring.fb.desc:
+    description: 快捷圈格子说明 · 反馈
+    defaults:
+      zh-CN: 问题、建议、报错
+      en-US: Problems, ideas, errors
+  dock.ring.pick.name:
+    description: 快捷圈格子名 · 选取页面元素
+    defaults:
+      zh-CN: 选取
+      en-US: Pick
+  dock.ring.pick.desc:
+    description: 快捷圈格子说明 · 选取
+    defaults:
+      zh-CN: 选页面上的地方，再问管家、问客服、反馈或发给别人
+      en-US: Pick a spot on the page, then ask, get help, give feedback or send it to someone
+  dock.ring.tasks.name:
+    description: 快捷圈格子名 · 我交给管家的任务
+    defaults:
+      zh-CN: 任务
+      en-US: Tasks
+  dock.ring.tasks.desc:
+    description: 快捷圈格子说明 · 任务
+    defaults:
+      zh-CN: 我交给管家的事
+      en-US: Things I handed to the assistant
+  dock.ring.auto.name:
+    description: 快捷圈格子名 · 建自动化
+    defaults:
+      zh-CN: 自动
+      en-US: Auto
+  dock.ring.auto.desc:
+    description: 快捷圈格子说明 · 自动
+    defaults:
+      zh-CN: 建自动化
+      en-US: Create an automation
+  dock.ringSet.title:
+    description: 调整快捷圈小窗的标题
+    defaults:
+      zh-CN: 调整快捷圈
+      en-US: Adjust quick ring
+  dock.ringSet.close:
+    description: 调整快捷圈小窗关闭按钮的无障碍名称
+    defaults:
+      zh-CN: 关闭
+      en-US: Close
+  dock.ringSet.intro:
+    description: 调整快捷圈小窗顶部说明
+    defaults:
+      zh-CN: 勾选圈里放哪些，用 ↑ ↓ 排顺序；最多 8 格（含这一页的动作）。只在这台电脑上生效。
+      en-US: Tick what goes in the ring and use ↑ ↓ to order it; up to 8 slots (including this page's actions). Applies to this computer only.
+  dock.ringSet.locked:
+    description: 「管家」格子不能去掉时的说明
+    defaults:
+      zh-CN: 必留：随时能问管家
+      en-US: "Always shown: the assistant is one click away"
+  dock.ringSet.agentClosed:
+    description: 用户没开「用智能管家」功能时，管家类格子的说明
+    defaults:
+      zh-CN: 「用智能管家」没开放给你
+      en-US: “Use the assistant” isn’t open to you
+  dock.ringSet.up:
+    description: 往上挪一格（无障碍名称）
+    defaults:
+      zh-CN: 上移
+      en-US: Move up
+  dock.ringSet.down:
+    description: 往下挪一格（无障碍名称）
+    defaults:
+      zh-CN: 下移
+      en-US: Move down
+  dock.ringSet.page:
+    description: 是否在「管家」二级里显示这一页声明的动作
+    defaults:
+      zh-CN: 「管家」里显示这一页的动作
+      en-US: Show this page's actions under “Ask”
+  dock.ringSet.pageList:
+    description: 这一页声明了哪些动作
+    params:
+      list: string
+    defaults:
+      zh-CN: 这一页：{{list}}
+      en-US: "On this page: {{list}}"
+  dock.ringSet.pageNone:
+    description: 这一页没有声明动作
+    defaults:
+      zh-CN: 这一页没有声明动作
+      en-US: This page has no actions
+  dock.ringSet.plugins:
+    description: 调整快捷圈底部关于插件的说明
+    defaults:
+      zh-CN: 插件也可以提供格子，装了以后在这里勾上才出现。外观跟着个人皮肤走。
+      en-US: Plugins can add slots too; they appear once you tick them here. The look follows your personal skin.
+  dock.ringSet.home:
+    description: 把悬浮球放回右下角
+    defaults:
+      zh-CN: 球回到右下角
+      en-US: Put the ball back in the corner
+  dock.ringSet.reset:
+    description: 快捷圈恢复默认
+    defaults:
+      zh-CN: 恢复默认
+      en-US: Reset
+  dock.ringSet.homeDone:
+    description: 球回到右下角后的提示
+    defaults:
+      zh-CN: 悬浮球回到右下角
+      en-US: The ball is back in the corner
+  dock.ringSet.resetDone:
+    description: 恢复默认后的提示
+    defaults:
+      zh-CN: 快捷圈恢复默认
+      en-US: Quick ring reset

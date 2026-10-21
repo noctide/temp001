@@ -36,11 +36,12 @@ FONT_URL = re.compile(r"url\((?:['\"])?fonts/([^)'\"]+)(?:['\"])?\)")
 HIFI_ALLOW = ("apps/web/src/shared/ui/generated/",)
 COLOR = re.compile(r"(?<![\w&/-])#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\b|\b(?:rgba?|hsla?)\(")
 
-# 自检时注入正式页一侧的"改坏"样式：模仿常见的走样（旧蓝色主色、标题字号、左边距、顶栏内距、导航当前项字重）
+# 自检时注入正式页一侧的"改坏"样式：模仿常见的走样（旧蓝色主色、标题字号、左边距、顶栏内距、导航当前项字重、悬浮球位置、快捷圈格子大小）
 BREAK_CSS = (
     "<style>.m-btn-p{background:#2350B5!important;border-color:#2350B5!important}"
     ".m-display{font-size:30px!important}.m-page{padding-left:44px!important}"
-    ".m-top{padding-left:24px!important}.m-rail a.on{font-weight:500!important}</style>"
+    ".m-top{padding-left:24px!important}.m-rail a.on{font-weight:500!important}"
+    ".dk-fab{right:24px!important}.dk-ri{width:56px!important}</style>"
 )
 
 
@@ -123,9 +124,16 @@ def node() -> str | None:
     return shutil.which("node")
 
 
-def has_deps() -> bool:
+def deps_problem() -> str | None:
+    """比对要的前端依赖有没有问题：None = 能用。"""
     nm = WEB / "node_modules"
-    return all((nm / p).exists() for p in ("playwright", "pngjs", "pixelmatch"))
+    try:
+        ok = all((nm / p).exists() for p in ("playwright", "pngjs", "pixelmatch"))
+    except OSError:  # Windows 装的依赖（链接）在 Linux 里读不了
+        return "前端依赖是另一个系统装的（例如 Windows 装、这里是 Linux）——在装依赖的那台机器上跑"
+    if not ok:
+        return "apps/web 没装 playwright / pngjs / pixelmatch（pnpm install，再 pnpm --dir apps/web exec playwright install chromium）"
+    return None
 
 
 def _free_port() -> int:
@@ -181,11 +189,9 @@ def run(
         return 3, "没有要比的页"
     if not node():
         return 2, "没找到 node"
-    if not has_deps():
-        return (
-            2,
-            "apps/web 没装 playwright / pngjs / pixelmatch（pnpm install，再 pnpm --dir apps/web exec playwright install chromium）",
-        )
+    problem = deps_problem()
+    if problem:
+        return 2, problem
     proto = prototype_root(cfg)
     if not proto:
         return 2, "找不到原型目录（设环境变量 TL_PROTOTYPE 指到 fidelity/Prototype）"

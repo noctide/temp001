@@ -1,5 +1,6 @@
 # 高保真比对清单（架构维护；执行 Agent 不改，要改提给架构）
-# 每页：原型文件、正式页路由、要比的状态（URL 参数；可单独写 viewport，例如手机 390×844）、关键位置。
+# 每页：原型文件、正式页路由、要比的状态（URL 参数；可单独写 viewport，例如手机 390×844；steps 是截图前的操作，
+#   如 [{click: ".dk-fab"}, {press: "Control+j"}]）、关键位置。
 # `tl.py fidelity` 跑全部或指定页；`tl.py check` 只跑 enabled: true 的页（正式页做出来以后由架构打开）。
 #
 # 正式页的约定（写进 AGENTS.md / 高保真规范）：
@@ -44,9 +45,36 @@ pages:
       搜索框: ".m-search"
       消息: ".m-top .m-ib"
       头像: ".m-ava"
-    hide:                   # 两边都藏起来（留空白）再截：页面内容不在这一项比；悬浮窗还没做
+    hide:                   # 两边都藏起来（留空白）再截：页面内容不在这一项比
       - ".m-page > *"
-      - "#dk-root"
+    mask: []
+    ignore_text: []
+
+  - name: 悬浮窗
+    project: shell
+    enabled: true           # 悬浮球 + 快捷圈 + 调整快捷圈，10-20 落成（待办 / 客服 / 反馈小窗、抽屉、选取下一步）
+    proto: Settings.html    # 取一页没有声明「管家」页面动作的（表单页有「帮我找表单」等，归表单页自己比）
+    app: /settings
+    full_page: false
+    scope: ["#dk-root"]
+    same_selectors: true
+    hide: [".m-page > *", ".m-rail", ".m-top"]   # 只比悬浮窗；原型「我的设置」页的顶栏是简化版，外壳归「外壳」那项比
+    states:
+      - { name: 球, query: "" }
+      - { name: 球·普通成员, query: role=member }
+      - { name: 快捷圈, query: "", steps: [{ click: ".dk-fab" }] }
+      - { name: 键盘打开, query: "", steps: [{ press: "Control+j" }] }
+      - { name: 调整, query: "", steps: [{ click: ".dk-fab" }, { click: ".dk-rset" }] }
+      - { name: 手机·快捷圈, query: "", viewport: { width: 390, height: 844 }, steps: [{ click: ".dk-fab" }] }
+      - { name: 手机·调整, query: "", viewport: { width: 390, height: 844 }, steps: [{ click: ".dk-fab" }, { click: ".dk-rrow.set" }] }
+    probes:
+      悬浮球: ".dk-fab"
+      角标: ".dk-fab b"
+      选中格: ".dk-ri.on"
+      调整: ".dk-rset"
+      提示: ".dk-rhint"
+      手机列表: ".dk-rsheet"
+      设置窗: ".dk-rsp"
     mask: []
     ignore_text: []
 

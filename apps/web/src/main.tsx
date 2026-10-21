@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 // 公共样式从高保真原型同步（tl.py fidelity --sync），不在这里另写
 import "./shared/ui/generated/mono-fonts.css";
 import "./shared/ui/generated/mono.css";
+import "./shared/ui/generated/dock.css";
 import { watchLook } from "./shared/ui/look";
 import { App } from "./shell/App";
 

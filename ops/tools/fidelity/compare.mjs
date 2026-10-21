@@ -125,6 +125,17 @@ async function shoot(browser, url, viewport, now, maskSel, probes, opt) {
   if (opt.hide && opt.hide.length) await page.addStyleTag({ content: opt.hide.join(",") + "{visibility:hidden!important}" });
   await page.evaluate(() => document.fonts && document.fonts.ready);
   await page.waitForTimeout(cfg.settle_ms ?? 400);
+  // 截图前的操作（两边一样）：{ click: 选择器 } 或 { press: "Control+j" }
+  for (const st of opt.steps || []) {
+    try {
+      if (st.click) await page.click(st.click, { timeout: 5000 });
+      if (st.press) await page.keyboard.press(st.press);
+    } catch (e) {
+      await ctx.close();
+      return { error: `操作没做成：${JSON.stringify(st)}（${String(e.message).split("\n")[0]}）` };
+    }
+    await page.waitForTimeout(300);
+  }
   const data = await page.evaluate(collect, { props: PROBE_PROPS, probes, maxText: 40, scope: opt.scope || null });
   const mask = (maskSel || []).map((s) => page.locator(s));
   const png = await page.screenshot({ fullPage: opt.fullPage, animations: "disabled", caret: "hide", mask, maskColor: "#FF00FF" });
@@ -267,7 +278,7 @@ for (const page of cfg.pages) {
       probesP[name] = typeof sel === "string" ? sel : sel.proto;
       probesA[name] = cfg.self_test || page.same_selectors ? probesP[name] : (typeof sel === "string" ? `[data-fid="${name}"]` : sel.app || `[data-fid="${name}"]`);
     }
-    const opt = { scope: page.scope || null, fullPage: page.full_page ?? true, hide: page.hide || [] };
+    const opt = { scope: page.scope || null, fullPage: page.full_page ?? true, hide: page.hide || [], steps: st.steps || [] };
     const P = await shoot(browser, protoUrl, viewport, cfg.now, maskP, probesP, opt);
     const A = P.error ? null : await shoot(browser, appUrl, viewport, cfg.now, maskA, probesA, opt);
     const err = P.error || (A && A.error);

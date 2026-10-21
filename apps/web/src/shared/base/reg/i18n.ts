@@ -36,6 +36,69 @@ export const K = {
     tokenExpired: "errors.tokenExpired",
   },
   shell: {
+    dock: {
+      fab: {
+        label: "shell.dock.fab.label",
+        tip: "shell.dock.fab.tip",
+      },
+      ring: {
+        adjust: "shell.dock.ring.adjust",
+        adjustMore: "shell.dock.ring.adjustMore",
+        adjustTip: "shell.dock.ring.adjustTip",
+        ask: {
+          desc: "shell.dock.ring.ask.desc",
+          name: "shell.dock.ring.ask.name",
+        },
+        askPage: "shell.dock.ring.askPage",
+        auto: {
+          desc: "shell.dock.ring.auto.desc",
+          name: "shell.dock.ring.auto.name",
+        },
+        fb: {
+          desc: "shell.dock.ring.fb.desc",
+          name: "shell.dock.ring.fb.name",
+        },
+        help: {
+          desc: "shell.dock.ring.help.desc",
+          name: "shell.dock.ring.help.name",
+        },
+        hintDrag: "shell.dock.ring.hintDrag",
+        hintKeys: "shell.dock.ring.hintKeys",
+        itemLabel: "shell.dock.ring.itemLabel",
+        label: "shell.dock.ring.label",
+        labelShort: "shell.dock.ring.labelShort",
+        pick: {
+          desc: "shell.dock.ring.pick.desc",
+          name: "shell.dock.ring.pick.name",
+        },
+        tasks: {
+          desc: "shell.dock.ring.tasks.desc",
+          name: "shell.dock.ring.tasks.name",
+        },
+        todo: {
+          desc: "shell.dock.ring.todo.desc",
+          name: "shell.dock.ring.todo.name",
+          nameShort: "shell.dock.ring.todo.nameShort",
+        },
+      },
+      ringSet: {
+        agentClosed: "shell.dock.ringSet.agentClosed",
+        close: "shell.dock.ringSet.close",
+        down: "shell.dock.ringSet.down",
+        home: "shell.dock.ringSet.home",
+        homeDone: "shell.dock.ringSet.homeDone",
+        intro: "shell.dock.ringSet.intro",
+        locked: "shell.dock.ringSet.locked",
+        page: "shell.dock.ringSet.page",
+        pageList: "shell.dock.ringSet.pageList",
+        pageNone: "shell.dock.ringSet.pageNone",
+        plugins: "shell.dock.ringSet.plugins",
+        reset: "shell.dock.ringSet.reset",
+        resetDone: "shell.dock.ringSet.resetDone",
+        title: "shell.dock.ringSet.title",
+        up: "shell.dock.ringSet.up",
+      },
+    },
     rail: {
       admin: "shell.rail.admin",
       agent: "shell.rail.agent",

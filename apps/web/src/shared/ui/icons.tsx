@@ -80,10 +80,17 @@ const SHAPES = {
     </>
   ),
   chevronDown: <path d="m6 9 6 6 6-6" />,
+  spark: <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />,
+  x: <path d="M6 6l12 12M18 6 6 18" />,
 } satisfies Record<string, ReactElement>;
 
 export type IconName = keyof typeof SHAPES;
 
-export function Icon({ name }: { name: IconName }) {
-  return <svg viewBox="0 0 24 24">{SHAPES[name]}</svg>;
+/** className 和 hidden 按原型对应位置给（导航、顶栏里的图标原型没有这两个属性；悬浮窗里的是 class="dk-i" aria-hidden）。 */
+export function Icon({ name, className, hidden }: { name: IconName; className?: string; hidden?: boolean }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden={hidden ? true : undefined}>
+      {SHAPES[name]}
+    </svg>
+  );
 }
