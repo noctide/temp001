@@ -101,10 +101,10 @@
 **审核结论记录**（每审一步加一行）
 | 步骤 | 提交 | 结论 |
 | --- | --- | --- |
-| 1 数据库与迁移脚手架 | b806593 | 待复审 54c9c89 |
-| 2 access.api | 0fb2942 + 10fb0a3 | 待复审 54c9c89 |
-| 3 execution.api | 05b164d | 待复审 54c9c89 |
-| 4 facilities.api | eaaa8fc | 待复审 103255d |
+| 1 数据库与迁移脚手架 | b806593 → 54c9c89 | **通过**（10-24 复审） |
+| 2 access.api | 0fb2942 + 10fb0a3 → 54c9c89 | **通过**（10-24 复审） |
+| 3 execution.api | 05b164d → 54c9c89 | **通过**（10-24 复审） |
+| 4 facilities.api | eaaa8fc → 103255d | **返工**（10-24 复审）：R4-1/2/3/5/6 通过；R4-4 改出新问题 R4-7 |
 
 **底座审核记录 · 2026-10-20**
 
@@ -139,5 +139,25 @@
 - **R4-6（必改，安全）审计的前后摘要可以直接塞明文。** 复现：`AuditDraft(before_digest="身份证 110101199001011234")` 照存不误。应该：`AuditDraft.__post_init__` 要求 `before_digest` / `after_digest` 为空或形如 `sha256:<64 位 hex>`（即 `digest()` 的输出），否则报错；补测试。
 - 带到真实实现：`delegation_id` 等 Whoami 有了再接（HANDOFF 已写）；通知收件人筛选依赖 R2-3 的口径（`check(subject=)` 模块内调用不校验诊断资格）；`view_capability` 不给时不筛收件人——带 `subject` 的通知是否强制要求给，真实实现前定。
 - 对等待中的 Agent：facilities 的签名要变（R4-2、R4-3、R4-4），考勤 / 表单如果已经开始用 `notify_in_tx`、`audit_for`、`todo_open_in_tx`，改完后要跟着改；在第 4 步复审通过之前，别让 Agent 照现在的签名写大量代码。
+
+**底座复审记录 · 2026-10-24**
+
+环境：VM 克隆 `local/integration`@488a80a；`tl check` 13 项过（tsc 跳过；"高保真"一项是 VM 没有原型目录和 playwright 的提醒，与底座无关）。带 PostgreSQL 16.2 跑全部后端测试：246 passed、0 skipped（R1-1 的三条带库测试在这里实际跑过，提交说明里写的"本机未跑"已补上）。10-20 的复现用例原样重跑。
+
+- R1-1 ✓：删 schema → `tl db upgrade` 重建 → 运行账号能查 `attendance.type`（原来 permission denied）；运行账号不存在时报 RuntimeRoleMissing。小项（metadata schema 断言、收回版本表写权限）未做，不挡。
+- R2-1 ✓：`projectId = NULL` 的行，SQL 与 check、matches 三方一致（真 PG）。
+- R2-2 ✓：filter 遮挡列取并集，"filter ⊇ 每行 check"的属性测试已加，原复现通过。
+- R2-3 ✓：docstring 已写明进程内调用不校验诊断资格，有测试钉住。
+- R3-1 ✓：带 expected_version、没登记校验器 → prepare 就报 NotRegistered。
+- R3-2 ✓：未提交的事件 drain 不投递，回滚后订阅者没收到。
+- R3-3 ✓：execution 桩改用 `track_rollback`。
+- R4-1 ✓：两次上传是两个文件、一个 blob、引用计数 2；撤回一份不影响另一份。
+- R4-2 ✓：同一 idempotency_key 重投计数不变；不同事件同 merge_key 5 分钟内计数 +1。
+- R4-3 ✓：本部门范围的人看别部门对象、不给归属，都是 ACCESS_DENIED；看本部门对象可以。
+- R4-5 ✓：改文案后旧通知的文字和语言包版本不变。
+- R4-6 ✓：明文摘要报 ValueError，`digest()` 的输出能过。
+- **R4-7（必改，R4-4 改出来的）来源版本推进后另开待办，旧的那条被覆盖掉了。** 复现：LV-0001 版本 1 的待办办完 → 版本 2 再开 → `my_todos()` 只剩 `(2, open)`，`(1, done)` 没了，桩里待办总数也是 1。原因：`_s.todos` 以 (类型, 来源) 为键，新开一条直接覆盖。设计要求已完成待办的副本保留 1 年，多人待办的其他人也要看到"已由 X 处理"。应该：存储按 (类型, 来源, 版本) 分开（或每个来源存一个列表），`get_todo` / `todo_close_in_tx` 等按键取"最新版本"那条；补测试"重开后旧的仍在、状态是 done"。
+- 小项（不挡，真实实现前处理）：① 文件状态改成 purged 时 blob 引用计数没减，真实实现按设计做孤儿清理时要减；② `Predicate.values` 里如果有 None，`_deny` 的 `IS NULL OR NOT …` 会把"拒绝空值"变成不拒绝——建议 Predicate 直接不收 None。
+- 说明：103255d 的提交署名是 DeepSeek Harness。按 10-18 的分工，M1 底座由架构（Claude）做；这次内容复审通过就不追究，以后底座的提交请仍由 code 模式（Claude）做，执行 Agent 只做开发项目。
 
 返工完成后：code 模式跑 `tl check`，并在本表把对应行改成"待复审 <提交号>"。
