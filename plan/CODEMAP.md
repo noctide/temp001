@@ -211,8 +211,8 @@
 - `facilities.api.__init__.todo_reassign_in_tx` — 改办理人。办理人没变则无影响；已关闭的待办 CONFLICT 类错误（RESOURCE_VERSION_CONFLICT）。
 - `facilities.api.__init__.todo_close_in_tx` — 办完。多人待办先到先得：之后再关的返回已有结果，不覆盖 done_by。done_by 必须是办理人。
 - `facilities.api.__init__.todo_withdraw_in_tx` — 来源对象不需要办了（撤回、取消）。已办完的保持办完。
-- `facilities.api.__init__.get_todo` — 给所属模块读自己的待办状态；没有则 RESOURCE_NOT_FOUND。
-- `facilities.api.__init__.my_todos` — 我的待办（我是办理人的），新的在前。收件箱自己不改状态：办理走待办类型登记的能力。
+- `facilities.api.__init__.get_todo` — 给所属模块读自己的待办状态（按 (类型, 来源引用) 取最新版本那条）；没有则 RESOURCE_NOT_FOUND。
+- `facilities.api.__init__.my_todos` — 我的待办（我是办理人的），新的在前。来源版本推进后旧的那条仍在（状态 done），不覆盖。
 - `facilities.api.__init__.notify_in_tx` — 在事务里发应用内通知。idempotency_key 管重投、merge_key 管 5 分钟合并；发送时定稿文字与语言包版本。
 - `facilities.api.__init__.my_notifications` — 我的通知，新的在前。
 - `facilities.api.__init__.mark_read` — 标已读，只对自己的生效；返回实际改变的条数。

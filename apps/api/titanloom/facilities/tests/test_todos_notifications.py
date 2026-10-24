@@ -64,6 +64,43 @@ def test_todo_key_idempotent_by_source_version(ready: InMemoryFacilities) -> Non
     assert third.todo_id != second.todo_id and third.state == "open" and third.source_version == 3
 
 
+def test_reopen_keeps_the_old_done_record(ready: InMemoryFacilities) -> None:
+    """R4-7：来源版本推进后另开一条，旧的那条仍在、状态是 done，不被新记录覆盖。"""
+    first = _open(AMY, BOB, version=1)
+    with db.transaction():
+        fac.todo_close_in_tx(KEY, done_by=BOB)
+    second = _open(AMY, BOB, version=2)
+    assert (second.source_version, second.state) == (2, "open")
+    assert len(ready.todos) == 2  # 旧记录没有丢
+    old = next(x for x in ready.todos if x.todo_id == first.todo_id)
+    assert (old.source_version, old.state, old.done_by) == (1, "done", BOB)
+    # 其他办理人也看到旧的已办完：收件箱两条，旧的显示“已由他人办理”
+    with as_principal(AMY):
+        mine = fac.my_todos().items
+    assert [(x.todo_id, x.state) for x in mine] == [(second.todo_id, "open"), (first.todo_id, "done")]
+    assert mine[1].done_by == BOB
+    # 按 (类型, 来源) 读写的是最新版本那条；关掉新的以后，旧的仍是 done 与原来的经办人
+    assert fac.get_todo(KEY).todo_id == second.todo_id
+    with db.transaction():
+        closed = fac.todo_close_in_tx(KEY, done_by=AMY)
+    assert (closed.todo_id, closed.done_by) == (second.todo_id, AMY)
+    again = next(x for x in ready.todos if x.todo_id == first.todo_id)
+    assert (again.state, again.done_by) == ("done", BOB)
+
+
+def test_reopen_rolls_back_together(ready: InMemoryFacilities, tx_session: Session) -> None:
+    """R4-7：事务回滚时新版本那条撤销，旧的已办完记录还原成原样。"""
+    first = _open(AMY, version=1)
+    with db.transaction():
+        fac.todo_close_in_tx(KEY, done_by=AMY)
+    tx_session.commit()  # 旧的已办完先落定
+    _open(AMY, version=2)
+    assert len(ready.todos) == 2
+    tx_session.rollback()
+    assert [(x.todo_id, x.state) for x in ready.todos] == [(first.todo_id, "done")]
+    assert fac.get_todo(KEY).state == "done"
+
+
 def test_group_todo_first_to_finish_wins(ready: InMemoryFacilities) -> None:
     _open(AMY, BOB)
     with db.transaction():

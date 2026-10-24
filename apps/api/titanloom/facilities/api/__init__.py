@@ -155,12 +155,15 @@ def todo_withdraw_in_tx(key: TodoKey) -> TodoView:
 
 
 def get_todo(key: TodoKey) -> TodoView:
-    """给所属模块读自己的待办状态；没有则 RESOURCE_NOT_FOUND。"""
+    """给所属模块读自己的待办状态（按 (类型, 来源引用) 取最新版本那条）；没有则 RESOURCE_NOT_FOUND。"""
     return _provider.provider().get_todo(key)
 
 
 def my_todos(*, state: TodoState | None = None, cursor: str | None = None, limit: int | None = None) -> Page[TodoView]:
-    """我的待办（我是办理人的），新的在前。收件箱自己不改状态：办理走待办类型登记的能力。"""
+    """我的待办（我是办理人的），新的在前。来源版本推进后旧的那条仍在（状态 done），不覆盖。
+
+    收件箱自己不改状态：办理走待办类型登记的能力；`done_by` 不是自己即“已由他人处理”。
+    """
     return _provider.provider().my_todos(state=state, cursor=cursor, limit=limit)
 
 

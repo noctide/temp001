@@ -9,9 +9,9 @@
         tx_session.commit()
         assert facilities_stub.audits[-1].result == "succeeded"
 
-它做什么：审计的哈希链、待办（多人先到先得、按 (类型, 来源, 版本) 幂等）、通知（收件人按权限筛、幂等键去重、
-合并键 5 分钟合并、发送时定稿文字与语言包版本）、文案按语言取字、文件引用（同样字节只在 blob 层去重、按挂靠对象授权、
-隔离区不可下载）。
+它做什么：审计的哈希链、待办（多人先到先得、按 (类型, 来源, 版本) 幂等、旧版本已办完的副本保留）、
+通知（收件人按权限筛、幂等键去重、合并键 5 分钟合并、发送时定稿文字与语言包版本）、文案按语言取字、
+文件引用（同样字节只在 blob 层去重、按挂靠对象授权、隔离区不可下载）。
 它不做什么：不上传 / 检查 / 派生文件，不存保留期，不做通知偏好、免打扰与外发，不做搜索。
 事务：名字带 in_tx 的不在 kernel.db 事务里就报错；事务里做的一切随会话回滚一起撤销。
 测试要用带库的会话时，用 execution.api.testing 的 `tx_session` fixture。
@@ -129,7 +129,7 @@ class BlobState:
 @dataclass(slots=True)
 class _State:
     audits: list[t.AuditEvent] = field(default_factory=lambda: [])
-    todos: dict[t.TodoKey, _Todo] = field(default_factory=lambda: {})
+    todos: dict[t.TodoKey, list[_Todo]] = field(default_factory=lambda: {})  # 每个来源一条列表，按版本升序
     notifs: list[_Notif] = field(default_factory=lambda: [])
     assets: dict[tuple[str, int], _Asset] = field(default_factory=lambda: {})
     blobs: dict[str, _Blob] = field(default_factory=lambda: {})
@@ -173,7 +173,8 @@ class InMemoryFacilities:
 
     @property
     def todos(self) -> tuple[t.TodoView, ...]:
-        return tuple(self._todo_view(x) for x in self._s.todos.values())
+        """所有待办记录，含旧版本已办完的副本（不覆盖）。"""
+        return tuple(self._todo_view(x) for versions in self._s.todos.values() for x in versions)
 
     @property
     def notifications(self) -> tuple[t.NotificationView, ...]:
@@ -366,25 +367,28 @@ class InMemoryFacilities:
         )
 
     def _todo(self, key: t.TodoKey) -> _Todo:
-        found = self._s.todos.get(key)
-        if found is None:
+        """按 (类型, 来源引用) 取正在起作用的那条：最新版本的记录。"""
+        versions = self._s.todos.get(key)
+        if not versions:
             raise AppError(ErrorCode.RESOURCE_NOT_FOUND, details={"type": key.type})
-        return found
+        return versions[-1]
 
     def todo_open_in_tx(self, draft: t.TodoDraft) -> t.TodoView:
         self._require_tx("todo_open_in_tx")
         decl = self._todo_types.get(draft.key.type)
         if decl is None:
             raise NotRegistered(f"待办类型 {draft.key.type!r} 没有登记")
-        current = self._s.todos.get(draft.key)
-        if current is not None:
-            if draft.source_version <= current.source_version:
-                return self._todo_view(current)  # 同一事件重投 / 迟到的旧事件：什么也不做
-            if current.state == "open":
-                raise AppError(
-                    ErrorCode.RESOURCE_VERSION_CONFLICT,
-                    details={"state": current.state, "sourceVersion": current.source_version},
-                )
+        versions = self._s.todos.get(draft.key, [])
+        latest = versions[-1] if versions else None
+        if latest is not None and draft.source_version <= latest.source_version:
+            # 同一事件重投 / 迟到的旧事件：什么也不做，原样返回已有的那条（同一版本就是它自己）
+            same = next((x for x in versions if x.source_version == draft.source_version), latest)
+            return self._todo_view(same)
+        if latest is not None and latest.state == "open":
+            raise AppError(
+                ErrorCode.RESOURCE_VERSION_CONFLICT,
+                details={"state": latest.state, "sourceVersion": latest.source_version},
+            )
         self._touch()
         now = self.clock.now()
         x = _Todo(
@@ -399,7 +403,7 @@ class InMemoryFacilities:
             now,
             tuple(dict.fromkeys(draft.assignees)),
         )
-        self._s.todos[draft.key] = x
+        self._s.todos.setdefault(draft.key, []).append(x)  # 旧版本的记录留着，不覆盖
         return self._todo_view(x)
 
     def todo_reassign_in_tx(self, key: t.TodoKey, assignees: Sequence[str]) -> t.TodoView:
@@ -443,7 +447,12 @@ class InMemoryFacilities:
         self, *, state: t.TodoState | None = None, cursor: str | None = None, limit: int | None = None
     ) -> Page[t.TodoView]:
         me = self._principal()
-        mine = [x for x in self._s.todos.values() if me in x.assignees and (state is None or x.state == state)]
+        mine = [
+            x
+            for versions in self._s.todos.values()
+            for x in versions
+            if me in x.assignees and (state is None or x.state == state)
+        ]
         rows = sorted(((x.seq, x.todo_id, self._todo_view(x)) for x in mine), key=lambda r: -r[0])
         return _page(rows, cursor, limit)
 
@@ -651,7 +660,7 @@ class InMemoryFacilities:
 def _copy(state: _State) -> _State:
     return _State(
         list(state.audits),
-        {k: replace(v) for k, v in state.todos.items()},
+        {k: [replace(x) for x in versions] for k, versions in state.todos.items()},
         [replace(n) for n in state.notifs],
         {k: replace(v) for k, v in state.assets.items()},
         {k: replace(v) for k, v in state.blobs.items()},
