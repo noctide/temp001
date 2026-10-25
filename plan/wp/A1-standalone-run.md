@@ -2,12 +2,12 @@
 id: A1-standalone-run
 project: arch
 title: 架构工程 · 每个模块单独运行（tl.py run）与合并前门禁
-status: 待派
+status: 执行中
 agent: null
 depends: []
 size: 一个阶段（有草稿补丁，约 1000 行改动，大半已写好）
 stage: 0
-started: null
+started: 2026-10-25
 ---
 ## 目标
 
@@ -55,7 +55,8 @@ git apply plan/wp/A1-standalone-run.patch
    - `AGENTS.md` 开头第一句改成："打开文件夹先读根目录的 `START.md`（没有就运行 `uv run python ops/tools/tl.py here`）。" 这样任何工具打开文件夹都会先读到它（opencode、Codex 读 AGENTS.md，Claude 读 CLAUDE.md，CLAUDE.md 已指向 AGENTS.md）。
    - `tl.py here` 在 `START.md` 不存在或过期时重新生成它。
    - 给现有的 `projects\attendance`、`projects\forms`、`projects\arch` 各生成一份。
-7. `README.md` 的启动方式、`plan/REVIEW.md` 第 2 节第 5 条（单独运行）与实际命令一致。
+7. **`tl.py wp start` 在 Windows 上建文件夹报 Permission denied**（10-25 实测：同一个 projects 文件夹，PowerShell 里直接 `git worktree add` 能建，经 `tl.py` 由 Python 调 git 就被拒）。查清原因并修好（例如受控文件夹访问拦了 uv 的 python、或子进程环境不同），修不好就让 `wp start` 打印一条可以直接复制的 git 命令，并在失败时删掉它建出的空分支。
+8. `README.md` 的启动方式、`plan/REVIEW.md` 第 2 节第 5 条（单独运行）与实际命令一致。
 
 ## 不做的事
 
