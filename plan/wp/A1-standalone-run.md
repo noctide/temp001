@@ -50,7 +50,12 @@ git apply plan/wp/A1-standalone-run.patch
 3. **在 Windows 上实跑一遍**：`tl.py run forms` 打开浏览器，确认导航只剩"首页、表单"，顶上有黄色横幅；`?role=zym` 换人；Ctrl+C 能把前后端都停掉（`serve()` 在 Windows 上用 `CTRL_BREAK_EVENT`，没实测过，停不干净就改成 `taskkill /T` 或 `CREATE_NEW_PROCESS_GROUP`）。截图存进 `review/arch/A1-run-forms.png`。
 4. **合并门禁实测**：在临时分支里让某模块的 `dev/smoke.py` 抛错，`tl.py wp merge <编号> --keep` 应该拒绝并撤销合并；squash 收尾那条路径同样测一下。
 5. **`tl.py here` 实测**：在 `projects\attendance`、`projects\forms` 里各跑一次（它们落后正本，应该先提示 merge）；在 hq 里跑应提示"不是工作区"。
-6. `README.md` 的启动方式、`plan/REVIEW.md` 第 2 节第 5 条（单独运行）与实际命令一致。
+6. **开工不用贴指令**（维护者 10-25 要求："建好文件夹，打开 Agent 让它读指令自己跑"）：
+   - `tl.py wp start <编号>` 建好文件夹后，把启动指令（就是 `wp launch` 打印的那段，工作目录写 Windows 路径）写进文件夹根目录的 `START.md`；`START.md` 加进 `.gitignore`（每个项目各一份，不进仓库、合并时不冲突）。
+   - `AGENTS.md` 开头第一句改成："打开文件夹先读根目录的 `START.md`（没有就运行 `uv run python ops/tools/tl.py here`）。" 这样任何工具打开文件夹都会先读到它（opencode、Codex 读 AGENTS.md，Claude 读 CLAUDE.md，CLAUDE.md 已指向 AGENTS.md）。
+   - `tl.py here` 在 `START.md` 不存在或过期时重新生成它。
+   - 给现有的 `projects\attendance`、`projects\forms`、`projects\arch` 各生成一份。
+7. `README.md` 的启动方式、`plan/REVIEW.md` 第 2 节第 5 条（单独运行）与实际命令一致。
 
 ## 不做的事
 
