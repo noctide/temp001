@@ -23,6 +23,17 @@ opencode、Codex、DeepSeek Harness、Claude 等所有执行 Agent 都按这一�
 - **前端页面照高保真做**（`D:\05_project\02_Titanloom\fidelity\Prototype\` 下同名页面；规则见 `ops/tools/fidelity/pages.yaml` 开头）：颜色、字号、圆角、间距只用设计变量 `var(--m-*)` 和公共组件，不直接写颜色值、不自己发明样式，公共组件要改提变更请求；开发模式认原型同样的 URL 参数（`role=member`、`empty=1` ……）切换示例身份和数据；清单里的关键位置加 `data-fid="<名字>"`。交前端页面前跑 `uv run python ops/tools/tl.py fidelity <页名>`，全过才交，回复里贴它的输出。
 - 先写测试（验收用例、权限的拒绝用例、状态不变量），再实现。示例与测试里的人名、部门只用合成数据人设表（`ops/synthetic-data`）。
 
+## 和正本同步（每次开工、每次收到审核意见先做）
+
+每个项目文件夹是正本 `hq` 的**独立克隆**（2026-10-25 起；不再用 git worktree，因为 opencode 会把同一仓库的多个 worktree 当成同一个项目）。正本在克隆里叫 `origin`：
+
+```
+git fetch origin local/integration:local/integration
+git merge local/integration
+```
+
+不要 `git push`（正本由审核者从你的文件夹取分支）。
+
 ## 提交
 
 - 只在本地分支提交，**不推送、不合并、不开合并请求**。

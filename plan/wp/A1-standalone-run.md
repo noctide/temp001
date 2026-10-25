@@ -73,3 +73,12 @@ git apply plan/wp/A1-standalone-run.patch
 ## 审核记录
 
 （架构审核意见写在这里）
+
+### 追加要求 · 2026-10-25（审核前加入，并入本次审核）
+
+**项目文件夹从 git worktree 改为独立克隆。** 原因（维护者实测）：opencode 按"git 公共目录"归并项目，同一仓库的几个 worktree 在它眼里是同一个项目，会话、权限、状态全部共用。改法：
+1. `tl.py wp start <编号>`：`git clone <hq> ../projects/<项目>`，在克隆里 `git switch -c <项目>/<编号> origin/local/integration`（克隆里正本的远端名就是 `origin`，指向 hq 的本机路径）；写 `START.md`、`plan/progress/<编号>.md` 照旧。顺带解决 Windows 上 `wp start` 的 Permission denied（若与 worktree 有关）。
+2. `tl.py here`：判断"落后正本"改用 `git fetch origin local/integration:local/integration` 后再比；提示的同步命令同 AGENTS.md"和正本同步"一节。
+3. `tl.py wp merge <编号>`：先从 `../projects/<项目>` 取分支（`git fetch ../projects/<项目> <分支>:<分支>`），再走原流程；收尾（不加 `--keep`）时不再 `git worktree remove`，改为提示维护者删除那个文件夹（删除前确认没有未提交、未取回的改动）。
+4. 启动指令、START.md 里的"git merge local/integration"都改成"和正本同步"那两条。
+5. 架构已在 `AGENTS.md` 加了"和正本同步"一节、在 `plan/REVIEW.md` 开场加了 fetch 一步；合并时以这两处为准。

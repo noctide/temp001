@@ -14,6 +14,7 @@
 ```powershell
 cd D:\05_project\02_Titanloom-dev\hq
 git status --short                                     # 必须没有输出
+git fetch ..\projects\<项目> <项目>/<编号>:<项目>/<编号>   # 把实现者文件夹里的分支取到正本（每个项目文件夹是独立克隆）
 git log --oneline local/integration..<项目>/<编号>       # 这次要审哪些提交
 git worktree add --detach ..\review-tmp <项目>/<编号>     # 临时检出一份来跑，不碰实现者的文件夹
 cd ..\review-tmp
@@ -25,7 +26,7 @@ cd ..\hq
 git worktree remove --force ..\review-tmp
 ```
 然后按第 2 节第 6–9 条：写证据（`review/<项目>/<编号>-阶段<N>-<日期>.md`，并在该项目 `README.md` 时间线加一行）→ 通过就 `uv run python ops/tools/tl.py wp merge <编号> --keep`（整个工作包最后一个阶段不加 `--keep`）并在说明书写审核记录；不通过就写返工意见、`status: 返工`。**提交时只 add 你写的文件。**
-最后给维护者一段可以转给实现者的话（第一步永远是 `git merge local/integration`）。
+最后给维护者一段可以转给实现者的话（第一步永远是"和正本同步"：`git fetch origin local/integration:local/integration` 再 `git merge local/integration`）。
 
 **拿不准的**：设计里写了的照设计；纯技术的你定并写进审核记录；业务问题停下问维护者。
 
@@ -72,7 +73,7 @@ git worktree remove --force ..\review-tmp
 7. **通过**：
    - 合入：`tl.py wp merge <编号> --keep`（A1 合入后会先跑单独运行门禁）。hq 里有别人没提交的改动时它会拒绝执行：先让对方提交，或手动 `git merge --no-ff --no-commit <分支>` → `tl.py run <模块> --smoke` → 通过再提交。
    - 说明书 `stage: N`、`status: 执行中`，末尾加审核记录（通过 + 带到下阶段的小项）。**只 add 自己改的文件**，`plan/HANDOFF.md` 归 code 模式，不动。
-   - 给用户一段转给 Agent 的话，第一步永远是 `git merge local/integration`。
+   - 给用户一段转给 Agent 的话，第一步永远是和正本同步（`git fetch origin local/integration:local/integration`，再 `git merge local/integration`）。
 8. **不通过**：说明书末尾写返工意见（逐条：问题、怎么复现的、怎么改），`status: 返工`，提交；给用户的转发话术：merge → 读审核记录 → 改 → 贴 `tl check`（和 vitest）输出 → 回复"做完了"。
 9. **需要改契约**（加用例、补规则）：直接改 `packages/contracts/`，跑 `tl.py check --only contracts`，和审核记录一起提交。
 
