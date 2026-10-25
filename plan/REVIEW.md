@@ -110,6 +110,10 @@ git worktree remove --force ..\review-tmp
 - 必查：补丁应用后 `tl check` 两项（类型、模块边界）修好；在 Windows 上实际 `tl.py run forms`：导航只剩首页和表单、顶上有黄色横幅、`?role=zym` 换人、Ctrl+C 前后端都停；故意让某模块 `dev/smoke.py` 抛错时 `wp merge` 拒绝合入且 hq 回到原样（`git status` 干净）；`tl.py here` 在 projects 里和 hq 里的提示都对；`wp start` 写出 `START.md` 且不进仓库；`wp start` 的 Permission denied 有结论。
 - A1 是单阶段：通过后用 `tl.py wp merge A1-standalone-run`（不加 `--keep`），它会删掉 `projects\arch` 和分支；若在 VM 里删不掉，按提示在 Windows 上删。
 
+### 底座真实实现（M1-access-real、M1-execution-real、M1-facilities-real）
+- 必查：**同一批行为测试对桩和真实各跑一遍**（`impl` 参数化），审核时一定设 `TITANLOOM_TEST_DB_URL` 连本机 PostgreSQL 跑 real 一侧；接口签名没变（对照第 6 节）；10-20 / 10-24 桩审出的坑（`review/arch/M1-底座审核记录.md`）在真实实现里同一口径；迁移是生成的、从空库能 upgrade；并发类验收（并发提交只一个调用、组待办先办先得、额度类加锁）要用两个真数据库连接实测。
+- 证据写进 `review/<底座>/`（access、execution、facilities 各自的文件夹）。
+
 ### 数据处理（M3-dataproc，待派）
 - 设计：`docs/Titanloom-后端详细设计-数据处理-V1.0.md`；验收：M3 出口 + 数据处理子方案 18.1（场景 14、16 待 G-ISO）；ADR-034；说明书 `plan/wp/M3-dataproc.md`。
 - 必查：数据集行表 `_v_from / _v_to` 只写差异，无变化不出版本；发布（差异、指针、代次、分区代次、血缘、outbox、审计）同一事务；回退是新版本、代次只增；JobRun 成功而质量阻断不发布（pipeline-run 契约）；基表生效方式必选无默认、用法绑定决定每天取哪版；关账月份回补先自动快照；SQL 与 Polars 实现同一份用例对拍；查询只收声明过的 FieldRef 筛选、行权限走 access.filter → to_sqlalchemy、aggregate 超限报错不截断；表名不拼用户输入。

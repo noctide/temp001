@@ -1,13 +1,16 @@
 # 进度
 
-由 `tl.py status` 生成（2026-10-25 15:06 UTC），不要手改。
+由 `tl.py status` 生成（2026-10-25 15:15 UTC），不要手改。
 
 ## 工作包
 
-待派 1 · 执行中 3 · 待审 0 · 返工 0 · 已合本地 0 · 已推送 0
+待派 4 · 执行中 3 · 待审 0 · 返工 0 · 已合本地 0 · 已推送 0
 
 | 编号 | 项目 | 标题 | 状态 | 谁在做 | 依赖 | 预计行数 |
 | --- | --- | --- | --- | --- | --- | --- |
+| M1-access-real | access | 底座真实实现 · 身份与权限（access） | 待派 |  | M1 底座接口与测试桩（已通过，review/arch/） | 整个项目，分 5 个阶段 |
+| M1-execution-real | execution | 底座真实实现 · 命令与任务（execution）+ 后台程序 | 待派 |  | M1 底座接口与测试桩（已通过，review/arch/） | 整个项目，分 5 个阶段 |
+| M1-facilities-real | facilities | 底座真实实现 · 公共设施（facilities） | 待派 |  | M1 底座接口与测试桩（已通过，review/arch/） | 整个项目，分 5 个阶段 |
 | M3-dataproc | dataproc | 数据处理开发项目 · M3（数据处理最小链） | 待派 |  | M1 底座接口（access、execution、facilities 已发布）, 文件解析器（Excel / CSV，架构做；阶段 1 导入基表、阶段 2 接入时要用，没交付前先用 CSV 桩） | 整个项目，分 7 个阶段 |
 | A1-standalone-run | arch | 架构工程 · 每个模块单独运行（tl.py run）与合并前门禁 | 执行中 |  |  | 一个阶段（有草稿补丁，约 1000 行改动，大半已写好） |
 | M2-attendance | attendance | 考勤开发项目 · M2（领域基础与完整人工闭环） | 执行中 |  | M1 底座接口（阶段 2 起） | 整个项目，分 7 个阶段 |
