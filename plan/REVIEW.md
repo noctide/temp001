@@ -5,27 +5,24 @@
 维护者会说："你是审核者，读 `plan/REVIEW.md` 开头这一节，审 <编号>。" 你就照下面做。
 
 **规矩**
-- 你在正本 `D:\05_project\02_Titanloom-dev\hq` 里工作（只有审核者能在这里写），**不在任何 `projects\<项目>` 里改东西**——那是实现者的。
+- 你在**本模块的审核文件夹** `D:\05_project\02_Titanloom-dev\reviewers\<模块>` 里工作（正本 `hq` 的独立克隆，一个模块一个，2026-10-25 起）。实现者的文件夹是 `..\..\projects\<模块>`，**只读不改**。
 - **审核者不能是做这件活的那个 Agent**（同一个会话不能自己审自己）。
-- 你只写：说明书末尾的审核记录（`plan/wp/<编号>.md`）、审计证据（`review/<项目>/`）、需要时的契约用例（`packages/contracts/`）；**不改产品代码**，发现问题写成返工意见让实现者改。
-- 开始前 `git status` 必须是干净的；不干净就停下告诉维护者，不要动别人的改动。
+- 你只写：说明书末尾的审核记录（`plan/wp/<编号>.md`）、审计证据（`review/<模块>/`）、需要时的契约用例（`packages/contracts/`）；**不改产品代码**，发现问题写成返工意见让实现者改。
+- 审核结论（合并或返工意见）最后 `git push origin local/integration` 推回正本——**只有审核者可以推**，实现者不推。推被拒（别的审核者先推了）就 `git pull --ff-only` 不行时 `git pull` 合一下再推。
 
-**步骤（PowerShell）**
+**步骤（PowerShell，在 reviewers\<模块> 里）**
 ```powershell
-cd D:\05_project\02_Titanloom-dev\hq
-git status --short                                     # 必须没有输出
-git fetch ..\projects\<项目> <项目>/<编号>:<项目>/<编号>   # 把实现者文件夹里的分支取到正本（每个项目文件夹是独立克隆）
-git log --oneline local/integration..<项目>/<编号>       # 这次要审哪些提交
-git worktree add --detach ..\review-tmp <项目>/<编号>     # 临时检出一份来跑，不碰实现者的文件夹
-cd ..\review-tmp
+git switch local/integration; git pull --ff-only origin local/integration   # 和正本同步
+git fetch ..\..\projects\<模块> <模块>/<编号>:<模块>/<编号>               # 取实现者的分支
+git log --oneline local/integration..<模块>/<编号>                           # 这次要审哪些提交
+git switch --detach <模块>/<编号>                                            # 切到实现者的代码上跑
 uv sync; pnpm install
-uv run python ops/tools/tl.py check                    # 全套检查，要全过
-uv run python ops/tools/tl.py run <模块> --smoke         # 单独运行（A1 合入后才有；arch 项目没有这一步）
+uv run python ops/tools/tl.py check                                         # 全套检查，要全过
+uv run python ops/tools/tl.py run <模块> --smoke                              # 单独运行（A1 合入后才有；arch 没有这一步）
 # 读代码，对照：说明书该阶段的"验收"、后端详细设计、上次审核记录里"带到下阶段"的项；问题要实际跑出来
-cd ..\hq
-git worktree remove --force ..\review-tmp
+git switch local/integration
 ```
-然后按第 2 节第 6–9 条：写证据（`review/<项目>/<编号>-阶段<N>-<日期>.md`，并在该项目 `README.md` 时间线加一行）→ 通过就 `uv run python ops/tools/tl.py wp merge <编号> --keep`（整个工作包最后一个阶段不加 `--keep`）并在说明书写审核记录；不通过就写返工意见、`status: 返工`。**提交时只 add 你写的文件。**
+然后按第 2 节第 6–9 条：写证据（`review/<模块>/<编号>-阶段<N>-<日期>.md`，并在该模块 `README.md` 时间线加一行）→ 通过就 `uv run python ops/tools/tl.py wp merge <编号> --keep`（整个工作包最后一个阶段不加 `--keep`）并在说明书写审核记录；不通过就写返工意见、`status: 返工`。**提交时只 add 你写的文件**，最后 `git push origin local/integration`。
 最后给维护者一段可以转给实现者的话（第一步永远是"和正本同步"：`git fetch origin local/integration:local/integration` 再 `git merge local/integration`）。
 
 **拿不准的**：设计里写了的照设计；纯技术的你定并写进审核记录；业务问题停下问维护者。

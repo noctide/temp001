@@ -32,7 +32,7 @@ git fetch origin local/integration:local/integration
 git merge local/integration
 ```
 
-不要 `git push`（正本由审核者从你的文件夹取分支）。
+不要 `git push`（正本由审核者从你的文件夹取分支）。每个模块还有一个审核文件夹 `reviewers\<模块>`，那是审核者的，实现者不进去。
 
 ## 提交
 

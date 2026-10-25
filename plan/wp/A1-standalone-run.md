@@ -82,3 +82,5 @@ git apply plan/wp/A1-standalone-run.patch
 3. `tl.py wp merge <编号>`：先从 `../projects/<项目>` 取分支（`git fetch ../projects/<项目> <分支>:<分支>`），再走原流程；收尾（不加 `--keep`）时不再 `git worktree remove`，改为提示维护者删除那个文件夹（删除前确认没有未提交、未取回的改动）。
 4. 启动指令、START.md 里的"git merge local/integration"都改成"和正本同步"那两条。
 5. 架构已在 `AGENTS.md` 加了"和正本同步"一节、在 `plan/REVIEW.md` 开场加了 fetch 一步；合并时以这两处为准。
+
+**再追加（同日，维护者要求"每个模块单独项目、审核也一个模块一个"）**：架构已写 `D:\05_project\02_Titanloom-dev\setup-projects.ps1`，一次建好 `projects\<模块>` 与 `reviewers\<模块>`（都是独立克隆，每个带 START.md），hq 设了 `receive.denyCurrentBranch=updateInstead` 让审核者推回。A1 要做的相应调整：`wp start` 只需在已有的 `projects\<模块>` 克隆里切出分支、写 START.md（没有文件夹时再克隆）；`wp merge` 在审核文件夹里运行（合并本地 local/integration，审核者随后 push），不再假设在 hq；上面"追加要求"第 3 条的 fetch 由审核手册的步骤做，`wp merge` 只要求分支已在本地。
