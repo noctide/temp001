@@ -122,3 +122,14 @@ started: 2026-10-18 15:03
 ### 底座接口已发布 · 2026-10-20 · 提交 eaaa8fc
 
 `access.api`（b806593 前后、0fb2942）、`execution.api`（05b164d）、`facilities.api`（eaaa8fc）的接口与内存测试桩都已在 `local/integration` 上。先 `git merge local/integration`，测试用各模块 `api.testing` 的 fixture（`access_stub`、`execution_stub`、`facilities_stub`、`tx_session`），细节见 `plan/HANDOFF.md` §3 第 2–4 步。表单阶段 3 用到的：`audit_in_tx`、`todo_*_in_tx`、`notify_in_tx`、`register_texts / text`、`add_ref / remove_ref / assets_of / download_grant`（挂靠对象的可见性用 `ref_authorizer` 登记）。文件上传与检查、文件解析器还没有，阶段 5 之前补。
+
+### 底座四步全部审核通过 · 2026-10-25 · 可以继续
+
+M1 底座（数据库与迁移、access、execution、facilities）的接口 + 测试桩复审全部通过（facilities 最后一处 a9878b6）。注意 facilities 10-20 以后改过签名：`NotifyDraft` 拆成 `idempotency_key` 与 `merge_key`、`audit_for(target, access_target=…)`、`TodoDraft.source_version`——照 `plan/CODEMAP.md` 现在的写法用。
+
+新规矩：
+- 工作区搬到 `D:\05_project\02_Titanloom-dev\projects\forms`（原 `wt\M2-forms`）；以后打开先跑 `uv run python ops/tools/tl.py here`（工作包 A1 合入后才有这条命令；在那之前照旧读本说明书和 plan/progress）。
+- A1 合入后：每个阶段交之前，除了 `tl check`，还要跑 `uv run python ops/tools/tl.py run forms --smoke`（单独运行本模块），两条输出都贴进报告；合并时架构在正本上再跑一遍，不过不合。
+- 本模块对外路由放 `api/routes.py`，开发造数据 `dev/seed.py`，冒烟检查 `dev/smoke.py`（有接口以后必须写）。
+
+下一步：阶段 3（记录、修订、提交 / 更正 / 作废 / 撤回、并发、字段来源）。

@@ -81,3 +81,14 @@ started: 2026-10-18 15:03
 ### 底座接口已发布 · 2026-10-20 · 提交 eaaa8fc
 
 `access.api`（b806593 前后、0fb2942）、`execution.api`（05b164d）、`facilities.api`（eaaa8fc）的接口与内存测试桩都已在 `local/integration` 上。先 `git merge local/integration`，测试用各模块 `api.testing` 的 fixture（`access_stub`、`execution_stub`、`facilities_stub`、`tx_session`），细节见 `plan/HANDOFF.md` §3 第 2–4 步。考勤阶段 2 用到的：`whoami / check / access_filter / members`，`register_binding / prepare / submit / enqueue_in_tx / emit_in_tx / schedule`，`audit_in_tx / todo_*_in_tx / notify_in_tx / text / add_ref`。真实实现还没有，桩之外不要自己造替代品。
+
+### 底座四步全部审核通过 · 2026-10-25 · 可以继续
+
+M1 底座（数据库与迁移、access、execution、facilities）的接口 + 测试桩复审全部通过（facilities 最后一处 a9878b6）。注意 facilities 10-20 以后改过签名：`NotifyDraft` 拆成 `idempotency_key` 与 `merge_key`、`audit_for(target, access_target=…)`、`TodoDraft.source_version`——照 `plan/CODEMAP.md` 现在的写法用。
+
+新规矩：
+- 工作区搬到 `D:\05_project\02_Titanloom-dev\projects\attendance`（原 `wt\M2-attendance`）；以后打开先跑 `uv run python ops/tools/tl.py here`（工作包 A1 合入后才有这条命令；在那之前照旧读本说明书和 plan/progress）。
+- A1 合入后：每个阶段交之前，除了 `tl check`，还要跑 `uv run python ops/tools/tl.py run attendance --smoke`（单独运行本模块），两条输出都贴进报告；合并时架构在正本上再跑一遍，不过不合。
+- 本模块对外路由放 `api/routes.py`，开发造数据 `dev/seed.py`，冒烟检查 `dev/smoke.py`（有接口以后必须写）。
+
+下一步：阶段 2（签到事件、签到页接口、今日出勤统计）+ 阶段 1 带过来的两项。

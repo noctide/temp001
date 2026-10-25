@@ -1,0 +1,1020 @@
+diff --git a/.gitignore b/.gitignore
+index 0fb2a84..91c5ed5 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -58,3 +58,4 @@ plan/.last-check.json
+ 
+ # --- 高保真比对报告（tl.py fidelity）---
+ .fidelity/
++plan/.last-run-*.json
+diff --git a/AGENTS.md b/AGENTS.md
+index 7dc9ae5..c283ef9 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -1,6 +1,18 @@
+ # Titanloom · 执行 Agent 规则（唯一正本）
+ 
+-opencode、Codex、DeepSeek Harness、Claude 等所有执行 Agent 都按这一份做；各模块目录下还有一份 `AGENTS.md`，写本模块的允许路径与必读。规则依据：`docs/Titanloom-开发项目划分与多Agent协作规范-V1.0.md`（5.4–5.6、6、7）与 `docs/Titanloom-工程质量与代码规范-V1.0.md`。
++opencode、Codex、DeepSeek Harness、Claude 等**任何**执行 Agent 都按这一份做（不限工具）；各模块目录下还有一份 `AGENTS.md`，写本模块的允许路径与必读。规则依据：`docs/Titanloom-开发项目划分与多Agent协作规范-V1.0.md`（5.4–5.6、6、7）与 `docs/Titanloom-工程质量与代码规范-V1.0.md`。
++
++## 打开文件夹后的第一件事
++
++你的工作区是 `D:\05_project\02_Titanloom-dev\projects\<项目>`（一个开发项目一个文件夹）。先运行：
++
++```
++uv run python ops/tools/tl.py here
++```
++
++它告诉你：这是哪个项目和工作包、要不要先 `git merge local/integration`（正本有更新时**必须先合**，审核意见和底座都在里面）、现在该做哪个阶段，然后打印完整的启动指令。照着做。
++
++如果它说"这里是 local/integration / 不是工作区"——你打开的是正本 `hq`，**不要在那里工作**，告诉维护者。
+ 
+ ## 开工前
+ 
+@@ -28,7 +40,12 @@ opencode、Codex、DeepSeek Harness、Claude 等所有执行 Agent 都按这一
+ - 只在本地分支提交，**不推送、不合并、不开合并请求**。
+ - `git commit -s`；提交信息第一行 `<模块>: <做了什么>`，正文写依据的设计章节，末尾另起一行 `Agent: <你的工具名>`。
+ - 每完成一步更新 `plan/progress/<编号>.md`（做到哪、下一步、遇到的问题）。
+-- 做完先跑 `uv run python ops/tools/tl.py check`，全部通过再交；最后一条提交写自查结果。然后回复一句"<编号> 做完了"，列出改了哪些文件、测试结果。
++- 每个阶段做完，先跑两条，都通过再交：
++  1. `uv run python ops/tools/tl.py check`（全套检查）
++  2. `uv run python ops/tools/tl.py run <模块> --smoke`（**单独运行**本模块：只装它 + 底座 + 外壳，自动检查；合并时架构会在正本上再跑一遍，不过不合）
++  最后一条提交写自查结果。然后回复一句"<编号> 阶段 N 做完了"，列出改了哪些文件，并**贴上这两条命令的输出**。
++- 想自己在浏览器里看本模块：`uv run python ops/tools/tl.py run <模块>`（后端 + 前端都起，浏览器只看到本模块；地址加 `?role=lead / member / zym` 切换合成人员）。
++- 模块要能单独跑：对外的路由放 `api/routes.py`（`router`，登记能力等放 `install()`）；开发用的造数据放 `dev/seed.py`（`seed()`，只用合成人设，可重复执行）；冒烟检查放 `dev/smoke.py`（`smoke(client)`，有接口以后必须写：至少打开列表、走一条命令）。
+ 
+ ## 常用命令（Windows 用 PowerShell 也一样）
+ 
+@@ -36,7 +53,10 @@ opencode、Codex、DeepSeek Harness、Claude 等所有执行 Agent 都按这一
+ uv sync                                   # 装后端依赖（第一次）
+ uv run python ops/tools/tl.py check       # 全套检查
+ uv run pytest apps/api/titanloom/<模块>    # 只跑本模块测试
+-pnpm install && pnpm --dir apps/web dev   # 前端
++uv run python ops/tools/tl.py here        # 我是哪个项目、该做什么（打开文件夹先跑）
++uv run python ops/tools/tl.py run <模块>          # 单独运行本模块（浏览器看）
++uv run python ops/tools/tl.py run <模块> --smoke  # 单独运行的自动检查（交阶段前必跑）
++pnpm install                              # 前端依赖（第一次）
+ pnpm --dir apps/web exec playwright install chromium   # 高保真比对用的浏览器（第一次）
+ uv run python ops/tools/tl.py fidelity <页名>          # 高保真比对，报告 .fidelity/report.html
+ ```
+diff --git a/README.md b/README.md
+index a7281cd..4d4abd6 100644
+--- a/README.md
++++ b/README.md
+@@ -26,7 +26,7 @@ Titanloom 是一个面向企业场景设计的综合数据与业务平台，覆
+ ```
+ uv sync                                        # 后端依赖
+ uv run pytest                                  # 后端测试
+-uv run uvicorn titanloom.main:app --reload     # 启动空应用：http://127.0.0.1:8000/api/health
++uv run python ops/tools/tl.py run forms        # 只运行一个模块（后端 + 前端），见 plan/NEXT-standalone-run.md
+ pnpm install && pnpm dev                       # 前端
+ uv run python ops/tools/tl.py check            # 全套检查
+ ```
+diff --git a/apps/api/titanloom/kernel/reg/i18n.py b/apps/api/titanloom/kernel/reg/i18n.py
+index bccdd77..fa87a8b 100644
+--- a/apps/api/titanloom/kernel/reg/i18n.py
++++ b/apps/api/titanloom/kernel/reg/i18n.py
+@@ -101,6 +101,8 @@ class K:
+             plugins = "shell.rail.plugins"
+             studio = "shell.rail.studio"
+             workbench = "shell.rail.workbench"
++        class run:
++            stubBanner = "shell.run.stubBanner"
+         class top:
+             class language:
+                 label = "shell.top.language.label"
+diff --git a/apps/api/titanloom/kernel/tests/test_app.py b/apps/api/titanloom/kernel/tests/test_app.py
+index 6eda6be..9b766c8 100644
+--- a/apps/api/titanloom/kernel/tests/test_app.py
++++ b/apps/api/titanloom/kernel/tests/test_app.py
+@@ -1,12 +1,84 @@
+-"""骨架自检：空应用能启动、健康检查可用。"""
++"""主程序：健康检查、单独运行一个模块（tl.py run）的装配约定。"""
+ 
++from collections.abc import Generator
++from types import ModuleType
++
++import pytest
++from fastapi import APIRouter, FastAPI
+ from fastapi.testclient import TestClient
+ 
+-from titanloom.main import create_app
++from titanloom import main
++from titanloom.access import api as access
++
++
++@pytest.fixture
++def make() -> Generator[list[FastAPI]]:
++    """建应用的测试都从这里拿，结束时把底座实现装回去，状态不外漏。"""
++    made: list[FastAPI] = []
++    yield made
++    for app in reversed(made):
++        app.state.restore_bases()
++
++
++def _app(made: list[FastAPI], *args: object, **kw: object) -> TestClient:
++    app = main.create_app(*args, **kw)  # pyright: ignore[reportArgumentType]
++    made.append(app)
++    return TestClient(app)
++
++
++def test_health(make: list[FastAPI]) -> None:
++    r = _app(make).get("/api/health")
++    assert (r.status_code, r.json()) == (200, {"status": "ok"})
++
++
++def test_business_modules_come_from_manifests() -> None:
++    mods = main.business_modules()
++    assert "forms" in mods and "attendance" in mods
++    assert not set(main.BASES) & set(mods)  # 底座与外壳不算业务模块
++    assert "kernel" not in mods
++
++
++def test_only_the_chosen_module(make: list[FastAPI]) -> None:
++    info = _app(make, ["forms"]).get("/api/platform/run-info").json()
++    assert info["modules"] == ["forms"] and info["bases"] == "stub"
++
++
++def test_modules_from_env(make: list[FastAPI], monkeypatch: pytest.MonkeyPatch) -> None:
++    monkeypatch.setenv("TITANLOOM_MODULES", "attendance")
++    assert _app(make).get("/api/platform/run-info").json()["modules"] == ["attendance"]
++
++
++def test_unknown_module_and_bad_bases_are_errors() -> None:
++    with pytest.raises(ValueError, match="没有这些业务模块"):
++        main.create_app(["nope"])
++    with pytest.raises(ValueError, match="stub 或 real"):
++        main.create_app(["forms"], bases="xx")  # pyright: ignore[reportArgumentType]
++
++
++def test_real_bases_not_built_yet_is_said_plainly() -> None:
++    with pytest.raises(RuntimeError, match="真实实现还没做"):
++        main.create_app(["forms"], bases="real")
++
++
++def test_mount_convention_and_dev_principal(make: list[FastAPI], monkeypatch: pytest.MonkeyPatch) -> None:
++    """模块的 api/routes.py 给 router 与 install；开发运行按 ?role= 切换合成人设。"""
++    installed: list[str] = []
++    router = APIRouter()
+ 
++    @router.get("/api/forms/me")
++    def me() -> dict[str, str]:  # pyright: ignore[reportUnusedFunction]
++        return {"account": access.whoami().account_id}
+ 
+-def test_health() -> None:
+-    client = TestClient(create_app())
+-    r = client.get("/api/health")
+-    assert r.status_code == 200
+-    assert r.json() == {"status": "ok"}
++    fake = ModuleType("titanloom.forms.api.routes")
++    fake.router = router  # pyright: ignore[reportAttributeAccessIssue]
++    fake.install = lambda: installed.append("forms")  # pyright: ignore[reportAttributeAccessIssue]
++    real_optional = main._optional  # pyright: ignore[reportPrivateUsage]
++    monkeypatch.setattr(
++        main, "_optional", lambda name: fake if name == "titanloom.forms.api.routes" else real_optional(name)
++    )
++    client = _app(make, ["forms"])
++    assert installed == ["forms"]
++    assert client.get("/api/platform/run-info").json()["mounted"] == ["forms"]
++    assert client.get("/api/forms/me").json() == {"account": main.PERSONAS["lead"]}
++    assert client.get("/api/forms/me?role=zym").json() == {"account": main.PERSONAS["zym"]}
++    assert client.get("/api/forms/me", headers={"X-TL-Role": "member"}).json() == {"account": main.PERSONAS["member"]}
+diff --git a/apps/api/titanloom/main.py b/apps/api/titanloom/main.py
+index b0a45ad..cd1204f 100644
+--- a/apps/api/titanloom/main.py
++++ b/apps/api/titanloom/main.py
+@@ -1,20 +1,149 @@
+ """主程序入口（后端详细设计·总图 1：一个主程序 + 一个后台程序）。
+ 
+-启动：uv run uvicorn titanloom.main:app --reload
+-各模块的路由由各自 api 层提供，在这里统一挂载（M1 起逐个加入）。
++启动：uv run uvicorn titanloom.main:create_app --factory --reload（工厂方式：导入本文件不会装任何东西）
++单独运行一个模块（2026-10-25 维护者定"每个功能单独做、单独跑通再合并"）：
++    uv run python ops/tools/tl.py run forms
++它设环境变量 TITANLOOM_MODULES=forms：只装这一个业务模块；底座（access、execution、facilities）和外壳（shell）永远装。
++
++业务模块怎么接进来（约定，create_app 只认这个，不 import 模块内部）：
++- `titanloom/<模块>/api/routes.py`：`router: APIRouter`（可选）、`install() -> None`
++  （可选：登记能力、待办类型、文案、订阅）；
++- `titanloom/<模块>/dev/seed.py`：`seed() -> None`（可选，只在开发运行时调用，只用合成人设，必须幂等）；
++- `titanloom/<模块>/dev/smoke.py`：`smoke(client) -> None`（可选，`tl.py run <模块> --smoke` 调用，出错就抛）。
+ """
+ 
+-from fastapi import FastAPI
++from __future__ import annotations
++
++import importlib
++import logging
++import os
++from collections.abc import Awaitable, Callable, Sequence
++from pathlib import Path
++from types import ModuleType
++from typing import Any, Literal, cast
++
++from fastapi import FastAPI, Request, Response
++
++from titanloom.kernel import context
++
++log = logging.getLogger("titanloom.main")
++
++PKG = Path(__file__).resolve().parent
++BASES = ("access", "execution", "facilities", "shell")
++# 开发运行的登录人设，与前端 shell/devSession.ts 同一份（合成数据）；?role= 或请求头 X-TL-Role 切换
++PERSONAS = {"lead": "acc-A0004", "member": "acc-W0015", "zym": "acc-Q0003"}
++BaseMode = Literal["stub", "real"]
++
++
++def business_modules() -> list[str]:
++    """有 manifest.yaml 的包都是模块；去掉底座与外壳就是业务模块（不另写一份清单）。"""
++    names = sorted(p.parent.name for p in PKG.glob("*/manifest.yaml"))
++    return [n for n in names if n not in BASES]
++
++
++def _optional(name: str) -> ModuleType | None:
++    """导入模块里可选的约定文件；文件本身不存在返回 None，文件里出错照常抛。"""
++    try:
++        return importlib.import_module(name)
++    except ModuleNotFoundError as e:
++        if e.name and (name == e.name or name.startswith(e.name + ".")):  # 文件或它所在的包不存在
++            return None
++        raise
++
++
++def install_bases(mode: BaseMode) -> Callable[[], None]:
++    """装底座实现，返回"恢复原来实现"的函数（测试用，免得状态漏到别的测试）。"""
++    if mode == "real":
++        raise RuntimeError("底座的真实实现还没做（plan/HANDOFF.md 第 3 节第 6 条），现在只能用 --bases=stub")
++    # 测试桩只在开发运行时装（依赖 pytest，生产不装）；不静默：日志一行、页面横幅（/api/platform/run-info）
++    from titanloom.access.api import _provider as access_p
++    from titanloom.access.api.testing import InMemoryAccess
++    from titanloom.execution.api import _provider as execution_p
++    from titanloom.execution.api.testing import InMemoryExecution
++    from titanloom.facilities.api import _provider as facilities_p
++    from titanloom.facilities.api.testing import InMemoryFacilities
++
++    access = InMemoryAccess.demo()
++    prev = (
++        access_p.set_provider(access),
++        execution_p.set_provider(InMemoryExecution(access.clock)),
++        facilities_p.set_provider(InMemoryFacilities(access.clock)),
++    )
++    log.warning("底座为测试桩：数据只在内存里，重启就没了")
+ 
++    def restore() -> None:
++        access_p.set_provider(prev[0])
++        execution_p.set_provider(prev[1])
++        facilities_p.set_provider(prev[2])
++
++    return restore
++
++
++def _mount(app: FastAPI, name: str) -> bool:
++    routes = _optional(f"titanloom.{name}.api.routes")
++    if routes is None:
++        return False
++    router = getattr(routes, "router", None)
++    if router is not None:
++        app.include_router(router)
++    install = cast(Callable[[], None] | None, getattr(routes, "install", None))
++    if install is not None:
++        install()
++    return True
++
++
++def _seed(name: str) -> None:
++    mod = _optional(f"titanloom.{name}.dev.seed")
++    seed = cast(Callable[[], None] | None, getattr(mod, "seed", None)) if mod else None
++    if seed is not None:
++        seed()
++
++
++def _env_modules() -> list[str] | None:
++    raw = os.environ.get("TITANLOOM_MODULES", "").strip()
++    return [x.strip() for x in raw.split(",") if x.strip()] or None
++
++
++def create_app(modules: Sequence[str] | None = None, bases: BaseMode | None = None) -> FastAPI:
++    every = business_modules()
++    chosen = list(modules) if modules is not None else (_env_modules() or every)
++    unknown = sorted(set(chosen) - set(every))
++    if unknown:
++        raise ValueError(f"没有这些业务模块：{unknown}（有：{every}）")
++    mode = bases or cast(BaseMode, os.environ.get("TITANLOOM_BASES", "stub"))
++    if mode not in ("stub", "real"):
++        raise ValueError(f"TITANLOOM_BASES 只能是 stub 或 real，现在是 {mode!r}")
+ 
+-def create_app() -> FastAPI:
+     app = FastAPI(title="Titanloom", version="0.0.0", docs_url="/api/docs", openapi_url="/api/openapi.json")
++    app.state.restore_bases = install_bases(mode)
++    mounted = [m for m in [*BASES, *chosen] if _mount(app, m)]
++    if os.environ.get("TITANLOOM_RUN") == "1":
++        for m in chosen:
++            _seed(m)
++    info: dict[str, Any] = {"modules": chosen, "bases": mode, "mounted": mounted, "personas": sorted(PERSONAS)}
+ 
+     @app.get("/api/health", tags=["platform"])
+     def health() -> dict[str, str]:  # pyright: ignore[reportUnusedFunction]
+         return {"status": "ok"}
+ 
+-    return app
++    @app.get("/api/platform/run-info", tags=["platform"])
++    def run_info() -> dict[str, Any]:  # pyright: ignore[reportUnusedFunction]
++        """前端据此只显示装了的模块，底座是测试桩时显示横幅。"""
++        return info
++
++    if mode == "stub":
+ 
++        @app.middleware("http")
++        async def dev_principal(  # pyright: ignore[reportUnusedFunction]
++            request: Request, call_next: Callable[[Request], Awaitable[Response]]
++        ) -> Response:
++            role = request.headers.get("x-tl-role") or request.query_params.get("role") or "lead"
++            token = context.bind(
++                context.RequestContext(context.new_request_id(), principal_id=PERSONAS.get(role, PERSONAS["lead"]))
++            )
++            try:
++                return await call_next(request)
++            finally:
++                context.reset(token)
+ 
+-app = create_app()
++    return app
+diff --git a/apps/web/src/shared/base/reg/i18n.seed.ts b/apps/web/src/shared/base/reg/i18n.seed.ts
+index cf8ddf9..a0ab9b6 100644
+--- a/apps/web/src/shared/base/reg/i18n.seed.ts
++++ b/apps/web/src/shared/base/reg/i18n.seed.ts
+@@ -87,6 +87,7 @@ export const SEED: Record<string, Record<string, string>> = {
+     "shell.rail.plugins": "插件",
+     "shell.rail.studio": "可视化",
+     "shell.rail.workbench": "工作台",
++    "shell.run.stubBanner": "开发运行：只装了 {{modules}}；底座是测试桩，数据只在内存里，重启就没了",
+     "shell.top.language.label": "切换语言",
+     "shell.top.messages.label": "消息 {{count}} 条",
+     "shell.top.search.label": "全局搜索",
+@@ -179,6 +180,7 @@ export const SEED: Record<string, Record<string, string>> = {
+     "shell.rail.plugins": "Plugins",
+     "shell.rail.studio": "Visualize",
+     "shell.rail.workbench": "Workbench",
++    "shell.run.stubBanner": "Dev run: only {{modules}} is loaded; platform services are test stubs, data lives in memory and is lost on restart",
+     "shell.top.language.label": "Change language",
+     "shell.top.messages.label": "Messages: {{count}} unread",
+     "shell.top.search.label": "Search everything",
+diff --git a/apps/web/src/shared/base/reg/i18n.ts b/apps/web/src/shared/base/reg/i18n.ts
+index 9779ef9..6cbbaf3 100644
+--- a/apps/web/src/shared/base/reg/i18n.ts
++++ b/apps/web/src/shared/base/reg/i18n.ts
+@@ -113,6 +113,9 @@ export const K = {
+       studio: "shell.rail.studio",
+       workbench: "shell.rail.workbench",
+     },
++    run: {
++      stubBanner: "shell.run.stubBanner",
++    },
+     top: {
+       language: {
+         label: "shell.top.language.label",
+diff --git a/apps/web/src/shell/App.tsx b/apps/web/src/shell/App.tsx
+index ca374db..969baae 100644
+--- a/apps/web/src/shell/App.tsx
++++ b/apps/web/src/shell/App.tsx
+@@ -1,14 +1,25 @@
+ // Shell 外壳（shell 项目）。导航、顶栏、悬浮球已按高保真落成；领域页面以后按路由懒加载进 <main>。
++// 单独运行一个模块（tl.py run <模块>）时，导航只留首页和这个模块；底座是测试桩时页面顶上有横幅，不悄悄冒充真数据。
++import { K } from "../shared/base/reg";
++import { t } from "../shared/base/i18n";
+ import { AppShell } from "./AppShell";
+ import { Dock } from "./dock/Dock";
+ import { devSession } from "./devSession";
+-import { activeNav } from "./nav";
++import { activeNav, navFor } from "./nav";
++import { useRunInfo } from "./runInfo";
+ 
+ export function App() {
+   const session = devSession();
++  const run = useRunInfo();
+   return (
+     <>
+-      <AppShell active={activeNav(location.pathname)} session={session} />
++      <AppShell active={activeNav(location.pathname)} session={session} nav={navFor(run?.modules ?? null)}>
++        {run?.bases === "stub" && (
++          <div className="m-note warn" role="status">
++            {t(K.shell.run.stubBanner, { modules: run.modules.join("、") })}
++          </div>
++        )}
++      </AppShell>
+       <Dock role={session.dockRole} />
+     </>
+   );
+diff --git a/apps/web/src/shell/AppShell.tsx b/apps/web/src/shell/AppShell.tsx
+index 679b1a0..05cf3bc 100644
+--- a/apps/web/src/shell/AppShell.tsx
++++ b/apps/web/src/shell/AppShell.tsx
+@@ -15,17 +15,25 @@ function RailLink({ it, on }: { it: NavItem; on: boolean }) {
+   );
+ }
+ 
+-export function Rail({ active }: { active: string | null }) {
++export function Rail({
++  active,
++  main = NAV_MAIN,
++  bottom = NAV_BOTTOM,
++}: {
++  active: string | null;
++  main?: NavItem[] | undefined;
++  bottom?: NavItem[] | undefined;
++}) {
+   return (
+     <nav className="m-rail" aria-label={t(K.shell.rail.label)}>
+       <div className="m-logo" aria-hidden="true">
+         <Icon name="logo" />
+       </div>
+-      {NAV_MAIN.map((it) => (
++      {main.map((it) => (
+         <RailLink key={it.id} it={it} on={it.id === active} />
+       ))}
+       <span style={{ flex: 1 }} />
+-      {NAV_BOTTOM.map((it) => (
++      {bottom.map((it) => (
+         <RailLink key={it.id} it={it} on={it.id === active} />
+       ))}
+     </nav>
+@@ -58,10 +66,20 @@ export function TopBar({ session }: { session: ShellSession }) {
+   );
+ }
+ 
+-export function AppShell({ active, session, children }: { active: string | null; session: ShellSession; children?: ReactNode }) {
++export function AppShell({
++  active,
++  session,
++  nav,
++  children,
++}: {
++  active: string | null;
++  session: ShellSession;
++  nav?: { main: NavItem[]; bottom: NavItem[] } | undefined;
++  children?: ReactNode;
++}) {
+   return (
+     <div className="m-app">
+-      <Rail active={active} />
++      <Rail active={active} main={nav?.main} bottom={nav?.bottom} />
+       <div className="m-main">
+         <TopBar session={session} />
+         <main className="m-page">{children}</main>
+diff --git a/apps/web/src/shell/nav.test.ts b/apps/web/src/shell/nav.test.ts
+index c938d9f..caeca64 100644
+--- a/apps/web/src/shell/nav.test.ts
++++ b/apps/web/src/shell/nav.test.ts
+@@ -1,5 +1,5 @@
+ import { describe, expect, it } from "vitest";
+-import { activeNav } from "./nav";
++import { activeNav, MODULE_NAV, NAV_BOTTOM, NAV_MAIN, navFor } from "./nav";
+ 
+ describe("activeNav", () => {
+   it("首页只认根路径", () => {
+@@ -13,3 +13,20 @@ describe("activeNav", () => {
+     expect(activeNav("/admin/plugins")).toBe("admin");
+   });
+ });
++
++describe("navFor（单独运行一个模块）", () => {
++  it("不知道装了什么就全显示", () => {
++    expect(navFor(null)).toEqual({ main: NAV_MAIN, bottom: NAV_BOTTOM });
++  });
++  it("只留首页和装了的模块", () => {
++    const n = navFor(["forms"]);
++    expect(n.main.map((x) => x.id)).toEqual(["home", "forms"]);
++    expect(n.bottom).toEqual([]);
++    expect(navFor(["dataproc"]).main.map((x) => x.id)).toEqual(["home", "data"]);
++    expect(navFor(["plugin_host"]).bottom.map((x) => x.id)).toEqual(["plugins"]);
++  });
++  it("每个对得上的导航项都真实存在", () => {
++    const ids = new Set([...NAV_MAIN, ...NAV_BOTTOM].map((x) => x.id));
++    for (const id of Object.values(MODULE_NAV)) expect(ids.has(id)).toBe(true);
++  });
++});
+diff --git a/apps/web/src/shell/nav.ts b/apps/web/src/shell/nav.ts
+index 5e44a0e..5606ea4 100644
+--- a/apps/web/src/shell/nav.ts
++++ b/apps/web/src/shell/nav.ts
+@@ -33,3 +33,23 @@ export function activeNav(path: string): string | null {
+   }
+   return null;
+ }
++
++/** 后端模块名 → 导航项 id（单独运行一个模块时，导航只留首页和它；tl.py run <模块>）。 */
++export const MODULE_NAV: Record<string, string> = {
++  forms: "forms",
++  attendance: "attendance",
++  automation: "automation",
++  dataproc: "data",
++  visualization: "studio",
++  knowledge: "knowledge",
++  agent: "agent",
++  plugin_host: "plugins",
++  admin: "admin",
++};
++
++/** 按装了哪些模块裁导航；不知道（null，例如没连上后端）就全显示。 */
++export function navFor(modules: readonly string[] | null): { main: NavItem[]; bottom: NavItem[] } {
++  if (modules === null) return { main: NAV_MAIN, bottom: NAV_BOTTOM };
++  const keep = new Set(["home", ...modules.map((m) => MODULE_NAV[m]).filter((x): x is string => !!x)]);
++  return { main: NAV_MAIN.filter((it) => keep.has(it.id)), bottom: NAV_BOTTOM.filter((it) => keep.has(it.id)) };
++}
+diff --git a/apps/web/src/shell/runInfo.test.ts b/apps/web/src/shell/runInfo.test.ts
+new file mode 100644
+index 0000000..cfabe29
+--- /dev/null
++++ b/apps/web/src/shell/runInfo.test.ts
+@@ -0,0 +1,19 @@
++import { describe, expect, it } from "vitest";
++import { fetchRunInfo } from "./runInfo";
++
++const reply = (status: number, body: unknown): typeof fetch =>
++  (async () => new Response(JSON.stringify(body), { status })) as typeof fetch;
++
++describe("fetchRunInfo", () => {
++  it("读出装了哪些模块、底座模式", async () => {
++    expect(await fetchRunInfo(reply(200, { modules: ["forms"], bases: "stub", mounted: [] }))).toEqual({
++      modules: ["forms"],
++      bases: "stub",
++    });
++  });
++  it("后端没有、出错或格式不对都当作不知道", async () => {
++    expect(await fetchRunInfo(reply(404, {}))).toBeNull();
++    expect(await fetchRunInfo(reply(200, { modules: "forms" }))).toBeNull();
++    expect(await fetchRunInfo((async () => Promise.reject(new Error("down"))) as typeof fetch)).toBeNull();
++  });
++});
+diff --git a/apps/web/src/shell/runInfo.ts b/apps/web/src/shell/runInfo.ts
+new file mode 100644
+index 0000000..c89d5a8
+--- /dev/null
++++ b/apps/web/src/shell/runInfo.ts
+@@ -0,0 +1,29 @@
++// 单独运行一个模块时（tl.py run <模块>）后端告诉前端：装了哪些模块、底座是不是测试桩。
++// 拿不到（没连后端、高保真比对时）就当作全装、不显示横幅，页面与原型一致。
++import { useEffect, useState } from "react";
++
++export interface RunInfo {
++  modules: string[];
++  bases: "stub" | "real";
++}
++
++export async function fetchRunInfo(f: typeof fetch = fetch): Promise<RunInfo | null> {
++  try {
++    const r = await f("/api/platform/run-info");
++    if (!r.ok) return null;
++    const j = (await r.json()) as Partial<RunInfo>;
++    return Array.isArray(j.modules) && (j.bases === "stub" || j.bases === "real")
++      ? { modules: j.modules, bases: j.bases }
++      : null;
++  } catch {
++    return null;
++  }
++}
++
++export function useRunInfo(): RunInfo | null {
++  const [info, setInfo] = useState<RunInfo | null>(null);
++  useEffect(() => {
++    void fetchRunInfo().then(setInfo);
++  }, []);
++  return info;
++}
+diff --git a/apps/web/vite.config.ts b/apps/web/vite.config.ts
+index b39ca56..1f82176 100644
+--- a/apps/web/vite.config.ts
++++ b/apps/web/vite.config.ts
+@@ -1,8 +1,8 @@
+ import { defineConfig } from "vite";
+ import react from "@vitejs/plugin-react";
+ 
+-// 开发时 /api 转到本机主程序（uv run uvicorn titanloom.main:app）
++// 开发时 /api 转到本机主程序（uv run python ops/tools/tl.py run <模块>，或 uv run uvicorn titanloom.main:create_app --factory）
+ export default defineConfig({
+   plugins: [react()],
+-  server: { proxy: { "/api": "http://127.0.0.1:8000" } },
++  server: { proxy: { "/api": `http://127.0.0.1:${process.env.TL_API_PORT ?? "8000"}` } },
+ });
+diff --git a/i18n/shell.yaml b/i18n/shell.yaml
+index ac62d28..c8cd712 100644
+--- a/i18n/shell.yaml
++++ b/i18n/shell.yaml
+@@ -304,3 +304,8 @@ keys:
+     defaults:
+       zh-CN: 快捷圈恢复默认
+       en-US: Quick ring reset
++  run.stubBanner:
++    description: 单独运行一个模块（tl.py run）且底座是测试桩时，页面顶上的提示；{{modules}} 是装了的模块
++    defaults:
++      zh-CN: 开发运行：只装了 {{modules}}；底座是测试桩，数据只在内存里，重启就没了
++      en-US: "Dev run: only {{modules}} is loaded; platform services are test stubs, data lives in memory and is lost on restart"
+diff --git a/ops/tools/checks.py b/ops/tools/checks.py
+index 3c3ea36..2d5d721 100644
+--- a/ops/tools/checks.py
++++ b/ops/tools/checks.py
+@@ -62,7 +62,7 @@ def modules() -> dict[str, str]:
+ def run(cmd: list[str], cwd: Path = ROOT) -> tuple[int, str]:
+     # Windows 控制台默认不是 UTF-8：子进程统一按 UTF-8 读写（中文输出、读配置文件）
+     env = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}
+-    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)  # noqa: S603
++    p = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
+     return p.returncode, (p.stdout + p.stderr).strip()
+ 
+ 
+diff --git a/ops/tools/hifi.py b/ops/tools/hifi.py
+index ded20bc..7254f15 100644
+--- a/ops/tools/hifi.py
++++ b/ops/tools/hifi.py
+@@ -148,7 +148,7 @@ def start_dev() -> tuple[subprocess.Popen[bytes] | None, str]:
+     if not vite:
+         return None, ""
+     port = _free_port()
+-    proc = subprocess.Popen(  # noqa: S603
++    proc = subprocess.Popen(
+         [vite, "--port", str(port), "--strictPort", "--host", "127.0.0.1"],
+         cwd=WEB,
+         stdout=subprocess.DEVNULL,
+@@ -215,7 +215,7 @@ def run(
+     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
+         json.dump(job, f, ensure_ascii=False)
+     try:
+-        p = subprocess.run(  # noqa: S603
++        p = subprocess.run(
+             [node() or "node", str(HERE / "compare.mjs"), f.name],
+             cwd=ROOT,
+             capture_output=True,
+diff --git a/ops/tools/run.py b/ops/tools/run.py
+new file mode 100644
+index 0000000..68bcd34
+--- /dev/null
++++ b/ops/tools/run.py
+@@ -0,0 +1,208 @@
++"""单独运行一个模块（2026-10-25 维护者定：每个功能单独做、单独跑通再合并；施工说明 plan/NEXT-standalone-run.md）。
++
++tl.py run <模块>            起后端（只装这个业务模块 + 底座 + 外壳）和前端开发服务器，浏览器只看到这个模块
++tl.py run <模块> --smoke    自动跑一遍（合并前的门禁）；结果写 plan/.last-run-<模块>.json
++"""
++
++from __future__ import annotations
++
++import json
++import os
++import signal
++import subprocess
++import sys
++import time
++from datetime import UTC, datetime
++from pathlib import Path
++from typing import Any
++
++import yaml
++
++ROOT = Path(__file__).resolve().parents[2]
++WEB = ROOT / "apps" / "web"
++BASES = ("access", "execution", "facilities", "shell")  # 与 apps/api/titanloom/main.py 同一份（smoke 里核对）
++
++
++def business_modules() -> dict[str, str]:
++    """项目名 → 模块名（projects.yaml 里有 module 的、不是底座与外壳的）。"""
++    data: dict[str, dict[str, Any] | None] = yaml.safe_load((ROOT / "projects.yaml").read_text(encoding="utf-8"))
++    out: dict[str, str] = {}
++    for proj, info in data.items():
++        mod = str((info or {}).get("module") or "")
++        if mod and mod not in BASES:
++            out[proj] = mod
++    return out
++
++
++def resolve(name: str) -> str:
++    """接受项目名或模块名（plugin-host / plugin_host 都行），返回模块名。"""
++    mods = business_modules()
++    if name in mods:
++        return mods[name]
++    if name in mods.values():
++        return name
++    raise SystemExit(f"没有业务模块 {name!r}；可以单独运行的：{', '.join(sorted(mods.values()))}")
++
++
++def _env(module: str, bases: str) -> dict[str, str]:
++    env = dict(os.environ)
++    env.update(
++        TITANLOOM_MODULES=module, TITANLOOM_BASES=bases, TITANLOOM_RUN="1", PYTHONUTF8="1", PYTHONIOENCODING="utf-8"
++    )
++    return env
++
++
++def _git_head() -> str:
++    r = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True)
++    return r.stdout.strip() or "?"
++
++
++# ------------------------------------------------------------------ 开发运行
++def serve(module: str, bases: str, port: int) -> int:
++    vite = WEB / "node_modules" / ".bin" / ("vite.cmd" if os.name == "nt" else "vite")
++    if not vite.exists():
++        print("前端依赖没装：先在仓库根运行 pnpm install", file=sys.stderr)
++        return 2
++    env = _env(module, bases) | {"TL_API_PORT": str(port)}  # 前端开发服务器把 /api 转到这个端口
++    api = subprocess.Popen(
++        [sys.executable, "-m", "uvicorn", "titanloom.main:create_app", "--factory", "--port", str(port), "--reload"],
++        cwd=ROOT,
++        env=env,
++    )
++    web = subprocess.Popen([str(vite), "--port", "5173", "--strictPort"], cwd=WEB, env=env)
++    print(f"\n只运行「{module}」：后端 http://127.0.0.1:{port}/api/docs · 前端 http://127.0.0.1:5173/")
++    print("  换人：地址后加 ?role=lead（刘畅·部门负责人）/ member（王磊）/ zym（赵一鸣·表单管理员）")
++    if bases == "stub":
++        print("  注意：底座是测试桩，数据只在内存里，重启就没了（真实实现做完后默认改为真库）")
++    print("  按 Ctrl+C 停止\n")
++    try:
++        while api.poll() is None and web.poll() is None:
++            time.sleep(0.5)
++    except KeyboardInterrupt:
++        pass
++    finally:
++        for p in (web, api):
++            if p.poll() is None:
++                p.send_signal(signal.CTRL_BREAK_EVENT if os.name == "nt" else signal.SIGINT)  # pyright: ignore[reportAttributeAccessIssue]
++                try:
++                    p.wait(10)
++                except subprocess.TimeoutExpired:
++                    p.kill()
++    return 0
++
++
++# ------------------------------------------------------------------ smoke（合并门禁）
++SMOKE_PY = r"""
++import importlib, json, sys
++from fastapi.testclient import TestClient
++from titanloom import main
++mod = sys.argv[1]
++out = []
++def ok(name, detail=""): out.append({"name": name, "ok": True, "detail": detail})
++def bad(name, detail): out.append({"name": name, "ok": False, "detail": detail})
++assert tuple(main.BASES) == tuple(json.loads(sys.argv[2])), "ops/tools/run.py 与 main.py 的底座清单不一致"
++app = main.create_app([mod])
++try:
++    c = TestClient(app)
++    r = c.get("/api/health")
++    (ok if r.status_code == 200 else bad)("健康检查", f"HTTP {r.status_code}")
++    info = c.get("/api/platform/run-info").json()
++    (ok if info["modules"] == [mod] else bad)("只装了这个模块", json.dumps(info, ensure_ascii=False))
++    others = [m for m in main.business_modules() if m != mod]
++    leaked = [p for p in c.get("/api/openapi.json").json()["paths"] if any(p.startswith(f"/api/{o}/") for o in others)]
++    (bad("没有混进别的模块的接口", ", ".join(leaked)) if leaked else ok("没有混进别的模块的接口"))
++    try:
++        sm = importlib.import_module(f"titanloom.{mod}.dev.smoke")
++    except ModuleNotFoundError as e:
++        want = f"titanloom.{mod}.dev.smoke"
++        if not (e.name and (want == e.name or want.startswith(e.name + "."))):
++            raise
++        ok("模块自己的冒烟检查", f"还没有 titanloom/{mod}/dev/smoke.py（有接口以后要写）")
++    else:
++        try:
++            sm.smoke(c)
++            ok("模块自己的冒烟检查", f"titanloom/{mod}/dev/smoke.py")
++        except Exception as e:  # noqa: BLE001
++            bad("模块自己的冒烟检查", f"{type(e).__name__}: {e}")
++finally:
++    app.state.restore_bases()
++print("@@RESULT@@" + json.dumps(out, ensure_ascii=False))
++"""
++
++
++def smoke(module: str, bases: str) -> int:
++    started = time.time()
++    steps: list[dict[str, Any]] = []
++    env = _env(module, bases)
++    r = subprocess.run(
++        [sys.executable, "-c", SMOKE_PY, module, json.dumps(BASES)],
++        cwd=ROOT,
++        env=env,
++        capture_output=True,
++        text=True,
++        encoding="utf-8",
++    )
++    marker = [ln for ln in r.stdout.splitlines() if ln.startswith("@@RESULT@@")]
++    if marker:
++        steps += json.loads(marker[-1][len("@@RESULT@@") :])
++    else:
++        steps.append({"name": "后端启动", "ok": False, "detail": (r.stderr or r.stdout).strip()[-1500:]})
++    # 前端：这个模块的领域目录 + 外壳的测试（导航只显示装了的模块）
++    vitest = WEB / "node_modules" / ".bin" / ("vitest.cmd" if os.name == "nt" else "vitest")
++    if vitest.exists():
++        targets = [f"src/domains/{module}", "src/shell"]
++        v = subprocess.run(
++            [str(vitest), "run", "--passWithNoTests", *targets],
++            cwd=WEB,
++            capture_output=True,
++            text=True,
++            encoding="utf-8",
++            env=env,
++        )
++        tail = [ln.strip() for ln in v.stdout.splitlines() if "Tests" in ln or "Test Files" in ln]
++        if v.returncode and "MODULE_NOT_FOUND" in (
++            v.stdout + v.stderr
++        ):  # 依赖是另一个系统装的（如 Windows 装、这里是 Linux）
++            steps.append(
++                {
++                    "name": "前端测试（本模块 + 外壳）",
++                    "ok": None,
++                    "detail": "前端依赖是另一个系统装的，跳过；在装依赖的那台机器上跑",
++                }
++            )
++        else:
++            steps.append(
++                {
++                    "name": "前端测试（本模块 + 外壳）",
++                    "ok": v.returncode == 0,
++                    "detail": " · ".join(tail) or v.stderr[-800:],
++                }
++            )
++    else:
++        steps.append({"name": "前端测试（本模块 + 外壳）", "ok": None, "detail": "没装前端依赖，跳过（pnpm install）"})
++    passed = all(s["ok"] is not False for s in steps)
++    result = {
++        "module": module,
++        "bases": bases,
++        "commit": _git_head(),
++        "at": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
++        "seconds": round(time.time() - started, 1),
++        "passed": passed,
++        "steps": steps,
++    }
++    (ROOT / "plan" / f".last-run-{module}.json").write_text(
++        json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8"
++    )
++    print(f"单独运行冒烟检查 · {module} · 底座 {bases} · 提交 {result['commit']}")
++    for s in steps:
++        mark = {True: "✓", False: "✗", None: "!"}[s["ok"]]
++        print(f"{mark} {s['name']}" + (f" —— {s['detail']}" if s["detail"] else ""))
++    if bases == "stub":
++        print("! 底座是测试桩（真实实现做完后改为真库再跑一遍）")
++    print("\n通过" if passed else "\n没通过：修好再报告 / 合并")
++    return 0 if passed else 1
++
++
++def main(name: str, do_smoke: bool, bases: str, port: int) -> int:
++    module = resolve(name)
++    return smoke(module, bases) if do_smoke else serve(module, bases, port)
+diff --git a/ops/tools/tl.py b/ops/tools/tl.py
+index 2c0da40..0e2b07d 100644
+--- a/ops/tools/tl.py
++++ b/ops/tools/tl.py
+@@ -11,6 +11,8 @@
+     uv run python ops/tools/tl.py db revision <模块> -m 说明   从 store/models.py 与库的差别生成迁移脚本（生成后要人看一遍）
+     uv run python ops/tools/tl.py fidelity [页名…] [--state 状态] [--app-url 地址] [--self-test same|broken] [--sync]
+                                                    高保真比对：截原型页和正式页逐像素比，报告在 .fidelity/report.html
++    uv run python ops/tools/tl.py run <模块> [--smoke]   单独运行一个模块（只装它 + 底座 + 外壳）；--smoke 是合并前门禁
++    uv run python ops/tools/tl.py here                 执行 Agent 打开项目文件夹后先跑：我是哪个项目、该做什么
+ 
+ 所有规则从 projects.yaml 读，不另写一份。
+ """
+@@ -243,7 +245,23 @@ def main(argv: list[str] | None = None) -> int:
+         default=None,
+         help="自检：same 两边都用原型（应全过），broken 正式页一侧注入走样（应全不过）",
+     )
++    pr = sub.add_parser("run", help="单独运行一个模块：只装它 + 底座 + 外壳；--smoke 自动检查（合并前门禁）")
++    pr.add_argument("module", help="项目名或模块名，如 forms、attendance、dataproc")
++    pr.add_argument(
++        "--smoke", action="store_true", help="不开浏览器，自动跑一遍检查，结果写 plan/.last-run-<模块>.json"
++    )
++    pr.add_argument(
++        "--bases", choices=["stub", "real"], default="stub", help="底座用测试桩还是真实实现（真实实现还没做）"
++    )
++    pr.add_argument("--port", type=int, default=8000)
++    sub.add_parser("here", help="执行 Agent 打开项目文件夹后先跑：我是哪个项目、该做什么")
+     args = ap.parse_args(argv)
++    if args.cmd == "run":
++        import run
++
++        return run.main(args.module, args.smoke, args.bases, args.port)
++    if args.cmd == "here":
++        return wp.here()
+     if args.cmd == "gen":
+         changed = gen.write_all()
+         for c in changed:
+diff --git a/ops/tools/wp.py b/ops/tools/wp.py
+index 6a2df3e..b62836c 100644
+--- a/ops/tools/wp.py
++++ b/ops/tools/wp.py
+@@ -24,6 +24,7 @@ from __future__ import annotations
+ import json
+ import re
+ import subprocess
++import sys
+ from datetime import UTC, datetime
+ from pathlib import Path
+ from typing import Any
+@@ -37,10 +38,11 @@ API = ROOT / "apps" / "api" / "titanloom"
+ INTEGRATION = "local/integration"
+ STATES = ["待派", "执行中", "待审", "返工", "已合本地", "已推送"]
+ LAST = ROOT / "plan" / ".last-check.json"
++RUN_BASES = ("access", "execution", "facilities", "shell")  # 底座与外壳：不单独运行（与 run.py / main.py 同一份）
+ 
+ 
+ def git(*args: str, cwd: Path = ROOT) -> str:
+-    p = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace")  # noqa: S603, S607
++    p = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+     if p.returncode:
+         raise SystemExit(f"git {' '.join(args)} 失败：{p.stderr.strip()}")
+     return p.stdout.strip()
+@@ -103,6 +105,13 @@ def launch(wid: str) -> int:
+     mod_doc = (
+         f"apps/api/titanloom/{info['module']}/AGENTS.md" if info.get("module") else "本项目目录的 AGENTS.md（如有）"
+     )
++    mod = info.get("module")
++    run_line = (
++        f"uv run python ops/tools/tl.py run {mod} --smoke 通过（单独运行本模块，把输出贴进报告；"
++        f"想自己在浏览器里看：tl.py run {mod}）；"
++        if mod and mod not in RUN_BASES
++        else ""
++    )
+     print(
+         f"""你是 Titanloom 项目的执行 Agent，负责工作包 {wid}「{meta.get("title", "")}」。
+ 
+@@ -115,12 +124,51 @@ def launch(wid: str) -> int:
+ 4. 本项目必读：{reads}
+ 5. plan/progress/{wid}.md（上次做到哪、审核意见怎么改）
+ 
+-做完：uv run python ops/tools/tl.py check 全部通过（✗ 0），最后一条提交写自查结果；只在本地提交（git commit -s，末尾 Agent: <你的工具名>），不推送、不合并。
++做完：uv run python ops/tools/tl.py check 全部通过（✗ 0）；{run_line}最后一条提交写自查结果；只在本地提交（git commit -s，末尾 Agent: <你的工具名>），不推送、不合并。
+ 按说明书的阶段一个一个做；**每做完一个阶段**回复一句"{wid} 阶段 N 做完了"，列出改了哪些文件、测试结果，等审核通过再做下一阶段。设计里没写、拿不准的，停下来写进 plan/progress/{wid}.md 告诉我。"""
+     )
+     return 0
+ 
+ 
++def _run_gate(proj: str) -> None:
++    """合入前门禁：在合并后的正本上单独运行这个模块（tl.py run <模块> --smoke），不过就撤销合并。"""
++    mod = (projects().get(proj) or {}).get("module")
++    if not mod or mod in RUN_BASES:
++        return
++    r = subprocess.run([sys.executable, str(ROOT / "ops" / "tools" / "tl.py"), "run", mod, "--smoke"], cwd=ROOT)
++    if r.returncode:
++        subprocess.run(["git", "merge", "--abort"], cwd=ROOT)
++        subprocess.run(["git", "reset", "--merge"], cwd=ROOT)
++        raise SystemExit(f"单独运行 {mod} 没通过，已撤销合并；让 Agent 修好、自己跑通 tl.py run {mod} --smoke 再报告")
++
++
++def here() -> int:
++    """执行 Agent 打开项目文件夹后先跑：告诉它是哪个项目、先做什么，再打印启动指令。"""
++    branch = git("rev-parse", "--abbrev-ref", "HEAD")
++    proj, _, wid = branch.partition("/")
++    if branch in (INTEGRATION, "main") or not wid or not (WP / f"{wid}.md").exists():
++        print(
++            f"这里是分支 {branch}，不是某个开发项目的工作区。\n"
++            "执行 Agent 只在 D:\\05_project\\02_Titanloom-dev\\projects\\<项目> 里工作；hq 是正本，只有架构合并、审核。"
++        )
++        return 1
++    behind = git("rev-list", "--count", f"HEAD..{INTEGRATION}")
++    print(f"项目 {proj} · 工作包 {wid} · 分支 {branch}")
++    if behind != "0":
++        print(
++            f"第一步：git merge {INTEGRATION}（正本比你新 {behind} 个提交：最新的说明书、审核意见、底座都在里面），"
++            "再重跑 tl.py here"
++        )
++        return 0
++    meta, body, _ = read(wid)
++    print(f"状态：{meta.get('status')} · 已通过到阶段 {meta.get('stage', 0)}")
++    last = [ln for ln in body.splitlines() if ln.startswith("### ")]
++    if last:
++        print(f"最近一条审核记录：{last[-1][4:]}（见 plan/wp/{wid}.md 末尾）")
++    print()
++    return launch(wid)
++
++
+ def merge(wid: str, keep: bool = False) -> int:
+     meta, _, _ = read(wid)
+     proj = meta["project"]
+@@ -131,13 +179,16 @@ def merge(wid: str, keep: bool = False) -> int:
+         raise SystemExit("hq 里有没提交的改动，先处理")
+     if keep:  # 阶段合入：保留历史，分支与 worktree 继续用
+         stage = int(meta.get("stage") or 0) + 1
+-        git("merge", "--no-ff", "-m", f"{proj}: {meta.get('title', wid)} · 阶段 {stage}（架构审核通过）", branch)
++        git("merge", "--no-ff", "--no-commit", branch)
++        _run_gate(proj)
++        git("commit", "-m", f"{proj}: {meta.get('title', wid)} · 阶段 {stage}（架构审核通过）")
+         set_status(wid, "执行中", stage=stage)
+         git("add", f"plan/wp/{wid}.md")
+         git("commit", "-m", f"plan: {wid} 阶段 {stage} 已合本地")
+         print(f"{wid} 阶段 {stage} 已合入 {INTEGRATION}；worktree 继续")
+         return 0
+     git("merge", "--squash", branch)
++    _run_gate(proj)
+     log = git("log", "--format=%s%n%b", f"{INTEGRATION}..{branch}")
+     agents = sorted(set(re.findall(r"^Agent:\s*(.+)$", log, re.M)))
+     msg = f"{proj}: {meta.get('title', wid)}（工作包 {wid}，架构审核通过）\n\n" + "\n".join(
+diff --git a/pyproject.toml b/pyproject.toml
+index dc07da3..601104b 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -45,7 +45,7 @@ max-complexity = 10
+ [tool.ruff.lint.per-file-ignores]
+ "**/tests/**" = ["S101"]
+ "ops/**" = ["S101", "T201", "E501"]   # 工具里的中文说明行长
+-"ops/tools/**" = ["S101", "T201", "E501", "C901"]   # 架构的工具脚本，检查项多分支
++"ops/tools/**" = ["S101", "T201", "E501", "C901", "S603", "S607"]   # 架构的工具脚本：检查项多分支；调 git / uv / pnpm 等本机命令
+ "ops/synthetic-data/**" = ["S101", "T201", "E501", "S311", "S603"]   # 合成数据用普通随机数；测试里调用本目录脚本
+ 
+ [tool.pytest.ini_options]
