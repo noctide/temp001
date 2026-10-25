@@ -12,7 +12,7 @@ plan/wp/<编号>.md 是工作包正本，开头一段 YAML：
     ---
 后面是正文：目标、设计依据、图、接口、验收、允许路径、不做的事；审核意见也记在这里。
 
-    tl.py wp start <编号>    （在维护者的 Windows 上跑：worktree 记的是本机绝对路径）建 worktree ../wt/<编号>（分支 <项目>/<编号>，从 local/integration 切出）、写 plan/progress/<编号>.md、状态 → 执行中
+    tl.py wp start <编号>    （在维护者的 Windows 上跑：worktree 记的是本机绝对路径）建 worktree ../projects/<项目>（一个开发项目一个文件夹；分支 <项目>/<编号>，从 local/integration 切出）、写 plan/progress/<编号>.md、状态 → 执行中
     tl.py wp launch <编号>   打出给执行 Agent 的启动指令（贴进 opencode / Codex / DeepSeek Harness）
     tl.py wp merge <编号> --keep   一个阶段审核通过：保留历史合入 local/integration，worktree 继续（2026-10-18：一个开发项目一个 Agent，按阶段审核）
     tl.py wp merge <编号>    整个里程碑做完：压成一个提交合入、删 worktree、状态 → 已合本地
@@ -32,7 +32,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 WP = ROOT / "plan" / "wp"
-WT = ROOT.parent / "wt"
+WT = ROOT.parent / "projects"  # 一个开发项目一个文件夹：projects/<项目>（2026-10-25 由 wt/<编号> 改）
 API = ROOT / "apps" / "api" / "titanloom"
 INTEGRATION = "local/integration"
 STATES = ["待派", "执行中", "待审", "返工", "已合本地", "已推送"]
@@ -77,7 +77,7 @@ def start(wid: str, agent: str | None) -> int:
     meta, _, _ = read(wid)
     proj = meta["project"]
     branch = f"{proj}/{wid}"
-    path = WT / wid
+    path = WT / proj
     if path.exists():
         raise SystemExit(f"{path} 已经存在")
     git("worktree", "add", str(path), "-b", branch, INTEGRATION)
@@ -99,7 +99,7 @@ def launch(wid: str) -> int:
     proj = meta["project"]
     info = projects().get(proj) or {}
     reads = "、".join(info.get("read") or []) or "（只有共同必读）"
-    path = WT / wid
+    path = WT / proj
     mod_doc = (
         f"apps/api/titanloom/{info['module']}/AGENTS.md" if info.get("module") else "本项目目录的 AGENTS.md（如有）"
     )
@@ -147,12 +147,12 @@ def merge(wid: str, keep: bool = False) -> int:
         msg += "\n\nAgent: " + ", ".join(agents)
     git("commit", "-s", "-m", msg)
     try:  # worktree 在 Windows 上建的，这里删不掉时让维护者在 Windows 上删
-        if (WT / wid).exists():
-            git("worktree", "remove", "--force", str(WT / wid))
+        if (WT / proj).exists():
+            git("worktree", "remove", "--force", str(WT / proj))
         git("branch", "-D", branch)
     except SystemExit as e:
         print(
-            f"（worktree / 分支没删掉：{e}；在建它的那台电脑上跑 git worktree remove ../wt/{wid} 和 git branch -D {branch}）"
+            f"（worktree / 分支没删掉：{e}；在建它的那台电脑上跑 git worktree remove ../projects/{proj} 和 git branch -D {branch}）"
         )
     set_status(wid, "已合本地", merged=datetime.now(UTC).strftime("%Y-%m-%d %H:%M"))
     git("add", f"plan/wp/{wid}.md")

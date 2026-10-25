@@ -191,7 +191,7 @@ sequenceDiagram
     -   **执行 Agent**（维护者电脑上的 opencode、Codex、DeepSeek Harness，以后可加别的，一视同仁）：只写模块里的业务代码（本模块 `api` / `app` / `domain` / `store` / `migrations` / `tests` 与本模块前端目录），不改内核、契约、别的模块。审核只看结果，不看是哪个工具写的。
     -   **维护者**：拍板（每次最多 3 处）、把启动指令贴给 Agent、验收。
 -   **一个开发项目一个 Agent（2026-10-18 维护者定）**：执行 Agent 按整个开发项目领活——考勤一个、表单一个……——不按单个文件或几百行的小包派。配置类、框架类、公共代码的活由架构自己做完，不派给 Agent。
--   **本地优先**：正本仓库是维护者电脑上的 `hq` 克隆，集成分支 `local/integration`。每个开发项目一个长期 git worktree `wt/<编号>`（如 `wt/M2-attendance`），分支 `<项目>/<编号>`，从 `local/integration` 切出；一个项目同一时刻只交给一个 Agent，不同项目并行。
+-   **本地优先**：正本仓库是维护者电脑上的 `hq` 克隆，集成分支 `local/integration`。每个开发项目一个文件夹 `projects/<项目>`（git worktree，如 `projects/attendance`；2026-10-25 由 `wt/<编号>` 改为按项目命名），审计记录在仓库 `review/<模块>/`，分支 `<项目>/<编号>`，从 `local/integration` 切出；一个项目同一时刻只交给一个 Agent，不同项目并行。
 -   **项目说明书**：`plan/wp/<里程碑>-<项目>.md` 是该项目这一里程碑的正本：目标、依据与必读、按阶段列出的清单与每阶段验收、允许路径、不做的事、依赖的底座接口；启动指令由 `tl.py wp launch <编号>` 生成。已建的 GitHub Issue 只作索引。
 -   **交付与审核**：执行 Agent 只在本地分支提交（`git commit -s`，末尾 `Agent: <工具名>`），不推送、不合并。**每完成一个阶段**报告一次；架构在 `hq` 跑 `tl check` 并按第 7 节审核，通过后用 `tl.py wp merge <编号> --keep` 合入 `local/integration`（保留历史的合并，worktree 继续用于下一阶段）；不通过时把意见写进说明书并给返工指令。整个里程碑做完 `tl.py wp merge <编号>` 收尾、删 worktree。同一阶段返工两次仍不过，换 Agent 或由架构拆小。
 -   **推送 GitHub**：维护者 10-17 定项目完结前不推送，全部留在本地；需要备份时由架构提醒，维护者决定推一次。GitHub 上的 CI 与分支保护在推送时才起作用，此前本地 `tl check` 就是门禁，和 CI 跑同一条命令。
