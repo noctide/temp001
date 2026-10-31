@@ -2,7 +2,7 @@
 id: M2-attendance
 project: attendance
 title: 考勤开发项目 · M2（领域基础与完整人工闭环）
-status: 执行中
+status: 返工
 agent: null
 depends:
 - M1 底座接口（阶段 2 起）
@@ -92,3 +92,13 @@ M1 底座（数据库与迁移、access、execution、facilities）的接口 + �
 - 本模块对外路由放 `api/routes.py`，开发造数据 `dev/seed.py`，冒烟检查 `dev/smoke.py`（有接口以后必须写）。
 
 下一步：阶段 2（签到事件、签到页接口、今日出勤统计）+ 阶段 1 带过来的两项。
+
+## 审核记录 · 阶段 2-3（2026-10-31，审核：dsh；架构复核：Claude）
+
+结论：**返工**。证据：review/attendance/M2-attendance-阶段2-3-2026-10-31.md 。架构抽查属实：阶段 2/3 的表没有任何迁移（migrations/versions 为空），api 层为空、没有 today_summary。
+返工要点（完整 20 条见证据文件，下列为阻断项）：
+1. 补迁移：从空库 tl.py db upgrade attendance 要建出阶段 1-3 全部表。
+2. 阶段 2：签到页接口、today_summary/my_summary、能力登记；classify_today 不得原样返回调用方计数；门禁来源不可读要有"来源缺失"状态；access.api 范围裁剪、未知不计 0。
+3. 阶段 3：过期修订不得确认；同一修订不得重复确认累计；改时长要释放旧占用；更正不得覆盖同人同月其他申报；confirmed 后不得 rejected；首次并发建账要成功（upsert/锁）；超限只标不拦；错误用 AppError(RESOURCE_VERSION_CONFLICT)；revision/result_version 补全设计字段；接 access/execution/facilities（审计、事件、待办、权限）。
+4. 测试：并发用例要真并发、更正用例要先确认旧修订、状态机测试要走 store；不许放宽断言。
+5. 提交信息：去掉 $attendance 与字面 \n，补 Agent trailer；删掉 models.py 里残留的 type 遮蔽别名。
